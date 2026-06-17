@@ -2,8 +2,9 @@
 
 import { motion, useMotionValueEvent, useScroll } from "framer-motion";
 import { useState } from "react";
+import Link from "next/link";
 
-const links = ["Residences", "Collections", "About", "Journal", "Contact"];
+const links = ["Residences", "Collections", "About", "Contact"];
 
 export default function Navbar() {
   const { scrollY } = useScroll();
@@ -43,6 +44,14 @@ export default function Navbar() {
               </a>
             </li>
           ))}
+          <li>
+            <Link
+              href="/projects"
+              className="relative transition-colors hover:text-foreground"
+            >
+              Projects
+            </Link>
+          </li>
         </ul>
 
         <a
