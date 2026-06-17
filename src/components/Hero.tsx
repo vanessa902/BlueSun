@@ -1,7 +1,9 @@
 "use client";
 
-import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useGSAP } from "@gsap/react";
 import HlsVideo from "./HlsVideo";
 
 // Replace these with your own assets. The .m3u8 is a public Mux demo stream so
@@ -11,45 +13,62 @@ const HERO_HLS =
 const HERO_POSTER =
   "https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=2000&q=80";
 
-export default function Hero() {
-  const ref = useRef<HTMLElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start start", "end start"],
-  });
+gsap.registerPlugin(ScrollTrigger, useGSAP);
 
-  // Parallax: video drifts down and fades, content lifts away as you scroll.
-  const videoY = useTransform(scrollYProgress, [0, 1], ["0%", "25%"]);
-  const overlayOpacity = useTransform(scrollYProgress, [0, 1], [0.55, 0.9]);
-  const contentY = useTransform(scrollYProgress, [0, 1], ["0%", "-40%"]);
-  const contentOpacity = useTransform(scrollYProgress, [0, 0.6], [1, 0]);
+export default function Hero() {
+  const section = useRef<HTMLElement>(null);
+  const videoWrap = useRef<HTMLDivElement>(null);
+  const overlay = useRef<HTMLDivElement>(null);
+  const content = useRef<HTMLDivElement>(null);
+
+  // Scroll parallax via GSAP ScrollTrigger (replaces the previous Framer hooks).
+  useGSAP(
+    () => {
+      const st = {
+        trigger: section.current,
+        start: "top top",
+        end: "bottom top",
+        scrub: true,
+      };
+      gsap.to(videoWrap.current, { yPercent: 25, ease: "none", scrollTrigger: st });
+      gsap.fromTo(
+        overlay.current,
+        { opacity: 0.55 },
+        { opacity: 0.9, ease: "none", scrollTrigger: st }
+      );
+      gsap.to(content.current, {
+        yPercent: -40,
+        autoAlpha: 0,
+        ease: "none",
+        scrollTrigger: st,
+      });
+    },
+    { scope: section }
+  );
 
   return (
     <section
-      ref={ref}
+      ref={section}
       id="residences"
       className="relative h-[100svh] w-full overflow-hidden"
     >
       {/* Background video */}
-      <motion.div style={{ y: videoY }} className="absolute inset-0 scale-110">
+      <div ref={videoWrap} className="absolute inset-0 scale-110">
         <HlsVideo
           src={HERO_HLS}
           poster={HERO_POSTER}
           className="h-full w-full object-cover"
         />
-      </motion.div>
+      </div>
 
       {/* Gradient + dim overlay for legibility */}
-      <motion.div
-        style={{ opacity: overlayOpacity }}
-        className="absolute inset-0 bg-background"
-      />
+      <div ref={overlay} className="absolute inset-0 bg-background opacity-55" />
       <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-transparent to-background" />
 
       {/* Headline — animated by the ported okd engine (SplitText line reveal +
-          sequenced reveals). The video parallax stays on Framer. */}
-      <motion.div
-        style={{ y: contentY, opacity: contentOpacity }}
+          sequenced reveals); video parallax stays on GSAP ScrollTrigger. */}
+      <div
+        ref={content}
         className="relative z-10 flex h-full flex-col items-center justify-center px-6 text-center"
       >
         <div
@@ -93,24 +112,14 @@ export default function Hero() {
             </a>
           </div>
         </div>
-      </motion.div>
+      </div>
 
       {/* Scroll cue */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.8, duration: 1 }}
-        style={{ opacity: contentOpacity }}
-        className="absolute bottom-8 left-1/2 z-10 -translate-x-1/2"
-      >
+      <div className="absolute bottom-8 left-1/2 z-10 -translate-x-1/2">
         <div className="flex h-10 w-6 items-start justify-center rounded-full border border-foreground/30 p-1.5">
-          <motion.span
-            animate={{ y: [0, 12, 0] }}
-            transition={{ repeat: Infinity, duration: 1.8, ease: "easeInOut" }}
-            className="h-1.5 w-1.5 rounded-full bg-gold-soft"
-          />
+          <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-gold-soft" />
         </div>
-      </motion.div>
+      </div>
     </section>
   );
 }

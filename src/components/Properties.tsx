@@ -1,7 +1,4 @@
-"use client";
-
 import Image from "next/image";
-import { motion } from "framer-motion";
 import Reveal from "./Reveal";
 
 type Property = {
@@ -74,18 +71,10 @@ export default function Properties() {
 
       <div className="grid grid-cols-1 gap-5 md:grid-cols-12">
         {properties.map((p, i) => (
-          <Reveal
-            key={p.name}
-            delay={i * 0.08}
-            className={`group ${p.span}`}
-          >
+          <Reveal key={p.name} delay={i * 0.08} className={`group ${p.span}`}>
             <a href="#" className="block">
               <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl">
-                <motion.div
-                  whileHover={{ scale: 1.06 }}
-                  transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-                  className="absolute inset-0"
-                >
+                <div className="absolute inset-0 transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.06]">
                   <Image
                     src={p.image}
                     alt={p.name}
@@ -93,7 +82,7 @@ export default function Properties() {
                     sizes="(max-width: 768px) 100vw, 50vw"
                     className="object-cover"
                   />
-                </motion.div>
+                </div>
                 <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-background/10 to-transparent opacity-80 transition-opacity duration-500 group-hover:opacity-100" />
                 <div className="absolute inset-x-0 bottom-0 flex items-end justify-between p-6">
                   <div>

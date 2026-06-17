@@ -16,8 +16,8 @@
   --color-gold: var(--gold);
   --color-gold-soft: var(--gold-soft);
   --color-line: var(--line);
-  --font-sans: var(--font-inter);
-  --font-display: var(--font-playfair);
+  --font-sans: var(--font-haffer);
+  --font-display: var(--font-haffer);
 }
 
 * {
