@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
+import "./okd.css";
 import SmoothScroll from "@/components/SmoothScroll";
+import OkdMotion from "@/components/OkdMotion";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -33,6 +35,7 @@ export default function RootLayout({
       className={`${inter.variable} ${playfair.variable} h-full antialiased`}
     >
       <body className="min-h-full bg-background text-foreground">
+        <OkdMotion />
         <SmoothScroll>{children}</SmoothScroll>
       </body>
     </html>

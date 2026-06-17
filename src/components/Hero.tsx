@@ -11,24 +11,6 @@ const HERO_HLS =
 const HERO_POSTER =
   "https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=2000&q=80";
 
-const words = ["Live", "where", "the", "extraordinary", "feels", "ordinary."];
-
-const container = {
-  hidden: {},
-  show: {
-    transition: { staggerChildren: 0.08, delayChildren: 0.4 },
-  },
-};
-
-const word = {
-  hidden: { opacity: 0, y: "110%" },
-  show: {
-    opacity: 1,
-    y: "0%",
-    transition: { duration: 1, ease: [0.22, 1, 0.36, 1] as const },
-  },
-};
-
 export default function Hero() {
   const ref = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({
@@ -64,59 +46,53 @@ export default function Hero() {
       />
       <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-transparent to-background" />
 
-      {/* Headline */}
+      {/* Headline — animated by the ported okd engine (SplitText line reveal +
+          sequenced reveals). The video parallax stays on Framer. */}
       <motion.div
         style={{ y: contentY, opacity: contentOpacity }}
         className="relative z-10 flex h-full flex-col items-center justify-center px-6 text-center"
       >
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.3, duration: 1 }}
-          className="mb-6 text-xs uppercase tracking-[0.45em] text-gold-soft"
+        <div
+          data-okd-scroll-reveal-group
+          data-okd-srg-stagger="0.12"
+          data-okd-srg-start="top 95%"
+          className="flex flex-col items-center"
         >
-          Private Collection · Est. MMXXVI
-        </motion.p>
-
-        <motion.h1
-          variants={container}
-          initial="hidden"
-          animate="show"
-          className="font-display text-balance text-5xl font-medium leading-[1.05] text-foreground sm:text-6xl md:text-7xl lg:text-8xl"
-        >
-          {words.map((w, i) => (
-            <span key={i} className="inline-block overflow-hidden align-bottom">
-              <motion.span variants={word} className="inline-block">
-                {w === "extraordinary" ? (
-                  <span className="italic text-gold-soft">{w}</span>
-                ) : (
-                  w
-                )}
-                {i < words.length - 1 && " "}
-              </motion.span>
-            </span>
-          ))}
-        </motion.h1>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.3, duration: 1 }}
-          className="mt-10 flex flex-col items-center gap-4 sm:flex-row"
-        >
-          <a
-            href="#collections"
-            className="rounded-full bg-gold px-8 py-3.5 text-sm font-medium tracking-wide text-background transition-transform hover:scale-[1.03]"
+          <p
+            data-okd-scroll-reveal
+            data-okd-sr-y="14"
+            className="mb-6 text-xs uppercase tracking-[0.45em] text-gold-soft"
           >
-            Explore Residences
-          </a>
-          <a
-            href="#contact"
-            className="rounded-full border border-foreground/25 px-8 py-3.5 text-sm tracking-wide text-foreground transition-colors hover:border-foreground/60"
+            Private Collection · Est. MMXXVI
+          </p>
+
+          <h1
+            data-okd-scroll-text-reveal
+            data-okd-str-type="lines"
+            className="max-w-5xl font-display text-5xl font-medium leading-[1.05] text-foreground sm:text-6xl md:text-7xl lg:text-8xl"
           >
-            Arrange a Viewing
-          </a>
-        </motion.div>
+            Live where the extraordinary feels ordinary.
+          </h1>
+
+          <div
+            data-okd-scroll-reveal
+            data-okd-sr-y="20"
+            className="mt-10 flex flex-col items-center gap-4 sm:flex-row"
+          >
+            <a
+              href="#collections"
+              className="u-btn--1 rounded-full bg-gold px-8 py-3.5 text-sm font-medium tracking-wide text-background transition-transform hover:scale-[1.03]"
+            >
+              <span data-button-animate-chars>Explore Residences</span>
+            </a>
+            <a
+              href="#contact"
+              className="u-btn--1 rounded-full border border-foreground/25 px-8 py-3.5 text-sm tracking-wide text-foreground transition-colors hover:border-foreground/60"
+            >
+              <span data-button-animate-chars>Arrange a Viewing</span>
+            </a>
+          </div>
+        </div>
       </motion.div>
 
       {/* Scroll cue */}

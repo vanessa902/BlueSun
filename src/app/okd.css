@@ -1,0 +1,83 @@
+/* ==========================================================================
+   Essential structural CSS for the ported "okd" motion engine (Cipher Digital
+   style). Reconstructed — only what the JS needs to work without FOUC. The
+   visual design/content sits on top and gets replaced later.
+   ========================================================================== */
+
+/* Hide reveal targets before the engine runs (engine makes them visible). */
+[data-okd-scroll-text-reveal] {
+  visibility: hidden;
+}
+[data-okd-scroll-reveal]:not(.is-okd-sr-revealed):not(.is-okd-sr-disabled) {
+  visibility: hidden;
+}
+
+/* SplitText line masking: lines clip their overflow so the rise reads cleanly.
+   GSAP's `mask: "lines"` also sets inline styles, this is a safety net. */
+.is-okd-str-split .okd-str-line {
+  overflow: hidden;
+}
+.okd-str-line,
+.okd-str-word,
+.okd-str-char {
+  display: inline-block;
+  will-change: transform;
+}
+
+/* Button per-character hover stagger (delay set per-char by button-splittext.js). */
+.u-btn--1 {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  overflow: hidden;
+}
+.u-btn--1 .btn-char {
+  display: inline-block;
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+}
+.u-btn--1:hover .btn-char {
+  transform: translateY(-3px);
+}
+
+/* Marquee structural layout. */
+[data-marquee-scroll-direction-target] {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+}
+[data-marquee-scroll-target] {
+  display: flex;
+  flex-wrap: nowrap;
+  will-change: transform;
+}
+[data-marquee-collection-target] {
+  display: flex;
+  flex: 0 0 auto;
+  flex-wrap: nowrap;
+  align-items: center;
+}
+[data-marquee-scroll-direction-target].is-marquee-static [data-marquee-scroll-target] {
+  margin-left: 0 !important;
+  width: 100% !important;
+}
+
+/* Page-transition curtain (only active if the overlay markup is present). */
+#okd-page-transition {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  pointer-events: none;
+}
+#okd-page-transition:not(.is-active) {
+  visibility: hidden;
+}
+#okd-page-transition .okd-page-transition__col {
+  flex: 1 1 0;
+  height: 100%;
+  background: #0b0b0d;
+  transform: scaleY(0);
+  transform-origin: center top;
+}
