@@ -45,6 +45,7 @@ export default function VeldaraPage() {
       "video-fallback"
     ) as HTMLVideoElement;
     const ctx = canvas.getContext("2d")!;
+    const vignette = document.getElementById("scroll-vignette");
     const frames: ImageBitmap[] = [];
     let framesReady = false;
     let lastFrameIndex = -1;
@@ -152,6 +153,11 @@ export default function VeldaraPage() {
     function videoTick() {
       if (destroyed) return;
       const progress = getProgress();
+      // Parallax depth: the black cloud zooms in slightly and darkens as you scroll.
+      if (vignette) {
+        vignette.style.transform = `scale(${1 + progress * 0.18}) translateY(${progress * -4}%)`;
+        vignette.style.opacity = String(0.8 + progress * 0.2);
+      }
       if (framesReady && frames.length > 0) {
         const idx = Math.round(progress * (frames.length - 1));
         if (idx !== lastFrameIndex) {
@@ -338,6 +344,7 @@ export default function VeldaraPage() {
           src={VIDEO_URL}
         />
         <div className="overlay" />
+        <div className="vignette" id="scroll-vignette" />
       </div>
 
       {/* Particles */}
