@@ -5,9 +5,11 @@ import Lenis from "lenis";
 import Navbar from "@/components/Navbar";
 import EnerblockSections from "@/components/EnerblockSections";
 
-// Scroll-driven background video, served same-origin from /public (no CORS).
-// NEXT_PUBLIC_BASE_PATH is set to the repo subpath on GitHub Pages, empty locally.
-const VIDEO_URL = `${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/construction.mp4`;
+// Scroll-driven background video. Pointing directly at the CloudFront URL the
+// user provided (this sandbox can't download that host to self-host it). For the
+// smoothest frame-extraction scrub, host it same-origin in /public instead.
+const VIDEO_URL =
+  "https://d8j0ntlcm91z4.cloudfront.net/user_3F0vaG83I0heIlPgjk9CwxdqIpz/hf_20260618_095905_d7b07dbb-1c70-4930-a5ac-391e63428046.mp4";
 
 export default function VeldaraPage() {
   useEffect(() => {
