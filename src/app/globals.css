@@ -234,16 +234,29 @@ body {
   padding: 0 1.5rem 6rem;
 }
 #hero .subtitle {
-  font-size: 0.875rem;
+  font-size: 1rem;
   color: #9ca3af;
-  margin-bottom: 1rem;
-  letter-spacing: 0.05em;
+  margin-bottom: 1.25rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
 }
 #hero h1 {
-  font-size: clamp(1.5rem, 5vw, 3.75rem);
+  font-size: clamp(2.75rem, 8vw, 6.5rem);
   font-weight: 600;
-  line-height: 1.15;
-  max-width: 48rem;
+  line-height: 1.04;
+  letter-spacing: -0.01em;
+  max-width: 60rem;
+}
+
+/* Black intro cover: fully opaque on the first frame, fades out as you scroll
+   (driven in page.tsx) — a "fade from black" reveal of the video. */
+#hero-cover {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  z-index: 1;
+  pointer-events: none;
+  will-change: opacity;
 }
 #hero h1 .underlined {
   position: relative;

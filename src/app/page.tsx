@@ -48,6 +48,7 @@ export default function VeldaraPage() {
     ) as HTMLVideoElement;
     const ctx = canvas.getContext("2d")!;
     const vignette = document.getElementById("scroll-vignette");
+    const heroCover = document.getElementById("hero-cover");
     const frames: ImageBitmap[] = [];
     let framesReady = false;
     let lastFrameIndex = -1;
@@ -155,6 +156,12 @@ export default function VeldaraPage() {
     function videoTick() {
       if (destroyed) return;
       const progress = getProgress();
+      // Intro black cover: opaque on the first frame, fades out over the first
+      // ~0.9 viewport of scroll, revealing the video underneath.
+      if (heroCover) {
+        const o = 1 - window.scrollY / (window.innerHeight * 0.9);
+        heroCover.style.opacity = String(Math.max(0, Math.min(1, o)));
+      }
       // Parallax depth: the black cloud zooms in slightly and darkens as you scroll.
       if (vignette) {
         vignette.style.transform = `scale(${1 + progress * 0.18}) translateY(${progress * -4}%)`;
@@ -352,6 +359,9 @@ export default function VeldaraPage() {
       {/* Particles */}
       <canvas id="particles-canvas" />
 
+      {/* Black intro cover (fades out on scroll) */}
+      <div id="hero-cover" />
+
       {/* Fixed Cards */}
       <div id="fixed-cards">
         <div className="grid">
@@ -389,28 +399,18 @@ export default function VeldaraPage() {
       <div id="content">
         {/* Section 1: Hero */}
         <section id="hero">
-          <div className="gradient-overlay" />
           <div className="content">
             <p className="subtitle">Our Purpose:</p>
             <h1
               style={{
                 fontFamily: "var(--font-haffer), sans-serif",
-                textTransform: "lowercase",
+                textTransform: "uppercase",
               }}
             >
               <span style={{ fontWeight: 100 }}>Engineering.</span>{" "}
               <span style={{ fontWeight: 300 }}>Construction.</span>{" "}
               <span style={{ fontWeight: 600 }}>Solutions.</span>
             </h1>
-            <div className="ctas">
-              <div className="code-box">
-                <span className="prompt">&gt;</span>
-                <code>npm i @veldara/core</code>
-              </div>
-              <a href="#" className="cta-btn">
-                Get Started <span>&rarr;</span>
-              </a>
-            </div>
           </div>
           <div className="bounce-arrow">
             <svg
