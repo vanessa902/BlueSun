@@ -1,54 +1,102 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import "../app/enerblock.css";
 
-type Solution = {
-  n: string;
-  label: string;
-  title: string;
-  desc: string;
-  img: string;
+type Item = { n: string; label: string; title: string; desc: string; img: string };
+
+const U = (id: string) =>
+  `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=1200&q=80`;
+
+const MARKETS: Record<string, { name: string; items: Item[] }> = {
+  residential: {
+    name: "Residential",
+    items: [
+      {
+        n: "01",
+        label: "Custom Homes",
+        title: "Single-family residences engineered to last",
+        desc: "Bespoke homes built with industrialized precision — durable envelopes, refined detailing and timeless design delivered on schedule.",
+        img: U("1564013799919-ab600027ffc6"),
+      },
+      {
+        n: "02",
+        label: "Multi-Family Housing",
+        title: "Apartments and condominiums delivered at scale",
+        desc: "Repeatable, high-quality residential units produced offsite and assembled fast, with consistent control over cost and quality.",
+        img: U("1545324418-cc1a3fa10c00"),
+      },
+      {
+        n: "03",
+        label: "Renovations",
+        title: "Structural remodels that modernize without compromise",
+        desc: "Expansions and retrofits that upgrade performance and space while preserving the integrity of the existing structure.",
+        img: U("1503387762-592deb58ef4e"),
+      },
+    ],
+  },
+  commercial: {
+    name: "Commercial",
+    items: [
+      {
+        n: "01",
+        label: "Offices & Retail",
+        title: "Workplaces and storefronts built to spec",
+        desc: "Commercial interiors and shells delivered on time and to code, engineered for flexibility and long-term value.",
+        img: U("1486406146926-c627a92ad1ab"),
+      },
+      {
+        n: "02",
+        label: "Hospitality",
+        title: "Hotels and venues crafted for experience",
+        desc: "Guest-focused environments that balance design, performance and longevity across every space.",
+        img: U("1551882547-ff40c63fe5fa"),
+      },
+      {
+        n: "03",
+        label: "Mixed-Use",
+        title: "Integrated developments in a single build",
+        desc: "Living, working and retail combined into one industrialized program, coordinated end to end.",
+        img: U("1496307042754-b4aa456c4a2d"),
+      },
+    ],
+  },
+  industrial: {
+    name: "Industrial",
+    items: [
+      {
+        n: "01",
+        label: "Warehouses",
+        title: "Large-span storage built for scale",
+        desc: "Distribution and storage facilities engineered for speed of delivery and operational efficiency.",
+        img: U("1553413077-190dd305871c"),
+      },
+      {
+        n: "02",
+        label: "Manufacturing Plants",
+        title: "Production environments engineered for uptime",
+        desc: "Facilities designed around process, safety and continuity, with industrialized precision throughout.",
+        img: U("1565043666747-69f6646db940"),
+      },
+      {
+        n: "03",
+        label: "Logistics Centers",
+        title: "High-throughput hubs designed for flow",
+        desc: "Resilient logistics infrastructure built for automation, throughput and future growth.",
+        img: U("1504307651254-35680f356dfd"),
+      },
+    ],
+  },
 };
 
-const SOLUTIONS: Solution[] = [
-  {
-    n: "01",
-    label: "Enerblock Panel",
-    title: "Industrial innovation for building envelope systems",
-    desc: "Lightweight multilayer sandwich panels designed to integrate precisely with the industrialized components of the Enerblock System®. Offsite manufacturing, process control and services geared towards meeting technical and regulatory requirements.",
-    img: "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1200&q=80",
-  },
-  {
-    n: "02",
-    label: "Enerblock Robot",
-    title: "Digital precision applied to industrial execution",
-    desc: "Precision cutting and machining that translate design into exact components ready for assembly. It automates machining, cutting and drilling to reduce errors, minimize waste and maintain scalable control through CAD/CAM technology.",
-    img: "https://images.unsplash.com/photo-1565043666747-69f6646db940?auto=format&fit=crop&w=1200&q=80",
-  },
-  {
-    n: "03",
-    label: "Enerblock Frame",
-    title: "Lightweight industrialized structure designed to fit",
-    desc: "A cold-formed steel framing system engineered for tight tolerances and rapid assembly. It coordinates with panels and services so structure, envelope and MEP align as one industrialized package.",
-    img: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=1200&q=80",
-  },
-  {
-    n: "04",
-    label: "Enerblock System",
-    title: "The 2D industrialized system that reduces risk and provides certainty",
-    desc: "Comprehensive system that coordinates envelopes, structure and processes within an industrialized and digital framework. It connects design, manufacturing and assembly as a single governable and scalable process.",
-    img: "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?auto=format&fit=crop&w=1200&q=80",
-  },
-];
-
-const BAND_IMG =
-  "https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=2000&q=80";
+const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+const BAND_IMG = `${BASE}/band.png`;
 
 export default function EnerblockSections() {
   const root = useRef<HTMLDivElement>(null);
   const stage = useRef<HTMLDivElement>(null);
   const band = useRef<HTMLImageElement>(null);
+  const [market, setMarket] = useState<keyof typeof MARKETS>("residential");
 
   useEffect(() => {
     let destroyed = false;
@@ -58,28 +106,31 @@ export default function EnerblockSections() {
       if (destroyed) return;
       const vh = window.innerHeight;
 
-      // 1. Blueprint 2D -> 3D tilt
+      // Blueprint 2D -> 3D tilt
       if (stage.current) {
         const r = stage.current.getBoundingClientRect();
         const p = clamp((vh - r.top) / (vh * 0.95) - 0.1);
         stage.current.style.setProperty("--p", String(p));
       }
 
-      // 2. Industrial band parallax
-      if (band.current) {
-        const r = band.current.parentElement!.getBoundingClientRect();
-        const offset = clamp((vh - r.top) / (vh + r.height)) - 0.5;
-        band.current.style.transform = `translateY(${offset * 12}%)`;
+      // Industrial band: zoom-in parallax (image grows as you scroll down)
+      if (band.current && band.current.parentElement) {
+        const r = band.current.parentElement.getBoundingClientRect();
+        const p = clamp((vh - r.top) / (vh + r.height));
+        band.current.style.transform = `translateY(${(p - 0.5) * 6}%) scale(${
+          1 + p * 0.28
+        })`;
       }
 
       requestAnimationFrame(tick);
     }
     requestAnimationFrame(tick);
-
     return () => {
       destroyed = true;
     };
   }, []);
+
+  const items = MARKETS[market].items;
 
   return (
     <div className="eb" ref={root}>
@@ -87,8 +138,7 @@ export default function EnerblockSections() {
       <section className="eb-intro">
         <div className="eb-intro__left">
           <h2 className="eb-title eb-intro__title">
-            The industrialized component system that reduces risk and provides
-            certainty
+            Building spaces that stand the test of time
           </h2>
           <p className="eb-intro__desc">
             Integrates enclosures, structure, and processes within an
@@ -108,24 +158,7 @@ export default function EnerblockSections() {
                 <line className="eb-bp__line" x1="150" y1="20" x2="150" y2="400" />
                 <rect className="eb-bp__line" x="120" y="150" width="60" height="140" />
                 {Array.from({ length: 10 }).map((_, i) => (
-                  <line
-                    key={i}
-                    className="eb-bp__hatch"
-                    x1={40 + i * 8}
-                    y1="40"
-                    x2={40 + i * 8}
-                    y2="100"
-                  />
-                ))}
-                {Array.from({ length: 10 }).map((_, i) => (
-                  <line
-                    key={`b${i}`}
-                    className="eb-bp__hatch"
-                    x1={190 + i * 8}
-                    y1="340"
-                    x2={190 + i * 8}
-                    y2="390"
-                  />
+                  <line key={i} className="eb-bp__hatch" x1={40 + i * 8} y1="40" x2={40 + i * 8} y2="100" />
                 ))}
               </svg>
             </div>
@@ -141,19 +174,32 @@ export default function EnerblockSections() {
         </div>
       </section>
 
-      {/* 2. SOLUTIONS accordion grid */}
-      <section className="eb-sol" id="solutions">
+      {/* 2. Our Markets — toggle drives the content */}
+      <section className="eb-sol" id="markets">
         <div className="eb-sol__eyebrow">
-          <span>Solutions</span>
+          <span>Our Markets</span>
           <span>■</span>
         </div>
-        <div className="eb-sol__head">
-          <h2 className="eb-title">
-            Industrialized technology for an evolving environment
-          </h2>
+
+        <div className="eb-markets-head">
+          <h2 className="eb-title">Our Markets</h2>
+          <div className="eb-toggle" role="tablist">
+            {(Object.keys(MARKETS) as Array<keyof typeof MARKETS>).map((k) => (
+              <button
+                key={k}
+                role="tab"
+                aria-selected={market === k}
+                className={market === k ? "is-active" : ""}
+                onClick={() => setMarket(k)}
+              >
+                {MARKETS[k].name}
+              </button>
+            ))}
+          </div>
         </div>
-        <div className="eb-sol__list">
-          {SOLUTIONS.map((s, i) => (
+
+        <div className="eb-sol__list" key={market}>
+          {items.map((s, i) => (
             <div
               className="eb-item"
               key={s.n}
@@ -177,23 +223,21 @@ export default function EnerblockSections() {
         </div>
       </section>
 
-      {/* 3. Industrial band + PROJECTS */}
+      {/* 3. Industrial band (zoom parallax) + PROJECTS */}
       <div className="eb-band">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          ref={band}
-          className="eb-band__img"
-          src={BAND_IMG}
-          alt="Industrialized steel framing"
-        />
+        <img ref={band} className="eb-band__img" src={BAND_IMG} alt="Construction site" />
       </div>
       <section className="eb-projects" id="projects">
         <div className="eb-projects__eyebrow">
           <span>Projects</span>
           <span>■</span>
         </div>
-        <h2 className="eb-title" style={{ fontSize: "clamp(2rem,4vw,3.5rem)", paddingTop: "4rem" }}>
-          Built with the Enerblock system
+        <h2
+          className="eb-title"
+          style={{ fontSize: "clamp(2rem,4vw,3.5rem)", paddingTop: "4rem" }}
+        >
+          Built with the BlueSun system
         </h2>
       </section>
     </div>

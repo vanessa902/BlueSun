@@ -390,13 +390,15 @@ export default function VeldaraPage() {
           <div className="gradient-overlay" />
           <div className="content">
             <p className="subtitle">Our Purpose:</p>
-            <h1>
-              Instantly craft immersive{" "}
-              <span className="underlined">
-                <span className="line" />
-                <span>3D worlds</span>
-              </span>{" "}
-              on the web.
+            <h1
+              style={{
+                fontFamily: "var(--font-haffer), sans-serif",
+                textTransform: "lowercase",
+              }}
+            >
+              <span style={{ fontWeight: 100 }}>Engineering.</span>{" "}
+              <span style={{ fontWeight: 300 }}>Construction.</span>{" "}
+              <span style={{ fontWeight: 600 }}>Solutions.</span>
             </h1>
             <div className="ctas">
               <div className="code-box">
@@ -437,10 +439,23 @@ export default function VeldaraPage() {
         {/* Section 3 */}
         <section id="section-three">
           <div className="inner" id="section-three-inner">
-            <p>Presenting</p>
-            <h2>Veldara 8</h2>
+            <p
+              style={{
+                fontFamily: "var(--font-haffer), sans-serif",
+                textTransform: "uppercase",
+                letterSpacing: "0.08em",
+              }}
+            >
+              Your Vision, Built with Excellence
+            </p>
+            <h2 style={{ fontFamily: "var(--font-haffer), sans-serif" }}>
+              BlueSun
+            </h2>
           </div>
         </section>
+
+        {/* Smooth fade from the video into the black intro — no hard cut. */}
+        <div className="video-to-black" />
 
         {/* Video scrub finishes here; opaque scroll sections take over. */}
         <div id="video-end" />

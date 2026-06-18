@@ -130,6 +130,45 @@
   font-size: clamp(2rem, 4vw, 3.5rem);
   max-width: 18ch;
 }
+
+/* Our Markets header + segmented toggle */
+.eb-markets-head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.75rem;
+  text-align: center;
+  padding: 5rem 0 4rem;
+}
+.eb-markets-head h2 {
+  font-size: clamp(2rem, 4vw, 3.25rem);
+}
+.eb-toggle {
+  display: inline-flex;
+  gap: 0.35rem;
+  background: #fff;
+  border: 1px solid var(--eb-line);
+  border-radius: 9999px;
+  padding: 0.35rem;
+}
+.eb-toggle button {
+  font-family: var(--font-haffer), sans-serif;
+  border: none;
+  cursor: pointer;
+  background: transparent;
+  color: #3a3a37;
+  border-radius: 9999px;
+  padding: 0.6rem 1.5rem;
+  font-size: 0.85rem;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+.eb-toggle button:hover {
+  color: var(--eb-ink);
+}
+.eb-toggle button.is-active {
+  background: #111;
+  color: #fff;
+}
 .eb-sol__list {
   position: relative;
 }
