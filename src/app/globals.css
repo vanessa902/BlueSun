@@ -82,6 +82,13 @@ body {
     rgba(0, 0, 0, 0.4) 100%
   );
 }
+/* Clip frame: heavy black shading feathered around the edges of the video. */
+#scroll-video-container .video-frame {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  box-shadow: inset 0 0 16vmax 6vmax #000, inset 0 0 4vmax 0 rgba(0, 0, 0, 0.8);
+}
 
 /* Smooth black connector: fades the video into the black intro section so the
    change between sections is seamless (no hard cut). */

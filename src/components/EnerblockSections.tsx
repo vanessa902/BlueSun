@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import "../app/enerblock.css";
+import ProjectsDock from "./ProjectsDock";
 
 type Item = { n: string; label: string; title: string; desc: string; img: string };
 
@@ -228,18 +229,8 @@ export default function EnerblockSections() {
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img ref={band} className="eb-band__img" src={BAND_IMG} alt="Construction site" />
       </div>
-      <section className="eb-projects" id="projects">
-        <div className="eb-projects__eyebrow">
-          <span>Projects</span>
-          <span>■</span>
-        </div>
-        <h2
-          className="eb-title"
-          style={{ fontSize: "clamp(2rem,4vw,3.5rem)", paddingTop: "4rem" }}
-        >
-          Built with the BlueSun system
-        </h2>
-      </section>
+      {/* 3D hover image dock (fully black) */}
+      <ProjectsDock />
     </div>
   );
 }

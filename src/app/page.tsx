@@ -354,6 +354,7 @@ export default function VeldaraPage() {
         />
         <div className="overlay" />
         <div className="vignette" id="scroll-vignette" />
+        <div className="video-frame" />
       </div>
 
       {/* Particles */}
@@ -400,7 +401,6 @@ export default function VeldaraPage() {
         {/* Section 1: Hero */}
         <section id="hero">
           <div className="content">
-            <p className="subtitle">Our Purpose:</p>
             <h1
               style={{
                 fontFamily: "var(--font-haffer), sans-serif",
