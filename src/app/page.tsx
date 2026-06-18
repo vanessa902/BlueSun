@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import Lenis from "lenis";
 import Navbar from "@/components/Navbar";
 
 // Scroll-driven background video, served same-origin from /public (no CORS).
@@ -19,6 +20,23 @@ export default function VeldaraPage() {
       window.addEventListener(ev, fn, opts);
       cleanups.push(() => window.removeEventListener(ev, fn, opts));
     };
+
+    // ===================== SMOOTH SCROLL (Lenis) =====================
+    // Smooths scrollY so the video scrub interpolates between frames instead
+    // of jumping per wheel notch — the immersive "video advances with you" feel.
+    const lenis = new Lenis({
+      duration: 1.4,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      smoothWheel: true,
+      touchMultiplier: 1.6,
+    });
+    function lenisLoop(time: number) {
+      if (destroyed) return;
+      lenis.raf(time);
+      requestAnimationFrame(lenisLoop);
+    }
+    requestAnimationFrame(lenisLoop);
+    cleanups.push(() => lenis.destroy());
 
     // ===================== SCROLL VIDEO =====================
     const canvas = document.getElementById("video-canvas") as HTMLCanvasElement;
@@ -396,14 +414,14 @@ export default function VeldaraPage() {
           </div>
         </section>
 
-        {/* Spacer */}
-        <div style={{ height: "150vh" }} />
+        {/* Immersive video-travel zone (longer = slower, more cinematic scrub) */}
+        <div style={{ height: "320vh" }} />
 
         {/* Cards Trigger Zone */}
-        <div id="cards-trigger" style={{ height: "200vh" }} />
+        <div id="cards-trigger" style={{ height: "260vh" }} />
 
         {/* Spacer */}
-        <div style={{ height: "100vh" }} />
+        <div style={{ height: "160vh" }} />
 
         {/* Section 3 */}
         <section id="section-three">
