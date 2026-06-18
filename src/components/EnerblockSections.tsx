@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import "../app/enerblock.css";
 import MzaCarousel from "./MzaCarousel";
+import BandVideo from "./BandVideo";
 
 type Item = { n: string; label: string; title: string; desc: string; img: string };
 
@@ -90,13 +91,9 @@ const MARKETS: Record<string, { name: string; items: Item[] }> = {
   },
 };
 
-const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
-const BAND_IMG = `${BASE}/band.png`;
-
 export default function EnerblockSections() {
   const root = useRef<HTMLDivElement>(null);
   const stage = useRef<HTMLDivElement>(null);
-  const band = useRef<HTMLImageElement>(null);
   const [market, setMarket] = useState<keyof typeof MARKETS>("residential");
 
   useEffect(() => {
@@ -112,15 +109,6 @@ export default function EnerblockSections() {
         const r = stage.current.getBoundingClientRect();
         const p = clamp((vh - r.top) / (vh * 0.95) - 0.1);
         stage.current.style.setProperty("--p", String(p));
-      }
-
-      // Industrial band: zoom-in parallax (image grows as you scroll down)
-      if (band.current && band.current.parentElement) {
-        const r = band.current.parentElement.getBoundingClientRect();
-        const p = clamp((vh - r.top) / (vh + r.height));
-        band.current.style.transform = `translateY(${(p - 0.5) * 6}%) scale(${
-          1 + p * 0.28
-        })`;
       }
 
       requestAnimationFrame(tick);
@@ -224,11 +212,8 @@ export default function EnerblockSections() {
         </div>
       </section>
 
-      {/* 3. Industrial band (zoom parallax) + PROJECTS */}
-      <div className="eb-band">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img ref={band} className="eb-band__img" src={BAND_IMG} alt="Construction site" />
-      </div>
+      {/* 3. Full-screen scroll-scrubbed video band */}
+      <BandVideo />
       {/* 3D coverflow carousel (Projects) */}
       <MzaCarousel />
     </div>
