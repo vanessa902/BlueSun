@@ -6,10 +6,10 @@
    ========================================================================== */
 
 .eb {
-  --eb-paper: #ece9e2;
-  --eb-ink: #141414;
+  --eb-paper: #000000;
+  --eb-ink: #ededea;
   --eb-red: #ff2e23;
-  --eb-line: rgba(20, 20, 20, 0.16);
+  --eb-line: rgba(255, 255, 255, 0.14);
   --eb-head: 3.25rem; /* visible collapsed strip height when stacked */
   font-family: var(--font-haffer), var(--font-inter), sans-serif;
   position: relative;
@@ -25,7 +25,7 @@
 
 /* ---------- 1. Intro: red title + 2D->3D blueprint ---------- */
 .eb-intro {
-  background: #070707;
+  background: #000;
   color: #fff;
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -146,7 +146,7 @@
 .eb-toggle {
   display: inline-flex;
   gap: 0.35rem;
-  background: #fff;
+  background: rgba(255, 255, 255, 0.06);
   border: 1px solid var(--eb-line);
   border-radius: 9999px;
   padding: 0.35rem;
@@ -156,7 +156,7 @@
   border: none;
   cursor: pointer;
   background: transparent;
-  color: #3a3a37;
+  color: #b6b6b1;
   border-radius: 9999px;
   padding: 0.6rem 1.5rem;
   font-size: 0.85rem;
@@ -166,8 +166,8 @@
   color: var(--eb-ink);
 }
 .eb-toggle button.is-active {
-  background: #111;
-  color: #fff;
+  background: #fff;
+  color: #0a0a0a;
 }
 .eb-sol__list {
   position: relative;
@@ -207,7 +207,7 @@
   font-weight: 500;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: #5b5b57;
+  color: #8f8f8a;
 }
 .eb-item__title {
   font-family: var(--font-haffer), sans-serif;
@@ -223,7 +223,7 @@
   max-width: 46ch;
   font-size: 0.95rem;
   line-height: 1.6;
-  color: #3a3a37;
+  color: #b6b6b1;
   font-weight: 400;
 }
 .eb-item__more {
@@ -244,7 +244,7 @@
   position: relative;
   height: 80vh;
   overflow: hidden;
-  background: #0a0a0a;
+  background: #000;
 }
 .eb-band__img {
   position: absolute;
