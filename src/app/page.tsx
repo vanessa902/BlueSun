@@ -268,6 +268,21 @@ export default function VeldaraPage() {
     }
     onWin("scroll", updateHeroOpacity, { passive: true });
 
+    // ===================== HERO DEPTH PARALLAX (mouse) =====================
+    const parallax = document.getElementById("hero-parallax");
+    function onParallaxMove(ev: Event) {
+      if (!parallax) return;
+      const e = ev as MouseEvent;
+      const x = e.clientX / window.innerWidth - 0.5;
+      const y = e.clientY / window.innerHeight - 0.5;
+      // depth-3 (front) moves most, depth-1 (back) least
+      parallax.style.backgroundPosition =
+        `${50 + x * 6}% ${50 + y * 6}%, ` +
+        `${50 + x * 3}% ${50 + y * 3}%, ` +
+        `${50 + x * 1.5}% ${50 + y * 1.5}%`;
+    }
+    onWin("mousemove", onParallaxMove, { passive: true });
+
     // ===================== FIXED CARDS =====================
     const fixedCards = document.getElementById("fixed-cards") as HTMLElement;
     const cardsGrid = fixedCards.querySelector(".grid") as HTMLElement;
@@ -400,6 +415,9 @@ export default function VeldaraPage() {
       <div id="content">
         {/* Section 1: Hero */}
         <section id="hero">
+          <div id="hero-parallax">
+            <h1>BlueSun</h1>
+          </div>
           <div className="content">
             <h1
               style={{

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import "../app/enerblock.css";
-import ProjectsDock from "./ProjectsDock";
+import MzaCarousel from "./MzaCarousel";
 
 type Item = { n: string; label: string; title: string; desc: string; img: string };
 
@@ -229,8 +229,8 @@ export default function EnerblockSections() {
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img ref={band} className="eb-band__img" src={BAND_IMG} alt="Construction site" />
       </div>
-      {/* 3D hover image dock (fully black) */}
-      <ProjectsDock />
+      {/* 3D coverflow carousel (Projects) */}
+      <MzaCarousel />
     </div>
   );
 }
