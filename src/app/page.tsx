@@ -2,9 +2,9 @@
 
 import { useEffect } from "react";
 
-// Scroll-driven background video. Replace with your own .mp4 (see notes).
-const VIDEO_URL =
-  "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260616_212935_bbf608da-62d1-4f25-9be4-c346e4d09cc8.mp4";
+// Scroll-driven background video, served same-origin from /public (no CORS).
+// NEXT_PUBLIC_BASE_PATH is set to the repo subpath on GitHub Pages, empty locally.
+const VIDEO_URL = `${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/construction.mp4`;
 
 export default function VeldaraPage() {
   useEffect(() => {

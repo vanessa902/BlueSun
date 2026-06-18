@@ -31,6 +31,8 @@ jobs:
         env:
           # Serve under https://<user>.github.io/BlueSun/
           PAGES_BASE_PATH: /BlueSun
+          # Exposed to the client so same-origin assets resolve under the subpath.
+          NEXT_PUBLIC_BASE_PATH: /BlueSun
         run: npm run build
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
