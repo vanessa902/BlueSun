@@ -1,0 +1,292 @@
+/* ==========================================================================
+   Enerblock-style sections appended after the scroll-video.
+   Titles: Haffer SemiBold, uppercase. Hierarchy via the Haffer weight family.
+   All motion is scroll-driven.
+   ========================================================================== */
+
+.eb {
+  --eb-paper: #ece9e2;
+  --eb-ink: #141414;
+  --eb-red: #ff2e23;
+  --eb-line: rgba(20, 20, 20, 0.16);
+  font-family: var(--font-haffer), var(--font-inter), sans-serif;
+  position: relative;
+  z-index: 2;
+}
+
+.eb-title {
+  font-family: var(--font-haffer), sans-serif;
+  font-weight: 600; /* SemiBold */
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  line-height: 1.04;
+}
+
+/* ---------- 1. Intro: red title + 2D→3D blueprint ---------- */
+.eb-intro {
+  background: #070707;
+  color: #fff;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 100vh;
+}
+.eb-intro__left {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 8rem 3rem 3rem;
+}
+.eb-intro__title {
+  color: var(--eb-red);
+  font-size: clamp(2rem, 3.6vw, 3.5rem);
+  max-width: 16ch;
+}
+.eb-intro__desc {
+  max-width: 34ch;
+  color: #8a8a8a;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  text-transform: none;
+  font-weight: 400;
+}
+.eb-intro__right {
+  position: relative;
+  border-left: 1px solid rgba(255, 255, 255, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 3rem 7rem;
+  overflow: hidden;
+}
+.eb-bp-stage {
+  --p: 0;
+  width: 70%;
+  max-width: 420px;
+  perspective: 1400px;
+}
+.eb-bp {
+  width: 100%;
+  transform-style: preserve-3d;
+  transform: rotateX(calc(var(--p) * 58deg)) rotateZ(calc(var(--p) * -40deg))
+    translateZ(calc(var(--p) * 30px));
+  transition: transform 0.1s linear;
+}
+.eb-bp svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.eb-bp__line {
+  stroke: var(--eb-red);
+  stroke-width: 2;
+  fill: none;
+}
+.eb-bp__hatch {
+  stroke: rgba(255, 46, 35, 0.5);
+  stroke-width: 1;
+}
+.eb-intro__caption {
+  position: absolute;
+  left: 3rem;
+  bottom: 2.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  border: 1px solid rgba(255, 46, 35, 0.6);
+  padding: 0.75rem 1rem;
+}
+.eb-intro__caption .mark {
+  color: var(--eb-red);
+  font-weight: 700;
+  font-size: 1.5rem;
+}
+.eb-intro__caption .meta {
+  color: var(--eb-red);
+  font-size: 0.6rem;
+  letter-spacing: 0.08em;
+  line-height: 1.5;
+}
+
+/* ---------- 2. SOLUTIONS accordion grid ---------- */
+.eb-sol {
+  background: var(--eb-paper);
+  color: var(--eb-ink);
+  padding: 0 3rem 6rem;
+}
+.eb-sol__eyebrow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 0;
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--eb-line);
+}
+.eb-sol__head {
+  padding: 5rem 0 6rem;
+  border-bottom: 1px solid var(--eb-line);
+}
+.eb-sol__head h2 {
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  max-width: 18ch;
+}
+.eb-sol__list {
+  display: flex;
+  flex-direction: column;
+}
+
+.eb-item {
+  display: grid;
+  grid-template-columns: 5rem minmax(200px, 1.3fr) 2fr;
+  gap: 2.5rem;
+  align-items: start;
+  padding: 1.5rem 0;
+  border-bottom: 1px solid var(--eb-line);
+  cursor: pointer;
+}
+.eb-item__num {
+  font-size: 0.85rem;
+  font-weight: 500;
+  padding-top: 0.2rem;
+}
+.eb-item__media {
+  height: 3rem;
+  overflow: hidden;
+  border-radius: 2px;
+  transition: height 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.eb-item.is-active .eb-item__media {
+  height: 22rem;
+}
+.eb-item__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.eb-item__label {
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #5b5b57;
+}
+.eb-item__title {
+  font-family: var(--font-haffer), sans-serif;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  line-height: 1.05;
+  font-size: clamp(1.5rem, 2.4vw, 2.25rem);
+  margin-top: 0.75rem;
+  max-height: 8rem;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.55s ease, transform 0.55s ease, max-height 0.55s ease;
+}
+.eb-item__desc,
+.eb-item__more {
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
+  transform: translateY(10px);
+  transition: opacity 0.55s ease, transform 0.55s ease, max-height 0.6s ease;
+}
+.eb-item__desc {
+  margin-top: 1.25rem;
+  max-width: 48ch;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: #3a3a37;
+  text-transform: none;
+  font-weight: 400;
+}
+.eb-item__more {
+  margin-top: 1.5rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 2rem;
+  border: 1px solid var(--eb-ink);
+  padding: 0.7rem 1.1rem;
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  width: max-content;
+}
+.eb-item.is-active .eb-item__title {
+  opacity: 1;
+  transform: translateY(0);
+}
+.eb-item.is-active .eb-item__desc {
+  opacity: 1;
+  max-height: 12rem;
+  transform: translateY(0);
+}
+.eb-item.is-active .eb-item__more {
+  opacity: 1;
+  max-height: 5rem;
+  transform: translateY(0);
+}
+
+/* ---------- 3. Industrial band + PROJECTS ---------- */
+.eb-band {
+  position: relative;
+  height: 80vh;
+  overflow: hidden;
+  background: #0a0a0a;
+}
+.eb-band__img {
+  position: absolute;
+  inset: -12% 0;
+  width: 100%;
+  height: 124%;
+  object-fit: cover;
+  will-change: transform;
+}
+.eb-projects {
+  background: var(--eb-paper);
+  color: var(--eb-ink);
+  padding: 1.5rem 3rem 10rem;
+}
+.eb-projects__eyebrow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 0;
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--eb-line);
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 860px) {
+  .eb-intro {
+    grid-template-columns: 1fr;
+  }
+  .eb-intro__left {
+    padding: 7rem 1.25rem 2rem;
+  }
+  .eb-intro__right {
+    border-left: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    min-height: 70vh;
+  }
+  .eb-sol,
+  .eb-projects {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+  .eb-item {
+    grid-template-columns: 2.5rem 1fr;
+    gap: 1rem 1rem;
+  }
+  .eb-item__body {
+    grid-column: 1 / -1;
+  }
+  .eb-item.is-active .eb-item__media {
+    height: 14rem;
+  }
+}

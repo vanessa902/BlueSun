@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import Lenis from "lenis";
 import Navbar from "@/components/Navbar";
+import EnerblockSections from "@/components/EnerblockSections";
 
 // Scroll-driven background video, served same-origin from /public (no CORS).
 // NEXT_PUBLIC_BASE_PATH is set to the repo subpath on GitHub Pages, empty locally.
@@ -123,10 +124,13 @@ export default function VeldaraPage() {
 
     function getScrollBounds() {
       const vh = window.innerHeight;
-      return {
-        start: vh * 0.5,
-        end: document.documentElement.scrollHeight - vh,
-      };
+      // The video finishes where the post-video sections begin (#video-end),
+      // not at the document bottom — so the scrub "ends" then content takes over.
+      const marker = document.getElementById("video-end");
+      const end = marker
+        ? marker.getBoundingClientRect().top + window.scrollY - vh
+        : document.documentElement.scrollHeight - vh;
+      return { start: vh * 0.5, end };
     }
 
     function getProgress() {
@@ -430,6 +434,10 @@ export default function VeldaraPage() {
             <h2>Veldara 8</h2>
           </div>
         </section>
+
+        {/* Video scrub finishes here; opaque scroll sections take over. */}
+        <div id="video-end" />
+        <EnerblockSections />
       </div>
     </>
   );
