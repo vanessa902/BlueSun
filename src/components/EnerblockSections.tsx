@@ -54,10 +54,6 @@ export default function EnerblockSections() {
     let destroyed = false;
     const clamp = (v: number, a = 0, b = 1) => Math.max(a, Math.min(b, v));
 
-    const items = Array.from(
-      root.current?.querySelectorAll<HTMLElement>(".eb-item") ?? []
-    );
-
     function tick() {
       if (destroyed) return;
       const vh = window.innerHeight;
@@ -69,26 +65,7 @@ export default function EnerblockSections() {
         stage.current.style.setProperty("--p", String(p));
       }
 
-      // 2. Active accordion item = nearest to viewport center
-      if (items.length) {
-        const center = vh * 0.45;
-        let best = 0;
-        let bestDist = Infinity;
-        items.forEach((el, i) => {
-          const r = el.getBoundingClientRect();
-          const c = r.top + r.height / 2;
-          const d = Math.abs(c - center);
-          if (d < bestDist) {
-            bestDist = d;
-            best = i;
-          }
-        });
-        items.forEach((el, i) =>
-          el.classList.toggle("is-active", i === best)
-        );
-      }
-
-      // 3. Industrial band parallax
+      // 2. Industrial band parallax
       if (band.current) {
         const r = band.current.parentElement!.getBoundingClientRect();
         const offset = clamp((vh - r.top) / (vh + r.height)) - 0.5;
@@ -176,8 +153,12 @@ export default function EnerblockSections() {
           </h2>
         </div>
         <div className="eb-sol__list">
-          {SOLUTIONS.map((s) => (
-            <div className="eb-item" key={s.n}>
+          {SOLUTIONS.map((s, i) => (
+            <div
+              className="eb-item"
+              key={s.n}
+              style={{ top: `calc(${i} * var(--eb-head))`, zIndex: i + 1 }}
+            >
               <div className="eb-item__num">{s.n} /</div>
               <div className="eb-item__media">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
