@@ -275,6 +275,18 @@ body {
   pointer-events: none;
   overflow: hidden;
 }
+#rock-stage .rock-stage-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+#rock-stage .rock-stage-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+}
 #rock-stage #rock-right {
   position: absolute;
   left: 50%;

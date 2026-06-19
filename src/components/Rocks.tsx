@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 const ROCK = `${BASE}/rock1.png`;
+const ROCK_BG = `${BASE}/rock-bg.mp4`;
 
 const clamp = (v: number, a = 0, b = 1) => Math.max(a, Math.min(b, v));
 const seg = (v: number, a: number, b: number) => clamp((v - a) / (b - a));
@@ -111,6 +112,15 @@ export default function Rocks() {
 
   return (
     <div id="rock-stage" ref={stageRef}>
+      <video
+        className="rock-stage-bg"
+        src={ROCK_BG}
+        autoPlay
+        loop
+        muted
+        playsInline
+      />
+      <div className="rock-stage-overlay" />
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img ref={rockRef} id="rock-right" src={ROCK} alt="" />
       <span ref={text1Ref} id="rock-text">
