@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from "react";
 import "../app/enerblock.css";
-import RedSection from "./RedSection";
 import CaseStudies from "./CaseStudies";
 
 type Item = { n: string; label: string; title: string; desc: string; img: string };
@@ -211,9 +210,6 @@ export default function EnerblockSections() {
           ))}
         </div>
       </section>
-
-      {/* Red S.P.D section (below Our Markets) */}
-      <RedSection />
 
       {/* Projects / Case Studies */}
       <CaseStudies />
