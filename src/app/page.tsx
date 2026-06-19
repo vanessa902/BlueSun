@@ -5,6 +5,7 @@ import Lenis from "lenis";
 import Navbar from "@/components/Navbar";
 import EnerblockSections from "@/components/EnerblockSections";
 import Footer from "@/components/Footer";
+import SteelBeam from "@/components/SteelBeam";
 
 // Scroll-driven background video. Pointing directly at the CloudFront URL the
 // user provided (this sandbox can't download that host to self-host it). For the
@@ -363,6 +364,9 @@ export default function VeldaraPage() {
 
       {/* Black intro cover (fades out on scroll) */}
       <div id="hero-cover" />
+
+      {/* Scroll-driven steel beam */}
+      <SteelBeam />
 
       {/* Fixed Cards */}
       <div id="fixed-cards">
