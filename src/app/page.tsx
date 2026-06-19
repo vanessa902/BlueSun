@@ -47,7 +47,6 @@ export default function VeldaraPage() {
       "video-fallback"
     ) as HTMLVideoElement;
     const ctx = canvas.getContext("2d")!;
-    const vignette = document.getElementById("scroll-vignette");
     const heroCover = document.getElementById("hero-cover");
     const heroFrame = document.getElementById("hero-frame");
     const frames: ImageBitmap[] = [];
@@ -154,6 +153,11 @@ export default function VeldaraPage() {
       ctx.drawImage(frame, (cw - dw) / 2, (ch - dh) / 2, dw, dh);
     }
 
+    const clamp01 = (v: number) => Math.max(0, Math.min(1, v));
+    const line1 = document.getElementById("hf-line1");
+    const line2 = document.getElementById("hf-line2");
+    const hfCenter = document.getElementById("hf-center");
+
     function videoTick() {
       if (destroyed) return;
       const progress = getProgress();
@@ -164,15 +168,31 @@ export default function VeldaraPage() {
         heroCover.style.opacity = String(Math.max(0, Math.min(1, o)));
       }
       // Keep the SVG HUD frame for the whole video; fade it only as it ends.
+      // Also publish scroll progress as a CSS var so the HUD elements can
+      // "measure" the hero scrollytelling (animated in hud.css).
       if (heroFrame) {
         heroFrame.style.opacity = String(
           1 - Math.max(0, Math.min(1, (progress - 0.86) / 0.14))
         );
+        heroFrame.style.setProperty("--hero-p", String(progress));
       }
-      // Parallax depth: the black cloud zooms in slightly and darkens as you scroll.
-      if (vignette) {
-        vignette.style.transform = `scale(${1 + progress * 0.18}) translateY(${progress * -4}%)`;
-        vignette.style.opacity = String(0.8 + progress * 0.2);
+      // Typewriter hero text on scroll: line 1 types over the first part of the
+      // scrub, then line 2; once fully typed it holds, then disappears entirely.
+      if (line1 && line2 && hfCenter) {
+        const typeP = clamp01(progress / 0.32);
+        const r1 = clamp01(typeP * 2);
+        const r2 = clamp01(typeP * 2 - 1);
+        line1.style.width = `${Math.round(line1.scrollWidth * r1)}px`;
+        line2.style.width = `${Math.round(line2.scrollWidth * r2)}px`;
+        const typed = r1 >= 1 && r2 >= 1;
+        line1.classList.toggle("is-typing", r1 < 1);
+        line2.classList.toggle("is-typing", r1 >= 1 && r2 < 1);
+        line1.classList.toggle("is-done", r1 >= 1);
+        line2.classList.toggle("is-done", typed);
+        // Disappear completely after typing is finished.
+        const fadeOut = clamp01((progress - 0.5) / 0.14);
+        hfCenter.style.opacity = String(1 - fadeOut);
+        hfCenter.style.visibility = fadeOut >= 1 ? "hidden" : "visible";
       }
       if (framesReady && frames.length > 0) {
         const idx = Math.round(progress * (frames.length - 1));
@@ -348,8 +368,14 @@ export default function VeldaraPage() {
 
   return (
     <>
-      {/* Scroll Video Background */}
-      <div id="scroll-video-container">
+      {/* Scroll Video Background — clipped to the SVG hero-frame shape */}
+      <div
+        id="scroll-video-container"
+        style={{
+          WebkitMaskImage: `url(${BASE}/hero-mask.svg)`,
+          maskImage: `url(${BASE}/hero-mask.svg)`,
+        }}
+      >
         <canvas id="video-canvas" />
         <video
           id="video-fallback"
@@ -359,9 +385,6 @@ export default function VeldaraPage() {
           crossOrigin="anonymous"
           src={VIDEO_URL}
         />
-        <div className="overlay" />
-        <div className="vignette" id="scroll-vignette" />
-        <div className="video-frame" />
       </div>
 
       {/* Particles */}
@@ -377,12 +400,17 @@ export default function VeldaraPage() {
       <div id="hero-frame">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img className="hf-svg" src={`${BASE}/hero-frame.svg`} alt="" />
-        <div className="hf-center">
+        {/* HUD scan line that tracks the hero scrollytelling progress */}
+        <div className="hf-scan" />
+        <div className="hf-center" id="hf-center">
           <p className="hf-eyebrow">Residential &amp; Commercial</p>
           <h1 className="hf-title">
-            Construction
-            <br />
-            Experts
+            <span className="hf-line" id="hf-line1">
+              Construction
+            </span>
+            <span className="hf-line hf-line--reg" id="hf-line2">
+              Experts
+            </span>
           </h1>
         </div>
         <div className="hf-scroll">

@@ -4,15 +4,17 @@ import { useEffect, useRef } from "react";
 
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 const ROCK_L = `${BASE}/rock2.png`; // asteroid cluster (left)
-const ROCK_R = `${BASE}/rock1.png`; // hex stone (right, travels)
+const ROCK_R = `${BASE}/rock1.png`; // hex stone (right, travels + lands)
 
 const clamp = (v: number, a = 0, b = 1) => Math.max(a, Math.min(b, v));
 const seg = (v: number, a: number, b: number) => clamp((v - a) / (b - a));
+const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 
 /**
- * Two rocks float at the sides during the hero video scrollytelling. When it
- * ends, the right rock moves to the center, then keeps descending into the next
- * section. Driven by scroll position (+ a gentle time-based bob).
+ * Both rocks float at the sides during the hero. The RIGHT rock is ALWAYS
+ * floating; as the blueprint "Building spaces…" vector scrolls into view it
+ * expands and descends, then locks on top of the vector and rides with it as
+ * you keep scrolling (it arrives there via scroll — it is never static).
  */
 export default function Rocks() {
   const left = useRef<HTMLImageElement>(null);
@@ -26,35 +28,58 @@ export default function Rocks() {
     const tick = (now: number) => {
       if (destroyed) return;
       const vh = window.innerHeight;
+      const vw = window.innerWidth;
       const sy = window.scrollY;
       const t = (now - t0) / 1000;
 
       const fadeIn = seg(sy, vh * 0.4, vh * 0.9);
-      const heroEnd = vh * 2.6;
-      const centerEnd = vh * 3.8;
-      const descEnd = vh * 6.5;
 
-      // LEFT rock: float, parallax up, fade out as the hero ends.
+      // LEFT rock: float + parallax during the hero, then fade out.
       if (left.current) {
         const bob = Math.sin(t * 0.9) * 10;
-        const par = -seg(sy, 0, heroEnd) * 80;
-        const op = fadeIn * (1 - seg(sy, heroEnd, centerEnd));
+        const par = -seg(sy, 0, vh * 2.6) * 80;
+        const op = fadeIn * (1 - seg(sy, vh * 2.6, vh * 3.8));
         left.current.style.opacity = String(op);
         left.current.style.transform = `translate(-50%, -50%) translateY(${par + bob}px)`;
       }
 
-      // RIGHT rock: float -> move to center -> descend into next section.
+      // RIGHT rock: always floating; lands on the blueprint vector via scroll.
       if (right.current) {
-        const bob = Math.cos(t * 0.8) * 10;
-        const toCenter = seg(sy, heroEnd, centerEnd); // 88% -> 50%
-        const descend = seg(sy, centerEnd, descEnd); // down + shrink
-        const par = -seg(sy, 0, heroEnd) * 60;
-        const x = toCenter * -38; // vw
-        const y = descend * 130; // vh
-        const scale = 1 - descend * 0.45;
-        const op = fadeIn * (1 - seg(sy, descEnd - vh * 1.0, descEnd));
-        right.current.style.opacity = String(op);
-        right.current.style.transform = `translate(-50%, -50%) translateX(${x}vw) translateY(calc(${par + bob}px + ${y}vh)) scale(${scale})`;
+        const bobx = Math.cos(t * 0.8) * 8;
+        const boby = Math.sin(t * 0.7) * 10;
+
+        // Home (floating) position on the right side of the viewport.
+        const homeCx = vw * 0.86;
+        const homeCy = vh * 0.5;
+
+        let cx = homeCx + bobx;
+        let cy = homeCy + boby;
+        let scale = 1;
+        let exit = 1;
+
+        const target = document.getElementById("eb-bp-target");
+        if (target) {
+          const r = target.getBoundingClientRect();
+          const tcx = r.left + r.width / 2;
+          const tcy = r.top + r.height / 2;
+          // Blend from floating-home to locked-on-vector as the blueprint
+          // scrolls up into view; once locked it rides with the section.
+          const blend = seg(vh - r.top, 0, vh * 0.75);
+          const naturalW = right.current.offsetWidth || 1;
+          const targetScale = (r.width * 0.92) / naturalW;
+
+          cx = lerp(homeCx + bobx, tcx, blend) + boby * (1 - blend) * 0;
+          cy = lerp(homeCy + boby, tcy + boby * 0.4, blend);
+          scale = lerp(1, targetScale, blend);
+          // Fade out once it has ridden the vector up past the top edge.
+          exit = 1 - seg(-tcy, 0, vh * 0.3);
+        }
+
+        right.current.style.left = `${cx}px`;
+        right.current.style.top = `${cy}px`;
+        right.current.style.transformOrigin = "center center";
+        right.current.style.transform = `translate(-50%, -50%) scale(${scale})`;
+        right.current.style.opacity = String(fadeIn * exit);
       }
 
       raf = requestAnimationFrame(tick);

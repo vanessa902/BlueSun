@@ -17,6 +17,32 @@
   width: 100%;
   height: 100%;
   object-fit: fill;
+  /* Grow the HUD frame 10% larger; a touch of scroll-driven parallax so the
+     frame "breathes" while the hero scrollytelling advances. */
+  transform: scale(calc(1.1 + var(--hero-p, 0) * 0.04));
+  transform-origin: center;
+  will-change: transform;
+}
+
+/* HUD scan line: a thin readout that travels top->bottom as the hero
+   scrollytelling progresses, so the SVG frame "measures" the scroll. */
+#hero-frame .hf-scan {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(var(--hero-p, 0) * 100%);
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(90, 150, 220, 0.65) 18%,
+    rgba(140, 200, 255, 0.9) 50%,
+    rgba(90, 150, 220, 0.65) 82%,
+    transparent 100%
+  );
+  box-shadow: 0 0 18px rgba(120, 190, 255, 0.55);
+  opacity: calc(0.25 + var(--hero-p, 0) * 0.55);
+  mix-blend-mode: screen;
 }
 
 /* centered hero text */
@@ -37,6 +63,9 @@
   font-weight: 400;
   text-shadow: 0 2px 20px rgba(0, 0, 0, 0.6);
 }
+#hero-frame .hf-center {
+  transition: opacity 0.18s linear;
+}
 #hero-frame .hf-title {
   font-family: var(--font-haffer), sans-serif;
   font-weight: 700;
@@ -45,6 +74,35 @@
   line-height: 0.92;
   font-size: clamp(2.6rem, 7.5vw, 6.5rem);
   text-shadow: 0 4px 30px rgba(0, 0, 0, 0.65);
+}
+/* Typewriter lines: each clips to a JS-driven width with a blinking caret
+   while typing; the caret hides once the line is fully revealed. */
+#hero-frame .hf-line {
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  vertical-align: bottom;
+  width: 0;
+  max-width: 100%;
+}
+#hero-frame .hf-title {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+#hero-frame .hf-line--reg {
+  font-weight: 400; /* EXPERTS in REGULAR weight */
+}
+#hero-frame .hf-line.is-typing {
+  border-right: 0.06em solid currentColor;
+  animation: hfCaret 0.8s steps(1) infinite;
+}
+#hero-frame .hf-line.is-done {
+  border-right: 0.06em solid transparent;
+}
+@keyframes hfCaret {
+  0%, 100% { border-right-color: currentColor; }
+  50% { border-right-color: transparent; }
 }
 
 /* SCROLL indicator */

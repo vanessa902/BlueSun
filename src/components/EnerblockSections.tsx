@@ -144,7 +144,7 @@ export default function EnerblockSections() {
           </p>
         </div>
         <div className="eb-intro__right">
-          <div className="eb-bp-stage" ref={stage}>
+          <div className="eb-bp-stage" id="eb-bp-target" ref={stage}>
             <div className="eb-bp">
               <svg viewBox="0 0 300 420" aria-label="Standard floor plan">
                 <rect className="eb-bp__line" x="20" y="20" width="260" height="380" />
@@ -159,8 +159,9 @@ export default function EnerblockSections() {
               </svg>
             </div>
           </div>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img className="eb-bp-rock" src={`${BASE}/rock1.png`} alt="" />
+          {/* The rock that "lands" here is the scroll-driven #rock-right
+              (rendered in <Rocks/>), which arrives on top of this vector via
+              scrolling — it is intentionally NOT a static image anymore. */}
           <div className="eb-intro__caption">
             <span className="mark">⧉</span>
             <span className="meta">
