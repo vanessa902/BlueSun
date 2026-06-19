@@ -13,24 +13,27 @@
 }
 #hero-frame .hf-svg {
   position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
+  /* Inset frame box: the SVG frame sits inside the viewport with a black
+     margin around it. These insets MUST match the video mask-size/position in
+     globals.css (#scroll-video-container) so the video clips exactly to the
+     frame and everything outside is pure black. */
+  top: 9%;
+  bottom: 9%;
+  left: 7%;
+  right: 7%;
+  width: auto;
+  height: auto;
   object-fit: fill;
-  /* Grow the HUD frame 10% larger; a touch of scroll-driven parallax so the
-     frame "breathes" while the hero scrollytelling advances. */
-  transform: scale(calc(1.1 + var(--hero-p, 0) * 0.04));
-  transform-origin: center;
-  will-change: transform;
+  will-change: opacity;
 }
 
 /* HUD scan line: a thin readout that travels top->bottom as the hero
    scrollytelling progresses, so the SVG frame "measures" the scroll. */
 #hero-frame .hf-scan {
   position: absolute;
-  left: 0;
-  right: 0;
-  top: calc(var(--hero-p, 0) * 100%);
+  left: 7%;
+  right: 7%;
+  top: calc(9% + var(--hero-p, 0) * 82%);
   height: 2px;
   background: linear-gradient(
     90deg,
