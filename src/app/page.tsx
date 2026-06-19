@@ -161,11 +161,11 @@ export default function VeldaraPage() {
     function videoTick() {
       if (destroyed) return;
       const progress = getProgress();
-      // Intro black cover: opaque on the first frame, fades out over the first
-      // ~0.9 viewport of scroll, revealing the video underneath.
+      // Intro black cover: starts at 30% opacity (letting the video show
+      // through from the first frame) and fades out as you scroll.
       if (heroCover) {
-        const o = 1 - window.scrollY / (window.innerHeight * 0.9);
-        heroCover.style.opacity = String(Math.max(0, Math.min(1, o)));
+        const o = 0.3 * (1 - window.scrollY / (window.innerHeight * 0.9));
+        heroCover.style.opacity = String(Math.max(0, Math.min(0.3, o)));
       }
       // Keep the SVG HUD frame for the whole video; fade it only as it ends.
       // Also publish scroll progress as a CSS var so the HUD elements can
