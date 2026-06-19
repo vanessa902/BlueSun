@@ -1,103 +1,14 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import "../app/enerblock.css";
-import CaseStudies from "./CaseStudies";
 import Scaffolding3D from "./Scaffolding3D";
-
-type Item = { n: string; label: string; title: string; desc: string; img: string };
-
-const U = (id: string) =>
-  `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=1200&q=80`;
-
-const MARKETS: Record<string, { name: string; items: Item[] }> = {
-  residential: {
-    name: "Residential",
-    items: [
-      {
-        n: "01",
-        label: "Custom Homes",
-        title: "Single-family residences engineered to last",
-        desc: "Bespoke homes built with industrialized precision — durable envelopes, refined detailing and timeless design delivered on schedule.",
-        img: U("1564013799919-ab600027ffc6"),
-      },
-      {
-        n: "02",
-        label: "Multi-Family Housing",
-        title: "Apartments and condominiums delivered at scale",
-        desc: "Repeatable, high-quality residential units produced offsite and assembled fast, with consistent control over cost and quality.",
-        img: U("1545324418-cc1a3fa10c00"),
-      },
-      {
-        n: "03",
-        label: "Renovations",
-        title: "Structural remodels that modernize without compromise",
-        desc: "Expansions and retrofits that upgrade performance and space while preserving the integrity of the existing structure.",
-        img: U("1503387762-592deb58ef4e"),
-      },
-    ],
-  },
-  commercial: {
-    name: "Commercial",
-    items: [
-      {
-        n: "01",
-        label: "Offices & Retail",
-        title: "Workplaces and storefronts built to spec",
-        desc: "Commercial interiors and shells delivered on time and to code, engineered for flexibility and long-term value.",
-        img: U("1486406146926-c627a92ad1ab"),
-      },
-      {
-        n: "02",
-        label: "Hospitality",
-        title: "Hotels and venues crafted for experience",
-        desc: "Guest-focused environments that balance design, performance and longevity across every space.",
-        img: U("1551882547-ff40c63fe5fa"),
-      },
-      {
-        n: "03",
-        label: "Mixed-Use",
-        title: "Integrated developments in a single build",
-        desc: "Living, working and retail combined into one industrialized program, coordinated end to end.",
-        img: U("1496307042754-b4aa456c4a2d"),
-      },
-    ],
-  },
-  industrial: {
-    name: "Industrial",
-    items: [
-      {
-        n: "01",
-        label: "Warehouses",
-        title: "Large-span storage built for scale",
-        desc: "Distribution and storage facilities engineered for speed of delivery and operational efficiency.",
-        img: U("1553413077-190dd305871c"),
-      },
-      {
-        n: "02",
-        label: "Manufacturing Plants",
-        title: "Production environments engineered for uptime",
-        desc: "Facilities designed around process, safety and continuity, with industrialized precision throughout.",
-        img: U("1565043666747-69f6646db940"),
-      },
-      {
-        n: "03",
-        label: "Logistics Centers",
-        title: "High-throughput hubs designed for flow",
-        desc: "Resilient logistics infrastructure built for automation, throughput and future growth.",
-        img: U("1504307651254-35680f356dfd"),
-      },
-    ],
-  },
-};
 
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
 export default function EnerblockSections() {
   const root = useRef<HTMLDivElement>(null);
   const stage = useRef<HTMLDivElement>(null);
-  const [market, setMarket] = useState<keyof typeof MARKETS>("residential");
-
   useEffect(() => {
     let destroyed = false;
     const clamp = (v: number, a = 0, b = 1) => Math.max(a, Math.min(b, v));
@@ -120,8 +31,6 @@ export default function EnerblockSections() {
       destroyed = true;
     };
   }, []);
-
-  const items = MARKETS[market].items;
 
   return (
     <div className="eb" ref={root}>
@@ -174,57 +83,6 @@ export default function EnerblockSections() {
         </div>
       </section>
 
-      {/* 2. Our Markets — toggle drives the content */}
-      <section className="eb-sol" id="markets">
-        <div className="eb-sol__eyebrow">
-          <span>Our Markets</span>
-          <span>■</span>
-        </div>
-
-        <div className="eb-markets-head">
-          <h2 className="eb-title">Our Markets</h2>
-          <div className="eb-toggle" role="tablist">
-            {(Object.keys(MARKETS) as Array<keyof typeof MARKETS>).map((k) => (
-              <button
-                key={k}
-                role="tab"
-                aria-selected={market === k}
-                className={market === k ? "is-active" : ""}
-                onClick={() => setMarket(k)}
-              >
-                {MARKETS[k].name}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div className="eb-sol__list" key={market}>
-          {items.map((s, i) => (
-            <div
-              className="eb-item"
-              key={s.n}
-              style={{ top: `calc(${i} * var(--eb-head))`, zIndex: i + 1 }}
-            >
-              <div className="eb-item__num">{s.n} /</div>
-              <div className="eb-item__media">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={s.img} alt={s.label} />
-              </div>
-              <div className="eb-item__body">
-                <div className="eb-item__label">{s.label}</div>
-                <h3 className="eb-item__title">{s.title}</h3>
-                <p className="eb-item__desc">{s.desc}</p>
-                <span className="eb-item__more">
-                  Learn more <span aria-hidden>→</span>
-                </span>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Projects / Case Studies */}
-      <CaseStudies />
     </div>
   );
 }

@@ -137,7 +137,7 @@ export default function ProjectsSection() {
         viewport={{ once: true, margin: "50px", amount: 0 }}
         transition={{ duration: 0.8, ease: EASE }}
       >
-        Project
+        Our Market
       </motion.h2>
 
       <div className="proj__list">
