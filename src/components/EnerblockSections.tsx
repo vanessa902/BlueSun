@@ -2,8 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import "../app/enerblock.css";
-import ZoomGallery from "./ZoomGallery";
-import BandVideo from "./BandVideo";
+import RedSection from "./RedSection";
+import CaseStudies from "./CaseStudies";
 
 type Item = { n: string; label: string; title: string; desc: string; img: string };
 
@@ -212,10 +212,11 @@ export default function EnerblockSections() {
         </div>
       </section>
 
-      {/* 3. Full-screen scroll-scrubbed video band */}
-      <BandVideo />
-      {/* Pan/zoom grid gallery (Projects) */}
-      <ZoomGallery />
+      {/* Red S.P.D section (below Our Markets) */}
+      <RedSection />
+
+      {/* Projects / Case Studies */}
+      <CaseStudies />
     </div>
   );
 }

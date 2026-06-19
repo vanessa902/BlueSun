@@ -1,0 +1,264 @@
+/* Projects / Case Studies section. Plain CSS (Tailwind isn't enabled project-wide)
+   + Framer Motion drives the animations. White bg, black text, DM Sans. */
+.cases {
+  position: relative;
+  background: #fff;
+  color: #000;
+  font-family: var(--font-dm), "DM Sans", sans-serif;
+  z-index: 2;
+}
+
+@keyframes marqueeProjects {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.cases .marquee-projects {
+  animation: marqueeProjects 28s linear infinite;
+}
+.cases .marquee-projects:hover {
+  animation-play-state: paused;
+}
+
+/* Top / header */
+.cases__top {
+  position: relative;
+  padding: 8rem 1.5rem 2.5rem;
+}
+.cases__floats {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+.cs-float {
+  position: absolute;
+  background: #000;
+}
+.cases__head {
+  position: relative;
+  margin: 0 auto;
+  max-width: 80rem;
+  text-align: center;
+}
+.cs-badge {
+  margin-bottom: 1.25rem;
+  display: inline-block;
+  background: #000;
+  color: #fff;
+  padding: 6px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+.cs-heading {
+  font-size: clamp(1.8rem, 3.2vw, 2.8rem);
+  font-weight: 300;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+}
+.cs-muted {
+  color: rgba(0, 0, 0, 0.4);
+}
+
+/* Cards grid */
+.cases__grid {
+  margin: 0 auto;
+  max-width: 80rem;
+  padding: 0 1.5rem 4rem;
+}
+.cases__grid-inner {
+  display: grid;
+  gap: 1rem;
+}
+.cs-card {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: #ddd;
+}
+.cs-card__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.cs-pixels {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  grid-template-rows: repeat(8, 1fr);
+  z-index: 5;
+  pointer-events: none;
+}
+.cs-pixel {
+  background: rgba(0, 0, 0, 0.8);
+}
+.cs-mag {
+  position: absolute;
+  background: #000;
+  z-index: 4;
+}
+.cs-plus {
+  position: absolute;
+  right: 1rem;
+  top: 1rem;
+  height: 1.75rem;
+  width: 1.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  font-size: 12px;
+  color: #fff;
+  z-index: 10;
+}
+.cs-plate {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  background: #fff;
+  padding: 10px 16px 12px;
+  z-index: 20;
+  max-width: 70%;
+}
+.cs-plate__title {
+  font-size: clamp(1.4rem, 2.2vw, 2rem);
+  font-weight: 400;
+  line-height: 1.1;
+  color: #000;
+}
+.cs-plate__meta {
+  display: flex;
+  gap: 1rem;
+  margin-top: 6px;
+}
+.cs-cat {
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.6);
+}
+.cs-year {
+  font-size: 12px;
+  font-weight: 500;
+  color: #000;
+}
+
+/* Footer area */
+.cases__footer {
+  margin: 0 auto;
+  max-width: 80rem;
+  padding: 0 1.5rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+.cases__cta {
+  max-width: 28rem;
+}
+.cs-footplus {
+  margin-bottom: 1rem;
+  display: flex;
+  height: 1.75rem;
+  width: 1.75rem;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  font-size: 12px;
+  color: #000;
+}
+.cs-foottext {
+  font-size: 14px;
+  line-height: 1.7;
+  color: rgba(0, 0, 0, 0.6);
+}
+.cs-cta-btn {
+  margin-top: 1.5rem;
+  display: flex;
+  align-items: flex-end;
+  background: none;
+}
+.cs-cta-btn__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  background: #000;
+  color: #fff;
+  padding: 8px 12px;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: background 0.2s ease;
+}
+.cs-cta-btn:hover .cs-cta-btn__label {
+  background: rgba(0, 0, 0, 0.85);
+}
+.cs-cta-btn__badge {
+  height: 1.5rem;
+  width: 1.5rem;
+  background: #000;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: margin-bottom 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.cs-cta-btn:hover .cs-cta-btn__badge {
+  margin-bottom: 2.25rem;
+}
+.cases__marquee {
+  flex: 1;
+  overflow: hidden;
+  padding: 1.25rem 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+.cases__marquee-track {
+  display: flex;
+  width: max-content;
+}
+.cs-logo {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 10px;
+  padding: 0 2rem;
+}
+.cs-logo__name {
+  white-space: nowrap;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: rgba(0, 0, 0, 0.8);
+}
+.cases__spacer {
+  height: 3rem;
+}
+
+@media (min-width: 768px) {
+  .cases__top {
+    padding: 10rem 4rem 2.5rem;
+  }
+  .cases__grid,
+  .cases__footer {
+    padding-left: 4rem;
+    padding-right: 4rem;
+  }
+  .cases__grid-inner {
+    grid-template-columns: 1fr 1fr;
+  }
+  .cases__footer {
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: space-between;
+  }
+  .cases__marquee {
+    margin-left: 3rem;
+    border-top: none;
+  }
+}
+@media (min-width: 1024px) {
+  .cases__top {
+    padding-left: 4rem;
+    padding-right: 4rem;
+  }
+}

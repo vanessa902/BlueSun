@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import Lenis from "lenis";
 import Navbar from "@/components/Navbar";
 import EnerblockSections from "@/components/EnerblockSections";
+import Footer from "@/components/Footer";
 
 // Scroll-driven background video. Pointing directly at the CloudFront URL the
 // user provided (this sandbox can't download that host to self-host it). For the
@@ -462,6 +463,7 @@ export default function VeldaraPage() {
         {/* Video scrub finishes here; opaque scroll sections take over. */}
         <div id="video-end" />
         <EnerblockSections />
+        <Footer />
       </div>
     </>
   );
