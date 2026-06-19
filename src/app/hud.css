@@ -1,0 +1,203 @@
+/* Hero HUD overlay (sci-fi frame: logo, socials, BUILD, side ticks, hero text,
+   SCROLL, bottom chip, barcode). Sits above the scroll video. */
+.hud {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  pointer-events: none;
+  font-family: var(--font-haffer), var(--font-inter), sans-serif;
+  color: #fff;
+}
+.hud a,
+.hud button {
+  pointer-events: auto;
+}
+
+/* top bar */
+.hud__top {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 1.75rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+}
+.hud__logo {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  font-size: 1.4rem;
+  letter-spacing: -0.02em;
+}
+.hud__logo b {
+  font-weight: 700;
+}
+.hud__logo span {
+  font-weight: 300;
+}
+.hud__logo small {
+  font-size: 0.55rem;
+  letter-spacing: 0.15em;
+  opacity: 0.7;
+  text-transform: uppercase;
+}
+.hud__socials {
+  display: flex;
+  gap: 0.5rem;
+}
+.hud__socials a {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: #1d63ff;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+/* side rails */
+.hud__rail {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.9rem;
+}
+.hud__rail--left { left: 1.5rem; }
+.hud__rail--right { right: 1.5rem; }
+.hud__rail .bars {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.hud__rail .bars i {
+  display: block;
+  width: 26px;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.7);
+}
+.hud__rail .bars i.blue { background: #1d63ff; }
+.hud__ticks {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.hud__ticks i {
+  width: 14px;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.4);
+}
+.hud__ticks i:nth-child(5n) { width: 22px; background: rgba(255, 255, 255, 0.7); }
+.hud__build {
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+}
+
+/* center hero text */
+.hud__center {
+  position: absolute;
+  left: 50%;
+  top: 42%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  width: 100%;
+  padding: 0 1rem;
+}
+.hud__eyebrow {
+  font-size: clamp(0.8rem, 1.4vw, 1.1rem);
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  margin-bottom: 0.6rem;
+  font-weight: 400;
+}
+.hud__title {
+  font-family: var(--font-haffer), sans-serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  line-height: 0.95;
+  font-size: clamp(2.4rem, 7vw, 6rem);
+}
+.hud__scroll {
+  position: absolute;
+  left: 50%;
+  bottom: 7rem;
+  transform: translateX(-50%);
+  text-align: center;
+  font-size: 0.75rem;
+  letter-spacing: 0.3em;
+}
+.hud__scroll .chev {
+  display: block;
+  margin-top: 0.4rem;
+  animation: hudBounce 1.6s ease-in-out infinite;
+}
+@keyframes hudBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(5px); }
+}
+
+/* bottom chip */
+.hud__chip {
+  position: absolute;
+  left: 1.75rem;
+  bottom: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  padding: 0.7rem 1.1rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.hud__chip b { font-weight: 700; }
+.hud__chip .dim { opacity: 0.6; }
+
+/* bottom-right barcode */
+.hud__barcode {
+  position: absolute;
+  right: 1.75rem;
+  bottom: 1.5rem;
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  height: 56px;
+  padding: 0 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+.hud__barcode i {
+  width: 8px;
+  background: #fff;
+}
+.hud__barcode i:nth-child(1) { height: 70%; }
+.hud__barcode i:nth-child(2) { height: 100%; }
+.hud__barcode i:nth-child(3) { height: 55%; }
+.hud__barcode i:nth-child(4) { height: 85%; }
+.hud__barcode i:nth-child(5) { height: 40%; }
+
+/* corner brackets */
+.hud__frame {
+  position: absolute;
+  inset: 5.5rem 1.5rem 5.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  pointer-events: none;
+}
+
+@media (max-width: 768px) {
+  .hud__rail,
+  .hud__barcode {
+    display: none;
+  }
+  .hud__frame {
+    inset: 5rem 0.75rem 5rem;
+  }
+  .hud__chip {
+    left: 0.9rem;
+    font-size: 0.6rem;
+  }
+}

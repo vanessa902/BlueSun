@@ -2,10 +2,10 @@
 
 import { useEffect } from "react";
 import Lenis from "lenis";
-import Navbar from "@/components/Navbar";
 import EnerblockSections from "@/components/EnerblockSections";
 import Footer from "@/components/Footer";
-import SteelBeam from "@/components/SteelBeam";
+import Rocks from "@/components/Rocks";
+import "./hud.css";
 
 // Scroll-driven background video. Pointing directly at the CloudFront URL the
 // user provided (this sandbox can't download that host to self-host it). For the
@@ -365,8 +365,8 @@ export default function VeldaraPage() {
       {/* Black intro cover (fades out on scroll) */}
       <div id="hero-cover" />
 
-      {/* Scroll-driven steel beam */}
-      <SteelBeam />
+      {/* Scroll-driven floating rocks */}
+      <Rocks />
 
       {/* Fixed Cards */}
       <div id="fixed-cards">
@@ -398,39 +398,71 @@ export default function VeldaraPage() {
         </div>
       </div>
 
-      {/* Navigation (Lumentrack menu) */}
-      <Navbar />
-
       {/* Main Content */}
       <div id="content">
-        {/* Section 1: Hero */}
+        {/* Section 1: Hero with HUD overlay */}
         <section id="hero">
-          <div className="content">
-            <h1
-              style={{
-                fontFamily: "var(--font-haffer), sans-serif",
-                textTransform: "uppercase",
-              }}
-            >
-              <span style={{ fontWeight: 100 }}>Engineering.</span>{" "}
-              <span style={{ fontWeight: 300 }}>Construction.</span>{" "}
-              <span style={{ fontWeight: 600 }}>Solutions.</span>
-            </h1>
-          </div>
-          <div className="bounce-arrow">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={2}
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M19.5 8.25l-7.5 7.5-7.5-7.5"
-              />
-            </svg>
+          <div className="hud">
+            <div className="hud__top">
+              <a className="hud__logo" href="#">
+                <b>Blue</b>
+                <span>sun</span>
+                <small>svcs</small>
+              </a>
+              <div className="hud__socials">
+                <a href="#" aria-label="LinkedIn">in</a>
+                <a href="#" aria-label="Instagram">ig</a>
+                <a href="#" aria-label="Facebook">f</a>
+              </div>
+            </div>
+
+            <div className="hud__rail hud__rail--left">
+              <div className="bars">
+                <i /><i /><i /><i />
+              </div>
+              <span className="hud__build">◀ BUILD</span>
+              <div className="hud__ticks">
+                {Array.from({ length: 20 }).map((_, i) => (
+                  <i key={i} />
+                ))}
+              </div>
+            </div>
+
+            <div className="hud__rail hud__rail--right">
+              <div className="bars">
+                <i className="blue" /><i className="blue" /><i /><i />
+              </div>
+              <div className="hud__ticks">
+                {Array.from({ length: 20 }).map((_, i) => (
+                  <i key={i} />
+                ))}
+              </div>
+            </div>
+
+            <div className="hud__center">
+              <p className="hud__eyebrow">Residential &amp; Commercial</p>
+              <h1 className="hud__title">
+                Construction
+                <br />
+                Experts
+              </h1>
+            </div>
+
+            <div className="hud__scroll">
+              SCROLL
+              <span className="chev">⌄</span>
+            </div>
+
+            <div className="hud__chip">
+              <span className="dim">Engineering.</span> <b>Construction.</b>{" "}
+              <b>Solutions.</b>
+            </div>
+
+            <div className="hud__barcode">
+              <i /><i /><i /><i /><i />
+            </div>
+
+            <div className="hud__frame" />
           </div>
         </section>
 

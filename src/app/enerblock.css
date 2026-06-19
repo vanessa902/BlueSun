@@ -23,7 +23,23 @@
   line-height: 1.05;
 }
 
-/* ---------- 1. Intro: red title + 2D->3D blueprint ---------- */
+/* ---------- Mountain band (black space) ---------- */
+.eb-mountain {
+  position: relative;
+  width: 100%;
+  height: 90vh;
+  background: #000;
+  overflow: hidden;
+}
+.eb-mountain img {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: auto;
+}
+
+/* ---------- 1. Intro: title + 2D->3D blueprint ---------- */
 .eb-intro {
   background: #000;
   color: #fff;
@@ -38,7 +54,7 @@
   padding: 8rem 3rem 3rem;
 }
 .eb-intro__title {
-  color: var(--eb-red);
+  color: #9a9a9a;
   font-size: clamp(2rem, 3.6vw, 3.5rem);
   max-width: 16ch;
 }
@@ -57,6 +73,16 @@
   justify-content: center;
   padding: 4rem 3rem 7rem;
   overflow: hidden;
+}
+.eb-bp-rock {
+  position: absolute;
+  left: 50%;
+  top: 47%;
+  width: 40%;
+  transform: translate(-50%, -55%);
+  pointer-events: none;
+  z-index: 2;
+  filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.6));
 }
 .eb-bp-stage {
   --p: 0;
@@ -77,12 +103,12 @@
   display: block;
 }
 .eb-bp__line {
-  stroke: var(--eb-red);
+  stroke: rgba(255, 255, 255, 0.85);
   stroke-width: 2;
   fill: none;
 }
 .eb-bp__hatch {
-  stroke: rgba(255, 46, 35, 0.5);
+  stroke: rgba(255, 255, 255, 0.4);
   stroke-width: 1;
 }
 .eb-intro__caption {
@@ -92,16 +118,16 @@
   display: flex;
   align-items: center;
   gap: 1rem;
-  border: 1px solid rgba(255, 46, 35, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.3);
   padding: 0.75rem 1rem;
 }
 .eb-intro__caption .mark {
-  color: var(--eb-red);
+  color: #fff;
   font-weight: 700;
   font-size: 1.5rem;
 }
 .eb-intro__caption .meta {
-  color: var(--eb-red);
+  color: rgba(255, 255, 255, 0.75);
   font-size: 0.6rem;
   letter-spacing: 0.08em;
   line-height: 1.5;

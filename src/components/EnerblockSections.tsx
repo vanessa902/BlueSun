@@ -90,6 +90,8 @@ const MARKETS: Record<string, { name: string; items: Item[] }> = {
   },
 };
 
+const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+
 export default function EnerblockSections() {
   const root = useRef<HTMLDivElement>(null);
   const stage = useRef<HTMLDivElement>(null);
@@ -122,7 +124,13 @@ export default function EnerblockSections() {
 
   return (
     <div className="eb" ref={root}>
-      {/* 1. Intro: red title + 2D->3D blueprint */}
+      {/* Mountain image in the black space */}
+      <section className="eb-mountain">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={`${BASE}/mountain.png`} alt="" />
+      </section>
+
+      {/* 1. Intro: title + 2D->3D blueprint with a rock resting on it */}
       <section className="eb-intro">
         <div className="eb-intro__left">
           <h2 className="eb-title eb-intro__title">
@@ -151,6 +159,8 @@ export default function EnerblockSections() {
               </svg>
             </div>
           </div>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img className="eb-bp-rock" src={`${BASE}/rock1.png`} alt="" />
           <div className="eb-intro__caption">
             <span className="mark">⧉</span>
             <span className="meta">
