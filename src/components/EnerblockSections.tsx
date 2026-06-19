@@ -125,16 +125,20 @@ export default function EnerblockSections() {
   return (
     <div className="eb" ref={root}>
       {/* Mountain image in the black space */}
-      <section className="eb-mountain">
+      <section className="eb-mountain" id="eb-mountain">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={`${BASE}/mountain.png`} alt="" />
       </section>
 
+      {/* Scroll zone for the rock animation phases */}
+      <div id="rock-scroll-zone" style={{ height: "280vh", background: "#000" }} />
+
       {/* 1. Intro: title + 2D->3D blueprint with a rock resting on it */}
       <section className="eb-intro">
         <div className="eb-intro__left">
-          <h2 className="eb-title eb-intro__title">
-            Building spaces that stand the test of time
+          <h2 className="eb-title eb-intro__title" id="eb-intro-title">
+            <span id="eb-title-prefix" style={{ display: "inline" }}>Building spaces </span>
+            <span id="eb-title-rest">that stand the test of time</span>
           </h2>
           <p className="eb-intro__desc">
             Integrates enclosures, structure, and processes within an

@@ -289,6 +289,19 @@ body {
   left: 88%;
   width: clamp(150px, 19vw, 360px);
 }
+#rock-text {
+  position: absolute;
+  transform: translateX(-50%);
+  font-family: var(--font-haffer), sans-serif;
+  font-weight: 600;
+  font-size: clamp(1.4rem, 3vw, 2.8rem);
+  color: #9a9a9a;
+  letter-spacing: -0.015em;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  will-change: opacity, clip-path;
+}
 
 /* Black intro cover: fully opaque on the first frame, fades out as you scroll. */
 #hero-cover {

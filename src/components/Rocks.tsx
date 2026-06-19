@@ -13,6 +13,7 @@ const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 export default function Rocks() {
   const left = useRef<HTMLImageElement>(null);
   const right = useRef<HTMLImageElement>(null);
+  const textRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
     let destroyed = false;
@@ -26,10 +27,9 @@ export default function Rocks() {
       const sy = window.scrollY;
       const t = (now - t0) / 1000;
 
-      const fadeIn = seg(sy, vh * 0.3, vh * 0.8);
-
-      // LEFT rock: float during hero, parallax up, fade out
+      // LEFT rock: float during hero, fade out before mountain
       if (left.current) {
+        const fadeIn = seg(sy, vh * 0.3, vh * 0.8);
         const bob = Math.sin(t * 0.9) * 10;
         const par = -seg(sy, 0, vh * 3) * 100;
         const op = fadeIn * (1 - seg(sy, vh * 2.5, vh * 3.5));
@@ -37,67 +37,91 @@ export default function Rocks() {
         left.current.style.transform = `translate(-50%, -50%) translateY(${par + bob}px)`;
       }
 
-      // RIGHT rock animation phases (matching the reference video):
-      // Phase 1 (hero): float on the right side
-      // Phase 2 (mid-scroll): move to center, grow
-      // Phase 3 (transition): descend with section toward the blueprint
-      // Phase 4 (landing): lock onto the blueprint vector and ride with it
-      if (right.current) {
-        const bob = Math.cos(t * 0.8) * 8 * (1 - seg(sy, vh * 4, vh * 5));
+      // RIGHT rock: appears at mountain section, phased scroll animation.
+      // Each "scroll" ≈ 1 vh of the rock-scroll-zone (280vh total).
+      const zone = document.getElementById("rock-scroll-zone");
+      const mountain = document.getElementById("eb-mountain");
+      if (right.current && zone && mountain) {
+        const mRect = mountain.getBoundingClientRect();
+        const zRect = zone.getBoundingClientRect();
+        // p: normalized progress through the rock animation zone
+        // 0 = mountain top hits viewport bottom, goes up from there
+        const scrollInto = vh - mRect.top;
+        const totalRange = mountain.offsetHeight + zone.offsetHeight;
+        const p = clamp(scrollInto / totalRange);
 
-        // Phase scroll boundaries
-        const heroEnd = vh * 2.8;
-        const centerAt = vh * 3.6;
-        const landStart = vh * 4.5;
+        const bob = Math.cos(t * 0.8) * 5 * (1 - seg(p, 0.7, 0.85));
 
-        // Phase 1→2: move from right side to center-left
-        const toCenter = seg(sy, heroEnd, centerAt);
-        // Phase 2→3→4: lock onto the blueprint target
+        // Phase 0 (p 0.00-0.06): Rock fades in at right side
+        const fadeIn = seg(p, 0.0, 0.06);
+
+        // Phase 1 (p 0.06-0.20): Rock grows 30% (≈2 scroll steps)
+        const growP = seg(p, 0.06, 0.20);
+        const scale = lerp(1, 1.3, growP);
+
+        // Phase 2 (p 0.20-0.36): Rock rotates (≈2 scroll steps)
+        const rotP = seg(p, 0.20, 0.36);
+        const rotation = lerp(0, 18, rotP);
+
+        // Phase 3 (p 0.36-0.48): Rock moves to center-left
+        const moveP = seg(p, 0.36, 0.48);
+        const startX = vw * 0.72;
+        const centerX = vw * 0.5;
+        const startY = vh * 0.42;
+        const centerY = vh * 0.46;
+        let x = lerp(startX, centerX, moveP);
+        let y = lerp(startY, centerY, moveP);
+
+        // Phase 4 (p 0.48-0.60): "Building Spaces" typewriter appears below rock
+        const typeP = seg(p, 0.48, 0.60);
+
+        // Phase 5 (p 0.60-0.85): Rock descends, "Building Spaces" erases,
+        // rock lands on the blueprint vector
+        const descendP = seg(p, 0.60, 0.85);
+        const eraseP = seg(p, 0.65, 0.80);
+
+        // Landing: blend toward the blueprint target
+        let finalScale = scale;
         const target = document.getElementById("eb-bp-target");
-
-        // Home position (floating on the right)
-        const homeX = vw * 0.86;
-        const homeY = vh * 0.42;
-        // Center position (mid-transition)
-        const midX = vw * 0.42;
-        const midY = vh * 0.45;
-
-        let x: number, y: number, scale: number, op: number;
-
-        if (target) {
+        if (target && descendP > 0) {
           const r = target.getBoundingClientRect();
           const tcx = r.left + r.width * 0.5;
           const tcy = r.top + r.height * 0.45;
           const naturalW = right.current.offsetWidth || 200;
           const landScale = (r.width * 0.85) / naturalW;
-
-          const toLand = seg(sy, centerAt, landStart);
-
-          if (toCenter < 1) {
-            // Phase 1→2: float → center
-            x = lerp(homeX, midX, toCenter) + bob;
-            y = lerp(homeY, midY, toCenter) + bob * 0.6;
-            scale = lerp(1, 1.3, toCenter);
-          } else {
-            // Phase 2→4: center → land on blueprint
-            x = lerp(midX, tcx, toLand);
-            y = lerp(midY, tcy, toLand);
-            scale = lerp(1.3, landScale, toLand);
-          }
-          // Fade out once the section scrolls past
-          op = fadeIn * (1 - seg(-r.bottom, 0, vh * 0.3));
-        } else {
-          // Fallback: just float
-          x = lerp(homeX, midX, toCenter) + bob;
-          y = lerp(homeY, midY, toCenter) + bob * 0.6;
-          scale = lerp(1, 1.3, toCenter);
-          op = fadeIn;
+          x = lerp(centerX, tcx, descendP);
+          y = lerp(centerY, tcy, descendP);
+          finalScale = lerp(scale, Math.max(landScale, 0.6), descendP);
+        } else if (descendP > 0) {
+          y = lerp(centerY, centerY + vh * 0.5, descendP);
         }
 
+        // Fade out when section exits viewport
+        const exitOp = target
+          ? 1 - seg(-(target.getBoundingClientRect().bottom), 0, vh * 0.3)
+          : 1;
+
         right.current.style.left = `${x}px`;
-        right.current.style.top = `${y}px`;
-        right.current.style.transform = `translate(-50%, -50%) scale(${scale})`;
-        right.current.style.opacity = String(op);
+        right.current.style.top = `${y + bob}px`;
+        right.current.style.transform = `translate(-50%, -50%) scale(${finalScale}) rotate(${rotation}deg)`;
+        right.current.style.opacity = String(fadeIn * exitOp);
+
+        // "Building Spaces" text
+        if (textRef.current) {
+          const textVisible = typeP > 0 && eraseP < 1;
+          const textReveal = typeP;
+          const textErase = 1 - eraseP;
+          textRef.current.style.opacity = String(textVisible ? Math.min(textReveal, textErase) : 0);
+          textRef.current.style.clipPath = `inset(0 ${(1 - textReveal * textErase) * 100}% 0 0)`;
+          textRef.current.style.left = `${x}px`;
+          textRef.current.style.top = `${y + bob + 80}px`;
+        }
+
+        // Hide/show the "Building spaces" prefix in the section title
+        const prefix = document.getElementById("eb-title-prefix");
+        if (prefix) {
+          prefix.style.opacity = String(1 - seg(p, 0.78, 0.88));
+        }
       }
 
       raf = requestAnimationFrame(tick);
@@ -115,6 +139,9 @@ export default function Rocks() {
       <img ref={left} id="rock-left" src={ROCK_L} alt="" />
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img ref={right} id="rock-right" src={ROCK_R} alt="" />
+      <span ref={textRef} id="rock-text">
+        Building Spaces
+      </span>
     </div>
   );
 }
