@@ -124,8 +124,12 @@ export default function Rocks() {
         stage.style.opacity = String(Math.max(0, stageOp));
 
         // ---- SCROLL-DRIVEN VIDEO BACKGROUND ----
-        if (framesReady && frames.length > 0) {
-          const idx = Math.round(p * (frames.length - 1));
+        // Only appears after "Building Spaces" finishes typing (p≥0.26)
+        const bgFade = seg(p, 0.26, 0.32);
+        canvas.style.opacity = String(bgFade);
+        if (framesReady && frames.length > 0 && p >= 0.25) {
+          const bgP = seg(p, 0.26, 0.92);
+          const idx = Math.round(bgP * (frames.length - 1));
           if (idx !== lastIdx) {
             lastIdx = idx;
             if (frames[idx]) drawFrame(frames[idx]);
