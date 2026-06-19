@@ -291,7 +291,6 @@ body {
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  /* +40% larger than the body text scale */
   font-family: var(--font-haffer), sans-serif;
   font-weight: 600;
   font-size: clamp(2rem, 4.2vw, 3.8rem);
@@ -300,6 +299,20 @@ body {
   white-space: nowrap;
   opacity: 0;
   will-change: opacity, clip-path, filter, top;
+}
+#rock-stage #rock-text2 {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font-family: var(--font-haffer), sans-serif;
+  font-weight: 600;
+  font-size: clamp(1.6rem, 3.2vw, 2.8rem);
+  color: #ededea;
+  letter-spacing: -0.015em;
+  white-space: nowrap;
+  opacity: 0;
+  will-change: opacity, transform, filter, top;
 }
 
 /* Black intro cover: fully opaque on the first frame, fades out as you scroll. */
