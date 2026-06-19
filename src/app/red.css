@@ -29,6 +29,7 @@
   position: relative;
   z-index: 20;
   max-width: 900px;
+  height: auto;
   margin: 0 auto;
 }
 .spd__logo {
@@ -36,6 +37,7 @@
 }
 .spd__mission {
   font-size: 16px;
+  height: 100px;
   width: 100%;
   max-width: 400px;
   line-height: 1.6;
@@ -92,6 +94,9 @@
 @media (min-width: 768px) {
   .spd__wrap {
     padding-top: 400px;
+  }
+  .spd__inner {
+    height: 620px;
   }
   .spd__paras {
     margin-bottom: 6rem;
