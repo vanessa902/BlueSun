@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import "../app/enerblock.css";
-import MzaCarousel from "./MzaCarousel";
+import ZoomGallery from "./ZoomGallery";
 import BandVideo from "./BandVideo";
 
 type Item = { n: string; label: string; title: string; desc: string; img: string };
@@ -214,8 +214,8 @@ export default function EnerblockSections() {
 
       {/* 3. Full-screen scroll-scrubbed video band */}
       <BandVideo />
-      {/* 3D coverflow carousel (Projects) */}
-      <MzaCarousel />
+      {/* Pan/zoom grid gallery (Projects) */}
+      <ZoomGallery />
     </div>
   );
 }
