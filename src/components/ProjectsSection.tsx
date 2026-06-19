@@ -53,23 +53,39 @@ function ProjectCard({
   project,
   index,
   total,
-  progress,
+  sectionProgress,
 }: {
   project: Project;
   index: number;
   total: number;
-  progress: MotionValue<number>;
+  sectionProgress: MotionValue<number>;
 }) {
-  // Cards stack and scale down as you scroll past them. The last card stays at
-  // scale 1; earlier cards shrink slightly so they "tuck" behind the next one.
-  const targetScale = 1 - (total - 1 - index) * 0.03;
-  const scale = useTransform(progress, [index / total, 1], [1, targetScale]);
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  const { scrollYProgress: cardScroll } = useScroll({
+    target: cardRef,
+    offset: ["start end", "start 0.35"],
+  });
+
+  const targetScale = 1 - (total - 1 - index) * 0.05;
+  const scale = useTransform(sectionProgress, [index / total, 1], [1, targetScale]);
+
+  const cardY = useTransform(cardScroll, [0, 1], [120, 0]);
+  const cardOpacity = useTransform(cardScroll, [0, 0.6], [0, 1]);
+
+  const imgY1 = useTransform(cardScroll, [0, 1], [40, 0]);
+  const imgY2 = useTransform(cardScroll, [0, 1], [60, 0]);
 
   return (
-    <div className="proj-card-wrap">
+    <div className="proj-card-wrap" ref={cardRef}>
       <motion.article
         className="proj-card"
-        style={{ scale, top: `calc(var(--proj-sticky) + ${index * 28}px)` }}
+        style={{
+          scale,
+          top: `calc(var(--proj-sticky) + ${index * 28}px)`,
+          y: cardY,
+          opacity: cardOpacity,
+        }}
       >
         <div className="proj-card__top">
           <span className="proj-card__num">{project.n}</span>
@@ -84,14 +100,20 @@ function ProjectCard({
 
         <div className="proj-card__grid">
           <div className="proj-card__col1">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img className="proj-img proj-img--t" src={project.images[0]} alt="" loading="lazy" />
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img className="proj-img proj-img--b" src={project.images[1]} alt="" loading="lazy" />
+            <motion.div style={{ y: imgY1 }}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img className="proj-img proj-img--t" src={project.images[0]} alt="" loading="lazy" />
+            </motion.div>
+            <motion.div style={{ y: imgY2 }}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img className="proj-img proj-img--b" src={project.images[1]} alt="" loading="lazy" />
+            </motion.div>
           </div>
           <div className="proj-card__col2">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img className="proj-img proj-img--tall" src={project.images[2]} alt="" loading="lazy" />
+            <motion.div style={{ y: imgY1 }}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img className="proj-img proj-img--tall" src={project.images[2]} alt="" loading="lazy" />
+            </motion.div>
           </div>
         </div>
       </motion.article>
@@ -110,10 +132,10 @@ export default function ProjectsSection() {
     <section className="proj" ref={ref} id="work">
       <motion.h2
         className="proj__heading"
-        initial={{ opacity: 0, y: 40 }}
+        initial={{ opacity: 0, y: 60 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "50px", amount: 0 }}
-        transition={{ duration: 0.7, ease: EASE }}
+        transition={{ duration: 0.8, ease: EASE }}
       >
         Project
       </motion.h2>
@@ -125,7 +147,7 @@ export default function ProjectsSection() {
             project={p}
             index={i}
             total={PROJECTS.length}
-            progress={scrollYProgress}
+            sectionProgress={scrollYProgress}
           />
         ))}
       </div>
