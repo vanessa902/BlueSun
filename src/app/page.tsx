@@ -163,18 +163,16 @@ export default function VeldaraPage() {
       const progress = getProgress();
 
       // Keep the SVG HUD frame for the whole video; fade it only as it ends.
-      // Also publish scroll progress as a CSS var so the HUD elements can
-      // "measure" the hero scrollytelling (animated in hud.css).
       if (heroFrame) {
         heroFrame.style.opacity = String(
-          1 - Math.max(0, Math.min(1, (progress - 0.86) / 0.14))
+          1 - Math.max(0, Math.min(1, (progress - 0.88) / 0.12))
         );
         heroFrame.style.setProperty("--hero-p", String(progress));
       }
-      // Typewriter hero text on scroll: line 1 types over the first part of the
-      // scrub, then line 2; once fully typed it holds, then disappears entirely.
+      // Typewriter hero text: types on scroll, stays visible through the
+      // transition, then fades out near the end.
       if (line1 && line2 && hfCenter) {
-        const typeP = clamp01(progress / 0.32);
+        const typeP = clamp01(progress / 0.28);
         const r1 = clamp01(typeP * 2);
         const r2 = clamp01(typeP * 2 - 1);
         line1.style.width = `${Math.round(line1.scrollWidth * r1)}px`;
@@ -184,8 +182,7 @@ export default function VeldaraPage() {
         line2.classList.toggle("is-typing", r1 >= 1 && r2 < 1);
         line1.classList.toggle("is-done", r1 >= 1);
         line2.classList.toggle("is-done", typed);
-        // Disappear completely after typing is finished.
-        const fadeOut = clamp01((progress - 0.5) / 0.14);
+        const fadeOut = clamp01((progress - 0.78) / 0.12);
         hfCenter.style.opacity = String(1 - fadeOut);
         hfCenter.style.visibility = fadeOut >= 1 ? "hidden" : "visible";
       }
