@@ -295,70 +295,6 @@ export default function VeldaraPage() {
     }
     onWin("scroll", updateHeroOpacity, { passive: true });
 
-    // ===================== FIXED CARDS =====================
-    const fixedCards = document.getElementById("fixed-cards") as HTMLElement;
-    const cardsGrid = fixedCards.querySelector(".grid") as HTMLElement;
-
-    function tickCards() {
-      if (destroyed) return;
-      const trigger = document.getElementById("cards-trigger") as HTMLElement;
-      const rect = trigger.getBoundingClientRect();
-      const triggerTop = rect.top + window.scrollY;
-      const triggerHeight = rect.height;
-      const scrollY = window.scrollY;
-      const vh = window.innerHeight;
-
-      const start = triggerTop - vh * 0.5;
-      const end = triggerTop + triggerHeight - vh * 0.3;
-      const range = end - start;
-
-      let progress = range > 0 ? (scrollY - start) / range : 0;
-      progress = Math.max(0, Math.min(1, progress));
-
-      const isActive = scrollY >= start - vh * 0.2 && scrollY <= end + vh * 0.3;
-      const fadeIn = Math.min(
-        1,
-        Math.max(0, (scrollY - (start - vh * 0.2)) / (vh * 0.2))
-      );
-      const fadeOut = Math.min(
-        1,
-        Math.max(0, (end + vh * 0.3 - scrollY) / (vh * 0.3))
-      );
-      const containerOpacity = isActive ? Math.min(fadeIn, fadeOut) : 0;
-
-      fixedCards.style.opacity = String(containerOpacity);
-      fixedCards.style.pointerEvents = containerOpacity > 0.1 ? "auto" : "none";
-
-      const isMobile = window.innerWidth < 768;
-      const revealPct = progress * 130;
-      if (isMobile) {
-        cardsGrid.style.maskImage = `linear-gradient(to bottom, black ${revealPct}%, transparent ${revealPct + 20}%)`;
-        cardsGrid.style.webkitMaskImage = `linear-gradient(to bottom, black ${revealPct}%, transparent ${revealPct + 20}%)`;
-      } else {
-        cardsGrid.style.maskImage = `linear-gradient(to right, black ${revealPct}%, transparent ${revealPct + 15}%)`;
-        cardsGrid.style.webkitMaskImage = `linear-gradient(to right, black ${revealPct}%, transparent ${revealPct + 15}%)`;
-      }
-
-      requestAnimationFrame(tickCards);
-    }
-    requestAnimationFrame(tickCards);
-
-    // ===================== SECTION 3 INTERSECTION =====================
-    const sectionThreeInner = document.getElementById(
-      "section-three-inner"
-    ) as HTMLElement;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          sectionThreeInner.classList.add("visible");
-          observer.unobserve(sectionThreeInner);
-        }
-      },
-      { threshold: 0.15 }
-    );
-    observer.observe(sectionThreeInner);
-    cleanups.push(() => observer.disconnect());
-
     return () => {
       destroyed = true;
       cleanups.forEach((fn) => fn());
@@ -417,35 +353,6 @@ export default function VeldaraPage() {
         </div>
       </div>
 
-      {/* Fixed Cards */}
-      <div id="fixed-cards">
-        <div className="grid">
-          <div className="card">
-            <h3>Explore Veldara</h3>
-            <p>
-              Veldara merges the elegance of Svelte 5 with the depth of Three.js
-              within easy reach. It&apos;s crafted to be robust and adaptable
-              while remaining intuitive and simple to grasp.
-            </p>
-          </div>
-          <div className="card">
-            <h3>Unlock Three.js</h3>
-            <p>
-              The web is growing increasingly dimensional. At its heart, Veldara
-              offers a composable declarative API for building performant
-              Three.js experiences on the web.
-            </p>
-          </div>
-          <div className="card">
-            <h3>Connect Everything</h3>
-            <p>
-              Veldara ships with tooling for physics, XR, animation, layouting,
-              model loading, and extensive utilities to make building compelling
-              3D apps for the web effortless.
-            </p>
-          </div>
-        </div>
-      </div>
 
       {/* Main Content */}
       <div id="content">
@@ -455,29 +362,6 @@ export default function VeldaraPage() {
         {/* Immersive video-travel zone (longer = slower, more cinematic scrub) */}
         <div style={{ height: "320vh" }} />
 
-        {/* Cards Trigger Zone */}
-        <div id="cards-trigger" style={{ height: "260vh" }} />
-
-        {/* Spacer */}
-        <div style={{ height: "160vh" }} />
-
-        {/* Section 3 */}
-        <section id="section-three">
-          <div className="inner" id="section-three-inner">
-            <p
-              style={{
-                fontFamily: "var(--font-haffer), sans-serif",
-                textTransform: "uppercase",
-                letterSpacing: "0.08em",
-              }}
-            >
-              Your Vision, Built with Excellence
-            </p>
-            <h2 style={{ fontFamily: "var(--font-haffer), sans-serif" }}>
-              BlueSun
-            </h2>
-          </div>
-        </section>
 
         {/* Smooth fade from the video into the black intro — no hard cut. */}
         <div className="video-to-black" />
