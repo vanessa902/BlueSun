@@ -71,7 +71,7 @@ body {
   background: linear-gradient(
     to bottom,
     rgba(0, 0, 0, 0) 0%,
-    rgba(0, 0, 0, 0.48) 55%,
+    rgba(0, 0, 0, 0.38) 55%,
     #000 100%
   );
   pointer-events: none;
@@ -264,43 +264,42 @@ body {
   will-change: transform, opacity;
 }
 
-/* Scroll-driven floating rocks — z-index above the HUD frame so they
-   appear in front of everything. */
-#rocks-layer {
+/* Pure-black rock stage: a fixed full-screen black layer that the rock and
+   "Building Spaces" text live in. Opacity is scroll-driven (0 over the video,
+   1 while scrolling the rock zone, back to 0 to reveal the next section). */
+#rock-stage {
   position: fixed;
   inset: 0;
-  z-index: 50;
+  z-index: 40;
+  background: #000;
+  opacity: 0;
   pointer-events: none;
+  overflow: hidden;
 }
-#rock-left,
-#rock-right {
+#rock-stage #rock-right {
   position: absolute;
+  left: 50%;
   top: 50%;
+  width: clamp(180px, 22vw, 420px);
   height: auto;
   opacity: 0;
-  will-change: transform, opacity;
+  will-change: transform, opacity, top;
   filter: drop-shadow(0 30px 50px rgba(0, 0, 0, 0.6));
 }
-#rock-left {
-  left: 10%;
-  width: clamp(220px, 32vw, 560px);
-}
-#rock-right {
-  left: 88%;
-  width: clamp(150px, 19vw, 360px);
-}
-#rock-text {
+#rock-stage #rock-text {
   position: absolute;
-  transform: translateX(-50%);
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  /* +40% larger than the body text scale */
   font-family: var(--font-haffer), sans-serif;
   font-weight: 600;
-  font-size: clamp(1.4rem, 3vw, 2.8rem);
-  color: #9a9a9a;
+  font-size: clamp(2rem, 4.2vw, 3.8rem);
+  color: #ededea;
   letter-spacing: -0.015em;
   white-space: nowrap;
   opacity: 0;
-  pointer-events: none;
-  will-change: opacity, clip-path;
+  will-change: opacity, clip-path, filter, top;
 }
 
 /* Black intro cover: fully opaque on the first frame, fades out as you scroll. */

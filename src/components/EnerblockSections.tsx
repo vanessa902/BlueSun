@@ -130,15 +130,15 @@ export default function EnerblockSections() {
         <img src={`${BASE}/mountain.png`} alt="" />
       </section>
 
-      {/* Scroll zone for the rock animation phases */}
-      <div id="rock-scroll-zone" style={{ height: "280vh", background: "#000" }} />
+      {/* Tall pure-black scroll zone where the rock animation plays out.
+          The fixed black stage + rock + text live in <Rocks/>. */}
+      <div id="rock-zone" style={{ height: "640vh", background: "#000" }} />
 
-      {/* 1. Intro: title + 2D->3D blueprint with a rock resting on it */}
+      {/* 1. Intro: title + 2D->3D blueprint */}
       <section className="eb-intro">
         <div className="eb-intro__left">
           <h2 className="eb-title eb-intro__title" id="eb-intro-title">
-            <span id="eb-title-prefix" style={{ display: "inline" }}>Building spaces </span>
-            <span id="eb-title-rest">that stand the test of time</span>
+            That stand the test of time
           </h2>
           <p className="eb-intro__desc">
             Integrates enclosures, structure, and processes within an
