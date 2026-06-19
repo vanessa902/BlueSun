@@ -51,19 +51,6 @@ body {
   inset: 0;
   z-index: -10;
   background: #000;
-  /* Clip video to the SVG hero-frame shape using polygon percentages derived
-     from the SVG path (viewBox 0 0 1363 751). Polygon clips are resolution-
-     independent and guaranteed to align with the frame SVG (object-fit:fill). */
-  clip-path: polygon(
-    76.15% 0.27%,
-    0.07% 0.27%,
-    0.07% 90.08%,
-    31.79% 90.08%,
-    33.38% 99.87%,
-    99.78% 99.87%,
-    99.78% 8.86%,
-    78.65% 8.86%
-  );
 }
 #scroll-video-container canvas,
 #scroll-video-container video {
