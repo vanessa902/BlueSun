@@ -225,63 +225,6 @@ export default function VeldaraPage() {
     requestAnimationFrame(videoTick);
     extractFrames();
 
-    // ===================== PARTICLES =====================
-    const pCanvas = document.getElementById(
-      "particles-canvas"
-    ) as HTMLCanvasElement;
-    const pCtx = pCanvas.getContext("2d")!;
-    let particles: Array<{
-      x: number;
-      y: number;
-      vx: number;
-      vy: number;
-      size: number;
-      opacity: number;
-    }> = [];
-
-    function createParticles() {
-      particles = [];
-      const count = Math.floor((pCanvas.width * pCanvas.height) / 12000);
-      for (let i = 0; i < count; i++) {
-        particles.push({
-          x: Math.random() * pCanvas.width,
-          y: Math.random() * pCanvas.height,
-          vx: (Math.random() - 0.5) * 0.3,
-          vy: (Math.random() - 0.5) * 0.3,
-          size: Math.random() * 1.5 + 0.5,
-          opacity: Math.random() * 0.6 + 0.2,
-        });
-      }
-    }
-
-    function resizeParticles() {
-      pCanvas.width = window.innerWidth;
-      pCanvas.height = window.innerHeight;
-      createParticles();
-    }
-
-    function animateParticles() {
-      if (destroyed) return;
-      pCtx.clearRect(0, 0, pCanvas.width, pCanvas.height);
-      for (const p of particles) {
-        p.x += p.vx;
-        p.y += p.vy;
-        if (p.x < 0) p.x = pCanvas.width;
-        if (p.x > pCanvas.width) p.x = 0;
-        if (p.y < 0) p.y = pCanvas.height;
-        if (p.y > pCanvas.height) p.y = 0;
-        pCtx.beginPath();
-        pCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        pCtx.fillStyle = `rgba(255,255,255,${p.opacity})`;
-        pCtx.fill();
-      }
-      requestAnimationFrame(animateParticles);
-    }
-
-    resizeParticles();
-    onWin("resize", resizeParticles);
-    requestAnimationFrame(animateParticles);
-
     // ===================== HERO FADE =====================
     function updateHeroOpacity() {
       const fade = Math.max(0, 1 - window.scrollY / (window.innerHeight * 0.3));
@@ -313,8 +256,6 @@ export default function VeldaraPage() {
         />
       </div>
 
-      {/* Particles */}
-      <canvas id="particles-canvas" />
 
 
       {/* Scroll-driven floating rocks */}
