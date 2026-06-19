@@ -18,6 +18,7 @@ const easeOutBack = (t: number) => {
 
 export default function Rocks() {
   const stageRef = useRef<HTMLDivElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
   const rockRef = useRef<HTMLImageElement>(null);
   const text1Ref = useRef<HTMLSpanElement>(null);
   const text2Ref = useRef<HTMLDivElement>(null);
@@ -26,6 +27,81 @@ export default function Rocks() {
     let destroyed = false;
     let raf = 0;
     const t0 = performance.now();
+
+    const canvas = canvasRef.current!;
+    const ctx = canvas.getContext("2d")!;
+    const frames: ImageBitmap[] = [];
+    let framesReady = false;
+    let lastIdx = -1;
+
+    function resizeCanvas() {
+      const dpr = Math.min(devicePixelRatio, 2);
+      const w = Math.round(window.innerWidth * dpr);
+      const h = Math.round(window.innerHeight * dpr);
+      if (canvas.width !== w || canvas.height !== h) {
+        canvas.width = w;
+        canvas.height = h;
+      }
+      lastIdx = -1;
+    }
+
+    function drawFrame(frame: ImageBitmap) {
+      const cw = canvas.width;
+      const ch = canvas.height;
+      const s = Math.max(cw / frame.width, ch / frame.height);
+      const dw = frame.width * s;
+      const dh = frame.height * s;
+      ctx.drawImage(frame, (cw - dw) / 2, (ch - dh) / 2, dw, dh);
+    }
+
+    async function extractFrames() {
+      try {
+        const res = await fetch(ROCK_BG, { mode: "cors" });
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+
+        const video = document.createElement("video");
+        video.muted = true;
+        video.playsInline = true;
+        video.crossOrigin = "anonymous";
+        video.preload = "auto";
+        video.src = url;
+
+        await new Promise<void>((resolve, reject) => {
+          video.onloadedmetadata = () => resolve();
+          video.onerror = () => reject();
+          setTimeout(() => reject(), 15000);
+        });
+
+        const scale = Math.min(1, 1280 / video.videoWidth);
+        const sw = Math.round(video.videoWidth * scale);
+        const sh = Math.round(video.videoHeight * scale);
+        const count = Math.max(30, Math.min(90, Math.round(video.duration * 20)));
+
+        for (let i = 0; i < count; i++) {
+          if (destroyed) return;
+          video.currentTime = (i / (count - 1)) * (video.duration - 0.05);
+          await new Promise<void>((resolve, reject) => {
+            const onSeeked = () => {
+              video.removeEventListener("seeked", onSeeked);
+              resolve();
+            };
+            video.addEventListener("seeked", onSeeked);
+            setTimeout(() => { video.removeEventListener("seeked", onSeeked); reject(); }, 3000);
+          });
+          frames.push(await createImageBitmap(video, { resizeWidth: sw, resizeHeight: sh }));
+        }
+
+        if (frames.length > 0) framesReady = true;
+        URL.revokeObjectURL(url);
+      } catch {
+        /* silent fallback — canvas stays black */
+      }
+    }
+
+    resizeCanvas();
+    window.addEventListener("resize", resizeCanvas);
+    extractFrames();
 
     const tick = (now: number) => {
       if (destroyed) return;
@@ -46,6 +122,15 @@ export default function Rocks() {
         // Stage: fade in at start, fade out at the very end to reveal next section
         const stageOp = Math.min(seg(p, 0, 0.03), 1 - seg(p, 0.9, 1.0));
         stage.style.opacity = String(Math.max(0, stageOp));
+
+        // ---- SCROLL-DRIVEN VIDEO BACKGROUND ----
+        if (framesReady && frames.length > 0) {
+          const idx = Math.round(p * (frames.length - 1));
+          if (idx !== lastIdx) {
+            lastIdx = idx;
+            if (frames[idx]) drawFrame(frames[idx]);
+          }
+        }
 
         const bob = Math.sin(t * 0.8) * 4 * (1 - seg(p, 0.5, 0.62));
 
@@ -74,7 +159,6 @@ export default function Rocks() {
         rock.style.opacity = String(rockOp);
 
         // ---- "BUILDING SPACES" (text1) ----
-        // Typewriter reveal (0.16–0.26), disappear (0.36–0.42)
         const reveal1 = seg(p, 0.16, 0.26);
         const fade1 = seg(p, 0.36, 0.42);
         const t1Op = reveal1 * (1 - fade1);
@@ -85,14 +169,9 @@ export default function Rocks() {
         text1.style.top = `calc(62% + ${bob}px)`;
 
         // ---- "THAT STAND THE TEST OF TIME" (text2, two lines) ----
-        // Drops in from above with easeOutBack as it "hits" the rock (0.5–0.62).
         const drop = seg(p, 0.5, 0.62);
         const t2Y = lerp(-vh * 0.55, 0, easeOutBack(drop));
-
-        // Starts 100% larger (scale 2), then shrinks dramatically (0.74–0.84).
         const t2Scale = lerp(2.0, 0.45, seg(p, 0.74, 0.84));
-
-        // Fade in during the drop, fade out at the end (0.84–0.92).
         const t2Op = seg(p, 0.5, 0.56) * (1 - seg(p, 0.84, 0.92));
 
         text2.style.top = `calc(50% + ${t2Y}px)`;
@@ -104,22 +183,18 @@ export default function Rocks() {
       raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);
+
     return () => {
       destroyed = true;
       cancelAnimationFrame(raf);
+      window.removeEventListener("resize", resizeCanvas);
+      frames.forEach((f) => f.close?.());
     };
   }, []);
 
   return (
     <div id="rock-stage" ref={stageRef}>
-      <video
-        className="rock-stage-bg"
-        src={ROCK_BG}
-        autoPlay
-        loop
-        muted
-        playsInline
-      />
+      <canvas ref={canvasRef} className="rock-stage-bg" />
       <div className="rock-stage-overlay" />
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img ref={rockRef} id="rock-right" src={ROCK} alt="" />
