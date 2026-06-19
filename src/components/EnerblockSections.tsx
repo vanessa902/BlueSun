@@ -124,12 +124,6 @@ export default function EnerblockSections() {
 
   return (
     <div className="eb" ref={root}>
-      {/* Mountain image in the black space */}
-      <section className="eb-mountain" id="eb-mountain">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={`${BASE}/mountain.png`} alt="" />
-      </section>
-
       {/* Tall pure-black scroll zone where the rock animation plays out.
           The fixed black stage + rock + text live in <Rocks/>. */}
       <div id="rock-zone" style={{ height: "640vh", background: "#000" }} />
