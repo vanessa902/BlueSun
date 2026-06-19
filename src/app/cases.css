@@ -4,7 +4,6 @@
   position: relative;
   background: #fff;
   color: #000;
-  font-family: var(--font-dm), "DM Sans", sans-serif;
   z-index: 2;
 }
 

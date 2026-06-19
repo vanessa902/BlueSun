@@ -24,7 +24,7 @@ html.lenis body {
 }
 
 body {
-  font-family: var(--font-inter), "Inter", sans-serif;
+  font-family: var(--font-haffer), sans-serif;
   background: #000000;
   color: #fff;
 }
@@ -255,7 +255,6 @@ body {
   transform: translateX(-50%);
   opacity: 0;
   color: #fff;
-  font-family: var(--font-haffer), sans-serif;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.12em;
@@ -291,7 +290,6 @@ body {
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  font-family: var(--font-haffer), sans-serif;
   font-weight: 600;
   font-size: clamp(2rem, 4.2vw, 3.8rem);
   color: #ededea;
@@ -300,8 +298,7 @@ body {
   opacity: 0;
   will-change: opacity, clip-path, filter, top;
 }
-#rock-stage #rock-text2,
-#rock-stage #rock-text-ghost {
+#rock-stage #rock-text2 {
   position: absolute;
   left: 50%;
   top: 50%;
@@ -311,7 +308,6 @@ body {
   align-items: center;
   gap: 0.15em;
   text-align: center;
-  font-family: var(--font-haffer), sans-serif;
   font-weight: 600;
   line-height: 1.02;
   font-size: clamp(1.6rem, 3.2vw, 2.8rem);
@@ -319,14 +315,7 @@ body {
   letter-spacing: -0.015em;
   white-space: nowrap;
   opacity: 0;
-}
-#rock-stage #rock-text2 {
   will-change: opacity, transform, filter, top;
-}
-#rock-stage #rock-text-ghost {
-  font-weight: 400;
-  color: #cfcfca;
-  will-change: opacity, top;
 }
 
 /* Black intro cover: fully opaque on the first frame, fades out as you scroll. */

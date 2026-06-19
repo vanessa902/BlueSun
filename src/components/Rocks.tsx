@@ -19,7 +19,6 @@ export default function Rocks() {
   const stageRef = useRef<HTMLDivElement>(null);
   const rockRef = useRef<HTMLImageElement>(null);
   const text1Ref = useRef<HTMLSpanElement>(null);
-  const ghostRef = useRef<HTMLDivElement>(null);
   const text2Ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -36,10 +35,9 @@ export default function Rocks() {
       const stage = stageRef.current;
       const rock = rockRef.current;
       const text1 = text1Ref.current;
-      const ghost = ghostRef.current;
       const text2 = text2Ref.current;
 
-      if (zone && stage && rock && text1 && ghost && text2) {
+      if (zone && stage && rock && text1 && text2) {
         const zr = zone.getBoundingClientRect();
         const range = Math.max(1, zone.offsetHeight - vh);
         const p = clamp(-zr.top / range);
@@ -85,14 +83,6 @@ export default function Rocks() {
         text1.style.filter = `blur(${fade1 * 10}px)`;
         text1.style.top = `calc(62% + ${bob}px)`;
 
-        // ---- FADED 2-LINE GHOST TEXT (below the rock) ----
-        // Appears at low opacity below the rock (0.42–0.50), then fades as the
-        // full impact text takes over (0.50–0.58).
-        const ghostIn = seg(p, 0.42, 0.5);
-        const ghostOut = seg(p, 0.5, 0.58);
-        ghost.style.opacity = String(ghostIn * 0.3 * (1 - ghostOut));
-        ghost.style.top = `calc(70% + ${bob}px)`;
-
         // ---- "THAT STAND THE TEST OF TIME" (text2, two lines) ----
         // Drops in from above with easeOutBack as it "hits" the rock (0.5–0.62).
         const drop = seg(p, 0.5, 0.62);
@@ -126,12 +116,7 @@ export default function Rocks() {
       <span ref={text1Ref} id="rock-text">
         Building Spaces
       </span>
-      {/* Faded 2-line preview that appears below the rock before the impact */}
-      <div ref={ghostRef} id="rock-text-ghost" aria-hidden>
-        <span>That stand</span>
-        <span>the test of time</span>
-      </div>
-      {/* Full impact text, two lines, 100% larger then shrinks away */}
+      {/* Impact text, two lines, drops from above then shrinks away */}
       <div ref={text2Ref} id="rock-text2">
         <span>That stand</span>
         <span>the test of time</span>
