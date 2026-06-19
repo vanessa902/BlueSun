@@ -19,7 +19,8 @@ export default function Rocks() {
   const stageRef = useRef<HTMLDivElement>(null);
   const rockRef = useRef<HTMLImageElement>(null);
   const text1Ref = useRef<HTMLSpanElement>(null);
-  const text2Ref = useRef<HTMLSpanElement>(null);
+  const ghostRef = useRef<HTMLDivElement>(null);
+  const text2Ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     let destroyed = false;
@@ -35,18 +36,19 @@ export default function Rocks() {
       const stage = stageRef.current;
       const rock = rockRef.current;
       const text1 = text1Ref.current;
+      const ghost = ghostRef.current;
       const text2 = text2Ref.current;
 
-      if (zone && stage && rock && text1 && text2) {
+      if (zone && stage && rock && text1 && ghost && text2) {
         const zr = zone.getBoundingClientRect();
         const range = Math.max(1, zone.offsetHeight - vh);
         const p = clamp(-zr.top / range);
 
-        // Stage: fade in at start, fade out at end to reveal next section
-        const stageOp = Math.min(seg(p, 0, 0.03), 1 - seg(p, 0.88, 1.0));
+        // Stage: fade in at start, fade out at the very end to reveal next section
+        const stageOp = Math.min(seg(p, 0, 0.03), 1 - seg(p, 0.9, 1.0));
         stage.style.opacity = String(Math.max(0, stageOp));
 
-        const bob = Math.sin(t * 0.8) * 4 * (1 - seg(p, 0.58, 0.68));
+        const bob = Math.sin(t * 0.8) * 4 * (1 - seg(p, 0.5, 0.62));
 
         // ---- ROCK ----
         // 1. Appear from above (0.00–0.06)
@@ -61,12 +63,12 @@ export default function Rocks() {
         // 4. Grow 200% more: scale 1.8 → 3.6 (0.26–0.36)
         scale = lerp(scale, 3.6, seg(p, 0.26, 0.36));
 
-        // 6. Impact: rock gets pushed downward (0.42–0.54)
-        const impact = seg(p, 0.42, 0.54);
-        rockY += lerp(0, vh * 0.38, impact);
+        // 6. Impact: rock gets pushed downward (0.50–0.62)
+        const impact = seg(p, 0.5, 0.62);
+        rockY += lerp(0, vh * 0.42, impact);
 
-        // Rock opacity: fade in, then dissolve (0.60–0.72)
-        const rockOp = seg(p, 0.0, 0.04) * (1 - seg(p, 0.60, 0.72));
+        // Rock opacity: fade in, then dissolve (0.62–0.74)
+        const rockOp = seg(p, 0.0, 0.04) * (1 - seg(p, 0.62, 0.74));
 
         rock.style.top = `calc(50% + ${rockY + bob}px)`;
         rock.style.transform = `translate(-50%, -50%) scale(${scale})`;
@@ -83,22 +85,29 @@ export default function Rocks() {
         text1.style.filter = `blur(${fade1 * 10}px)`;
         text1.style.top = `calc(62% + ${bob}px)`;
 
-        // ---- "THAT STAND THE TEST OF TIME" (text2) ----
-        // Drops from above with easeOutBack (0.42–0.54)
-        const drop = seg(p, 0.42, 0.54);
-        const dropEased = easeOutBack(drop);
-        const t2Y = lerp(-vh * 0.6, 0, dropEased);
+        // ---- FADED 2-LINE GHOST TEXT (below the rock) ----
+        // Appears at low opacity below the rock (0.42–0.50), then fades as the
+        // full impact text takes over (0.50–0.58).
+        const ghostIn = seg(p, 0.42, 0.5);
+        const ghostOut = seg(p, 0.5, 0.58);
+        ghost.style.opacity = String(ghostIn * 0.3 * (1 - ghostOut));
+        ghost.style.top = `calc(70% + ${bob}px)`;
 
-        // Starts at 2× size (100% larger), shrinks to 20% (0.72–0.80)
-        const t2Scale = lerp(2.0, 0.4, seg(p, 0.72, 0.80));
+        // ---- "THAT STAND THE TEST OF TIME" (text2, two lines) ----
+        // Drops in from above with easeOutBack as it "hits" the rock (0.5–0.62).
+        const drop = seg(p, 0.5, 0.62);
+        const t2Y = lerp(-vh * 0.55, 0, easeOutBack(drop));
 
-        // Fade in during drop, fade out at end (0.80–0.88)
-        const t2Op = seg(p, 0.42, 0.48) * (1 - seg(p, 0.80, 0.88));
+        // Starts 100% larger (scale 2), then shrinks dramatically (0.74–0.84).
+        const t2Scale = lerp(2.0, 0.45, seg(p, 0.74, 0.84));
+
+        // Fade in during the drop, fade out at the end (0.84–0.92).
+        const t2Op = seg(p, 0.5, 0.56) * (1 - seg(p, 0.84, 0.92));
 
         text2.style.top = `calc(50% + ${t2Y}px)`;
         text2.style.transform = `translate(-50%, -50%) scale(${t2Scale})`;
         text2.style.opacity = String(t2Op);
-        text2.style.filter = `blur(${seg(p, 0.80, 0.88) * 12}px)`;
+        text2.style.filter = `blur(${seg(p, 0.84, 0.92) * 12}px)`;
       }
 
       raf = requestAnimationFrame(tick);
@@ -117,9 +126,16 @@ export default function Rocks() {
       <span ref={text1Ref} id="rock-text">
         Building Spaces
       </span>
-      <span ref={text2Ref} id="rock-text2">
-        That stand the test of time
-      </span>
+      {/* Faded 2-line preview that appears below the rock before the impact */}
+      <div ref={ghostRef} id="rock-text-ghost" aria-hidden>
+        <span>That stand</span>
+        <span>the test of time</span>
+      </div>
+      {/* Full impact text, two lines, 100% larger then shrinks away */}
+      <div ref={text2Ref} id="rock-text2">
+        <span>That stand</span>
+        <span>the test of time</span>
+      </div>
     </div>
   );
 }

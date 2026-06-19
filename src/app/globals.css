@@ -300,19 +300,33 @@ body {
   opacity: 0;
   will-change: opacity, clip-path, filter, top;
 }
-#rock-stage #rock-text2 {
+#rock-stage #rock-text2,
+#rock-stage #rock-text-ghost {
   position: absolute;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15em;
+  text-align: center;
   font-family: var(--font-haffer), sans-serif;
   font-weight: 600;
+  line-height: 1.02;
   font-size: clamp(1.6rem, 3.2vw, 2.8rem);
   color: #ededea;
   letter-spacing: -0.015em;
   white-space: nowrap;
   opacity: 0;
+}
+#rock-stage #rock-text2 {
   will-change: opacity, transform, filter, top;
+}
+#rock-stage #rock-text-ghost {
+  font-weight: 400;
+  color: #cfcfca;
+  will-change: opacity, top;
 }
 
 /* Black intro cover: fully opaque on the first frame, fades out as you scroll. */
