@@ -7,11 +7,9 @@ import Footer from "@/components/Footer";
 import Rocks from "@/components/Rocks";
 import "./hud.css";
 
-// Scroll-driven background video. Pointing directly at the CloudFront URL the
-// user provided (this sandbox can't download that host to self-host it). For the
-// smoothest frame-extraction scrub, host it same-origin in /public instead.
-const VIDEO_URL =
-  "https://d8j0ntlcm91z4.cloudfront.net/user_3F0vaG83I0heIlPgjk9CwxdqIpz/hf_20260618_095905_d7b07dbb-1c70-4930-a5ac-391e63428046.mp4";
+const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+// Scroll-driven background video, served same-origin from /public.
+const VIDEO_URL = `${BASE}/construction.mp4`;
 
 export default function VeldaraPage() {
   useEffect(() => {
@@ -51,6 +49,7 @@ export default function VeldaraPage() {
     const ctx = canvas.getContext("2d")!;
     const vignette = document.getElementById("scroll-vignette");
     const heroCover = document.getElementById("hero-cover");
+    const heroFrame = document.getElementById("hero-frame");
     const frames: ImageBitmap[] = [];
     let framesReady = false;
     let lastFrameIndex = -1;
@@ -163,6 +162,12 @@ export default function VeldaraPage() {
       if (heroCover) {
         const o = 1 - window.scrollY / (window.innerHeight * 0.9);
         heroCover.style.opacity = String(Math.max(0, Math.min(1, o)));
+      }
+      // Keep the SVG HUD frame for the whole video; fade it only as it ends.
+      if (heroFrame) {
+        heroFrame.style.opacity = String(
+          1 - Math.max(0, Math.min(1, (progress - 0.86) / 0.14))
+        );
       }
       // Parallax depth: the black cloud zooms in slightly and darkens as you scroll.
       if (vignette) {
@@ -368,6 +373,27 @@ export default function VeldaraPage() {
       {/* Scroll-driven floating rocks */}
       <Rocks />
 
+      {/* SVG HUD hero frame (stays during the whole video; fades as it ends) */}
+      <div id="hero-frame">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img className="hf-svg" src={`${BASE}/hero-frame.svg`} alt="" />
+        <div className="hf-center">
+          <p className="hf-eyebrow">Residential &amp; Commercial</p>
+          <h1 className="hf-title">
+            Construction
+            <br />
+            Experts
+          </h1>
+        </div>
+        <div className="hf-scroll">
+          SCROLL<span className="chev">⌄</span>
+        </div>
+        <div className="hf-chip">
+          <span className="dim">Engineering.</span> <b>Construction.</b>{" "}
+          <b>Solutions.</b>
+        </div>
+      </div>
+
       {/* Fixed Cards */}
       <div id="fixed-cards">
         <div className="grid">
@@ -400,71 +426,8 @@ export default function VeldaraPage() {
 
       {/* Main Content */}
       <div id="content">
-        {/* Section 1: Hero with HUD overlay */}
-        <section id="hero">
-          <div className="hud">
-            <div className="hud__top">
-              <a className="hud__logo" href="#">
-                <b>Blue</b>
-                <span>sun</span>
-                <small>svcs</small>
-              </a>
-              <div className="hud__socials">
-                <a href="#" aria-label="LinkedIn">in</a>
-                <a href="#" aria-label="Instagram">ig</a>
-                <a href="#" aria-label="Facebook">f</a>
-              </div>
-            </div>
-
-            <div className="hud__rail hud__rail--left">
-              <div className="bars">
-                <i /><i /><i /><i />
-              </div>
-              <span className="hud__build">◀ BUILD</span>
-              <div className="hud__ticks">
-                {Array.from({ length: 20 }).map((_, i) => (
-                  <i key={i} />
-                ))}
-              </div>
-            </div>
-
-            <div className="hud__rail hud__rail--right">
-              <div className="bars">
-                <i className="blue" /><i className="blue" /><i /><i />
-              </div>
-              <div className="hud__ticks">
-                {Array.from({ length: 20 }).map((_, i) => (
-                  <i key={i} />
-                ))}
-              </div>
-            </div>
-
-            <div className="hud__center">
-              <p className="hud__eyebrow">Residential &amp; Commercial</p>
-              <h1 className="hud__title">
-                Construction
-                <br />
-                Experts
-              </h1>
-            </div>
-
-            <div className="hud__scroll">
-              SCROLL
-              <span className="chev">⌄</span>
-            </div>
-
-            <div className="hud__chip">
-              <span className="dim">Engineering.</span> <b>Construction.</b>{" "}
-              <b>Solutions.</b>
-            </div>
-
-            <div className="hud__barcode">
-              <i /><i /><i /><i /><i />
-            </div>
-
-            <div className="hud__frame" />
-          </div>
-        </section>
+        {/* Section 1: Hero (scroll zone; visuals are the fixed SVG frame + video) */}
+        <section id="hero" />
 
         {/* Immersive video-travel zone (longer = slower, more cinematic scrub) */}
         <div style={{ height: "320vh" }} />
