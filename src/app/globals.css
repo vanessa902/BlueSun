@@ -51,14 +51,19 @@ body {
   inset: 0;
   z-index: -10;
   background: #000;
-  /* Clip the video to the SVG hero-frame shape (mask set inline in page.tsx).
-     Both the mask and the HUD frame SVG share the same viewBox + path, both
-     stretch to fill the viewport (preserveAspectRatio="none" / object-fit:fill),
-     so 100% x 100% aligns them perfectly. */
-  -webkit-mask-size: 100% 100%;
-  mask-size: 100% 100%;
-  -webkit-mask-repeat: no-repeat;
-  mask-repeat: no-repeat;
+  /* Clip video to the SVG hero-frame shape using polygon percentages derived
+     from the SVG path (viewBox 0 0 1363 751). Polygon clips are resolution-
+     independent and guaranteed to align with the frame SVG (object-fit:fill). */
+  clip-path: polygon(
+    76.15% 0.27%,
+    0.07% 0.27%,
+    0.07% 90.08%,
+    31.79% 90.08%,
+    33.38% 99.87%,
+    99.78% 99.87%,
+    99.78% 8.86%,
+    78.65% 8.86%
+  );
 }
 #scroll-video-container canvas,
 #scroll-video-container video {
@@ -272,11 +277,12 @@ body {
   will-change: transform, opacity;
 }
 
-/* Scroll-driven floating rocks */
+/* Scroll-driven floating rocks — z-index above the HUD frame so they
+   appear in front of everything. */
 #rocks-layer {
   position: fixed;
   inset: 0;
-  z-index: 6;
+  z-index: 50;
   pointer-events: none;
 }
 #rock-left,
@@ -289,8 +295,8 @@ body {
   filter: drop-shadow(0 30px 50px rgba(0, 0, 0, 0.6));
 }
 #rock-left {
-  left: 12%;
-  width: clamp(160px, 24vw, 440px);
+  left: 10%;
+  width: clamp(220px, 32vw, 560px);
 }
 #rock-right {
   left: 88%;

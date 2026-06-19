@@ -368,14 +368,9 @@ export default function VeldaraPage() {
 
   return (
     <>
-      {/* Scroll Video Background — clipped to the SVG hero-frame shape */}
-      <div
-        id="scroll-video-container"
-        style={{
-          WebkitMaskImage: `url(${BASE}/hero-mask.svg)`,
-          maskImage: `url(${BASE}/hero-mask.svg)`,
-        }}
-      >
+      {/* Scroll Video Background — clipped to the SVG hero-frame shape via
+           clip-path polygon in globals.css (no inline mask needed). */}
+      <div id="scroll-video-container">
         <canvas id="video-canvas" />
         <video
           id="video-fallback"
