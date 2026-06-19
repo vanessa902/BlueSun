@@ -285,17 +285,6 @@ body {
   will-change: transform, opacity, top;
   filter: drop-shadow(0 30px 50px rgba(0, 0, 0, 0.6));
 }
-#rock-stage #rock-debris {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: clamp(120px, 16vw, 300px);
-  height: auto;
-  opacity: 0;
-  mix-blend-mode: lighten;
-  filter: invert(1) drop-shadow(0 20px 40px rgba(0, 0, 0, 0.5));
-  will-change: transform, opacity, top;
-}
 #rock-stage #rock-text {
   position: absolute;
   left: 50%;
