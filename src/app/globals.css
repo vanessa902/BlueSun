@@ -52,13 +52,11 @@ body {
   z-index: -10;
   background: #000;
   /* Clip the video to the SVG hero-frame shape (mask set inline in page.tsx).
-     Size/position MUST match the inset frame box in hud.css (.hf-svg:
-     left/right 7% -> width 86%, top/bottom 9% -> height 82%), so the video
-     fills exactly inside the frame and everything outside is pure black. */
-  -webkit-mask-size: 86% 82%;
-  mask-size: 86% 82%;
-  -webkit-mask-position: center;
-  mask-position: center;
+     Both the mask and the HUD frame SVG share the same viewBox + path, both
+     stretch to fill the viewport (preserveAspectRatio="none" / object-fit:fill),
+     so 100% x 100% aligns them perfectly. */
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
   -webkit-mask-repeat: no-repeat;
   mask-repeat: no-repeat;
 }
