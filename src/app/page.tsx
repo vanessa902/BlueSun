@@ -5,6 +5,7 @@ import Lenis from "lenis";
 import EnerblockSections from "@/components/EnerblockSections";
 import Footer from "@/components/Footer";
 import ProjectsSection from "@/components/ProjectsSection";
+import StatsSection from "@/components/StatsSection";
 import Rocks from "@/components/Rocks";
 import "./hud.css";
 
@@ -302,6 +303,7 @@ export default function VeldaraPage() {
         <div id="video-end" />
         <EnerblockSections />
         <ProjectsSection />
+        <StatsSection />
         <Footer />
       </div>
     </>
