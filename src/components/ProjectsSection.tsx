@@ -6,8 +6,8 @@ import "../app/projects.css";
 
 const EASE = [0.25, 0.1, 0.25, 1] as const;
 
-const IMG = (path: string) =>
-  `https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2F${path}&w=1280&q=85`;
+const U = (id: string) =>
+  `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=1280&q=85`;
 
 type Project = {
   n: string;
@@ -19,32 +19,32 @@ type Project = {
 const PROJECTS: Project[] = [
   {
     n: "01",
-    name: "Nextlevel Studio",
-    category: "Client",
+    name: "Riverside Complex",
+    category: "Residential",
     images: [
-      IMG("hf_20260412_055344_5eff02e0-87a5-41ce-b64f-eb08da8f33db.png"),
-      IMG("hf_20260412_055431_11d841fd-8b41-46a5-82e4-b04f2407a7d8.png"),
-      IMG("hf_20260412_055451_e317bf2d-28d4-48cc-86b0-6f72f25b6327.png"),
+      U("1504307651254-35680f356dfd"),
+      U("1541888946425-d81bb19240f5"),
+      U("1503387762-592deb58ef4e"),
     ],
   },
   {
     n: "02",
-    name: "Aura Brand Identity",
-    category: "Personal",
+    name: "Industrial Park",
+    category: "Commercial",
     images: [
-      IMG("hf_20260412_055654_911201c5-36d9-4bc6-bac7-331adfce159f.png"),
-      IMG("hf_20260412_055723_5ceda0b8-d9c2-4665-b2e3-83ba19ba76d1.png"),
-      IMG("hf_20260412_055753_adc5dcbd-a8e6-49c0-b43a-9b030d835cea.png"),
+      U("1581094794329-c8112c4e1190"),
+      U("1565043666747-69f6646db940"),
+      U("1553413077-190dd305871c"),
     ],
   },
   {
     n: "03",
-    name: "Solaris Digital",
-    category: "Client",
+    name: "Harbor Tower",
+    category: "Mixed-Use",
     images: [
-      IMG("hf_20260412_055759_963cfb0b-4bd1-4b0f-9d0a-09bd6cf95b2f.png"),
-      IMG("hf_20260412_060108_438f781a-9846-4dcc-89ab-c4e6cb830f5b.png"),
-      IMG("hf_20260412_055818_9d062121-ad7e-46b9-999a-1a6a692ef1ee.png"),
+      U("1486406146926-c627a92ad1ab"),
+      U("1564013799919-ab600027ffc6"),
+      U("1545324418-cc1a3fa10c00"),
     ],
   },
 ];

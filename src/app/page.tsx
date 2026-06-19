@@ -11,7 +11,7 @@ import "./hud.css";
 
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 // Scroll-driven background video, served same-origin from /public.
-const VIDEO_URL = `${BASE}/construction.mp4`;
+const VIDEO_URL = `${BASE}/hero.mp4`;
 
 export default function VeldaraPage() {
   useEffect(() => {

@@ -2,8 +2,6 @@
 
 import { useEffect, useRef } from "react";
 import "../app/enerblock.css";
-import Scaffolding3D from "./Scaffolding3D";
-
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
 export default function EnerblockSections() {
@@ -67,8 +65,6 @@ export default function EnerblockSections() {
               </svg>
             </div>
           </div>
-          {/* Draggable 3D scaffolding sitting on top of the blueprint vector */}
-          <Scaffolding3D />
           {/* The rock that "lands" here is the scroll-driven #rock-right
               (rendered in <Rocks/>), which arrives on top of this vector via
               scrolling — it is intentionally NOT a static image anymore. */}
