@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 const ROCK = `${BASE}/rock1.png`;
+const DEBRIS = `${BASE}/debris.png`;
 
 const clamp = (v: number, a = 0, b = 1) => Math.max(a, Math.min(b, v));
 const seg = (v: number, a: number, b: number) => clamp((v - a) / (b - a));
@@ -18,6 +19,7 @@ const easeOutBack = (t: number) => {
 export default function Rocks() {
   const stageRef = useRef<HTMLDivElement>(null);
   const rockRef = useRef<HTMLImageElement>(null);
+  const debrisRef = useRef<HTMLImageElement>(null);
   const text1Ref = useRef<HTMLSpanElement>(null);
   const text2Ref = useRef<HTMLDivElement>(null);
 
@@ -29,15 +31,17 @@ export default function Rocks() {
     const tick = (now: number) => {
       if (destroyed) return;
       const vh = window.innerHeight;
+      const vw = window.innerWidth;
       const t = (now - t0) / 1000;
 
       const zone = document.getElementById("rock-zone");
       const stage = stageRef.current;
       const rock = rockRef.current;
+      const debris = debrisRef.current;
       const text1 = text1Ref.current;
       const text2 = text2Ref.current;
 
-      if (zone && stage && rock && text1 && text2) {
+      if (zone && stage && rock && debris && text1 && text2) {
         const zr = zone.getBoundingClientRect();
         const range = Math.max(1, zone.offsetHeight - vh);
         const p = clamp(-zr.top / range);
@@ -71,6 +75,20 @@ export default function Rocks() {
         rock.style.top = `calc(50% + ${rockY + bob}px)`;
         rock.style.transform = `translate(-50%, -50%) scale(${scale})`;
         rock.style.opacity = String(rockOp);
+
+        // ---- DEBRIS (beside the rock, rotates, same lifecycle) ----
+        const debrisAppear = seg(p, 0.02, 0.08);
+        let debrisY = lerp(-vh * 0.25, 0, debrisAppear);
+        debrisY += lerp(0, vh * 0.42, impact);
+        const debrisRotation = p * 360;
+        const debrisScale = lerp(0.7, 1.2, seg(p, 0.06, 0.16));
+        const debrisOp = seg(p, 0.02, 0.06) * (1 - seg(p, 0.62, 0.74));
+        const debrisX = Math.min(vw * 0.22, 280);
+
+        debris.style.top = `calc(50% + ${debrisY + bob * 0.7}px)`;
+        debris.style.left = `calc(50% + ${debrisX}px)`;
+        debris.style.transform = `translate(-50%, -50%) rotate(${debrisRotation}deg) scale(${debrisScale})`;
+        debris.style.opacity = String(debrisOp);
 
         // ---- "BUILDING SPACES" (text1) ----
         // Typewriter reveal (0.16–0.26), disappear (0.36–0.42)
@@ -113,6 +131,8 @@ export default function Rocks() {
     <div id="rock-stage" ref={stageRef}>
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img ref={rockRef} id="rock-right" src={ROCK} alt="" />
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img ref={debrisRef} id="rock-debris" src={DEBRIS} alt="" />
       <span ref={text1Ref} id="rock-text">
         Building Spaces
       </span>
