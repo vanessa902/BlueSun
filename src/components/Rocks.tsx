@@ -19,6 +19,7 @@ const easeOutBack = (t: number) => {
 export default function Rocks() {
   const stageRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const overlayRef = useRef<HTMLDivElement>(null);
   const rockRef = useRef<HTMLImageElement>(null);
   const text1Ref = useRef<HTMLSpanElement>(null);
   const text2Ref = useRef<HTMLDivElement>(null);
@@ -110,17 +111,19 @@ export default function Rocks() {
 
       const zone = document.getElementById("rock-zone");
       const stage = stageRef.current;
+      const overlay = overlayRef.current;
       const rock = rockRef.current;
       const text1 = text1Ref.current;
       const text2 = text2Ref.current;
 
-      if (zone && stage && rock && text1 && text2) {
+      if (zone && stage && overlay && rock && text1 && text2) {
         const zr = zone.getBoundingClientRect();
         const range = Math.max(1, zone.offsetHeight - vh);
         const p = clamp(-zr.top / range);
 
-        // Stage: fade in at start, fade out at the very end to reveal next section
-        const stageOp = Math.min(seg(p, 0, 0.03), 1 - seg(p, 0.9, 1.0));
+        // Stage: fade in at start; the final dissolve (the "6th scroll") fades
+        // the whole stage out at 0.93–1.0 to reveal the next section.
+        const stageOp = Math.min(seg(p, 0, 0.03), 1 - seg(p, 0.93, 1.0));
         stage.style.opacity = String(Math.max(0, stageOp));
 
         // ---- SCROLL-DRIVEN VIDEO BACKGROUND ----
@@ -128,13 +131,29 @@ export default function Rocks() {
         const bgFade = seg(p, 0.26, 0.32);
         canvas.style.opacity = String(bgFade);
         if (framesReady && frames.length > 0 && p >= 0.25) {
-          const bgP = seg(p, 0.26, 0.92);
+          const bgP = seg(p, 0.26, 0.95);
           const idx = Math.round(bgP * (frames.length - 1));
           if (idx !== lastIdx) {
             lastIdx = idx;
             if (frames[idx]) drawFrame(frames[idx]);
           }
         }
+
+        // ---- VIDEO GROW-TO-FULLSCREEN FINALE ----
+        // After "That stand the test of time" shrinks small (done by ~0.70),
+        // the video settles into a centered panel (0.60–0.70), then grows +20%
+        // per scroll across 5 scroll-steps (0.70–0.93) until it covers the whole
+        // screen, then dissolves with the stage on the 6th scroll (0.93–1.0).
+        const settle = seg(p, 0.6, 0.7);
+        const growth = seg(p, 0.7, 0.93);
+        let videoScale = 1;
+        if (p >= 0.7) {
+          videoScale = 0.41 * Math.pow(1.2, 5 * growth); // 0.41 → ~1.02 (covers)
+        } else if (p >= 0.6) {
+          videoScale = lerp(1, 0.41, settle);
+        }
+        canvas.style.transform = `scale(${videoScale})`;
+        overlay.style.opacity = String(lerp(0.7, 0.12, settle));
 
         const bob = Math.sin(t * 0.8) * 4 * (1 - seg(p, 0.5, 0.62));
 
@@ -151,12 +170,12 @@ export default function Rocks() {
         // 4. Grow 200% more: scale 1.8 → 3.6 (0.26–0.36)
         scale = lerp(scale, 3.6, seg(p, 0.26, 0.36));
 
-        // 6. Impact: rock gets pushed downward (0.50–0.62)
-        const impact = seg(p, 0.5, 0.62);
+        // 6. Impact: rock gets pushed downward (0.46–0.58)
+        const impact = seg(p, 0.46, 0.58);
         rockY += lerp(0, vh * 0.42, impact);
 
-        // Rock opacity: fade in, then dissolve (0.62–0.74)
-        const rockOp = seg(p, 0.0, 0.04) * (1 - seg(p, 0.62, 0.74));
+        // Rock opacity: fade in, then dissolve before the video finale (0.52–0.62)
+        const rockOp = seg(p, 0.0, 0.04) * (1 - seg(p, 0.52, 0.62));
 
         rock.style.top = `calc(50% + ${rockY + bob}px)`;
         rock.style.transform = `translate(-50%, -50%) scale(${scale})`;
@@ -173,15 +192,16 @@ export default function Rocks() {
         text1.style.top = `calc(62% + ${bob}px)`;
 
         // ---- "THAT STAND THE TEST OF TIME" (text2, two lines) ----
-        const drop = seg(p, 0.5, 0.62);
+        // Drops in, shrinks small, then clears out before the video grows.
+        const drop = seg(p, 0.46, 0.58);
         const t2Y = lerp(-vh * 0.55, 0, easeOutBack(drop));
-        const t2Scale = lerp(2.0, 0.45, seg(p, 0.74, 0.84));
-        const t2Op = seg(p, 0.5, 0.56) * (1 - seg(p, 0.84, 0.92));
+        const t2Scale = lerp(2.0, 0.45, seg(p, 0.56, 0.66));
+        const t2Op = seg(p, 0.46, 0.52) * (1 - seg(p, 0.62, 0.7));
 
         text2.style.top = `calc(50% + ${t2Y}px)`;
         text2.style.transform = `translate(-50%, -50%) scale(${t2Scale})`;
         text2.style.opacity = String(t2Op);
-        text2.style.filter = `blur(${seg(p, 0.84, 0.92) * 12}px)`;
+        text2.style.filter = `blur(${seg(p, 0.62, 0.7) * 12}px)`;
       }
 
       raf = requestAnimationFrame(tick);
@@ -199,7 +219,7 @@ export default function Rocks() {
   return (
     <div id="rock-stage" ref={stageRef}>
       <canvas ref={canvasRef} className="rock-stage-bg" />
-      <div className="rock-stage-overlay" />
+      <div ref={overlayRef} className="rock-stage-overlay" />
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img ref={rockRef} id="rock-right" src={ROCK} alt="" />
       <span ref={text1Ref} id="rock-text">
