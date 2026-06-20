@@ -90,6 +90,18 @@ export default function StatsSection() {
 
   return (
     <section className="stats" ref={ref}>
+      {/* Infinite CSS marquee — the track holds two identical copies and
+          slides -50%, so the loop is seamless. */}
+      <div className="stats-marquee" aria-hidden="true">
+        <div className="stats-marquee__track">
+          {[0, 1].map((i) => (
+            <span className="stats-marquee__copy" key={i}>
+              Engineering&nbsp;&mdash;&nbsp;Construction&nbsp;&mdash;&nbsp;Solutions&nbsp;&mdash;&nbsp;Residencial&nbsp;&mdash;&nbsp;Comercial&nbsp;&mdash;&nbsp;
+            </span>
+          ))}
+        </div>
+      </div>
+
       <div className="stats__grid">
         {STATS.map((s, i) => (
           <StatCard key={i} stat={s} index={i} progress={scrollYProgress} />

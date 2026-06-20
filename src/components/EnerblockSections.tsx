@@ -25,8 +25,30 @@ export default function EnerblockSections() {
       requestAnimationFrame(tick);
     }
     requestAnimationFrame(tick);
+
+    // Typewriter intro title: lines start hidden ("eb-armed") and reveal
+    // left-to-right with a stepped clip once the title scrolls into view.
+    const title = document.getElementById("eb-intro-title");
+    let io: IntersectionObserver | null = null;
+    if (title) {
+      title.classList.add("eb-armed");
+      io = new IntersectionObserver(
+        (entries) => {
+          for (const e of entries) {
+            if (e.isIntersecting) {
+              title.classList.add("is-typing");
+              io?.disconnect();
+            }
+          }
+        },
+        { threshold: 0.35 }
+      );
+      io.observe(title);
+    }
+
     return () => {
       destroyed = true;
+      io?.disconnect();
     };
   }, []);
 
@@ -68,10 +90,15 @@ export default function EnerblockSections() {
             </span>
           </h2>
           <p className="eb-intro__desc">
-            Integrates enclosures, structure, and processes within an
-            industrialized and digital framework. It connects design,
-            manufacturing, and assembly to reduce deviations in timelines, costs,
-            and compliance, turning construction into a planned assembly process.
+            Integrates enclosures, structure, and processes within
+            <br />
+            an industrialized and digital framework. It connects
+            <br />
+            design, manufacturing, and assembly to reduce
+            <br />
+            deviations in timelines, costs, and compliance, turning
+            <br />
+            construction into a planned assembly process.
           </p>
         </div>
         <div className="eb-intro__right">
