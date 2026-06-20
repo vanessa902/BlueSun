@@ -40,8 +40,8 @@
   transition: opacity 0.18s linear;
 }
 #hero-frame .hf-title {
-  font-weight: 700;
-  text-transform: lowercase;
+  font-weight: 400;
+  text-transform: uppercase;
   letter-spacing: -0.01em;
   line-height: 0.92;
   font-size: clamp(2.6rem, 7.5vw, 6.5rem);
@@ -62,12 +62,13 @@
   flex-direction: column;
   align-items: center;
 }
-/* Lowercase title, uppercase first letter only. */
-#hero-frame .hf-line:first-child::first-letter {
-  text-transform: uppercase;
+/* CONSTRUCTION in regular weight. */
+#hero-frame .hf-line {
+  font-weight: 400;
 }
+/* EXPERTS in light weight. */
 #hero-frame .hf-line--reg {
-  font-weight: 400; /* EXPERTS in REGULAR weight */
+  font-weight: 300;
 }
 #hero-frame .hf-line.is-typing {
   border-right: 0.06em solid currentColor;
