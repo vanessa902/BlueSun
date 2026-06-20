@@ -40,7 +40,32 @@ export default function EnerblockSections() {
       <section className="eb-intro">
         <div className="eb-intro__left">
           <h2 className="eb-title eb-intro__title" id="eb-intro-title">
-            That stand the test of time
+            <span className="eb-intro__line">
+              <span>WE</span>
+              <span>APPROACH</span>
+              <span>EACH</span>
+              <span>OF</span>
+            </span>
+            <span className="eb-intro__line">
+              <span>OUR</span>
+              <span>DISCIPLINES</span>
+              <span>AS</span>
+              <span>A</span>
+            </span>
+            <span className="eb-intro__line">
+              <span>GENEROUS</span>
+              <span>GESTURE</span>
+            </span>
+            <span className="eb-intro__line">
+              <span>TRYING</span>
+              <span>TO</span>
+              <span>REACH</span>
+              <span>OUT</span>
+            </span>
+            <span className="eb-intro__line">
+              <span>IT&rsquo;S</span>
+              <span>AUDIENCE</span>
+            </span>
           </h2>
           <p className="eb-intro__desc">
             Integrates enclosures, structure, and processes within an

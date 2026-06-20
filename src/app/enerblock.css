@@ -37,8 +37,20 @@
 }
 .eb-intro__title {
   color: #9a9a9a;
-  font-size: clamp(2rem, 3.6vw, 3.5rem);
-  max-width: 16ch;
+  font-size: clamp(1.5rem, 3.4vw, 3.25rem);
+  width: 100%;
+  max-width: 18ch;
+  text-transform: uppercase;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1em;
+}
+/* Each line spreads its words to the column edges, matching the justified
+   visual order of the reference layout. */
+.eb-intro__line {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5em;
 }
 .eb-intro__desc {
   max-width: 34ch;
@@ -46,6 +58,8 @@
   font-size: 0.95rem;
   line-height: 1.6;
   font-weight: 400;
+  /* Nudge the description up ~20% of its own height. */
+  transform: translateY(-20%);
 }
 .eb-intro__right {
   position: relative;
