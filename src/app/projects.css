@@ -41,20 +41,24 @@
   margin: 0 auto;
 }
 
-/* Each wrapper is taller than the card so the sticky card "tucks" as you scroll */
-.proj-card-wrap {
-  position: relative;
-  height: 85vh;
-}
-
+/* Cards are direct children of the list so each sticky card stays pinned
+   within the whole section — they pile up instead of leaving with a wrapper.
+   --proj-step is how far each card stops below the previous one, which is the
+   strip of the previous card's header that stays visible underneath. */
 .proj-card {
   --proj-sticky: 6rem;
+  --proj-step: clamp(2.5rem, 4vw, 3.75rem);
   position: sticky;
   transform-origin: top center;
   border: 2px solid #d0d0d0;
   border-radius: clamp(40px, 5vw, 60px);
   background: #ffffff;
   padding: clamp(1rem, 2vw, 2rem);
+  /* Trailing space = scroll distance before the next card slides up over it. */
+  margin-bottom: 55vh;
+}
+.proj-card:last-child {
+  margin-bottom: 0;
 }
 @media (min-width: 768px) {
   .proj-card {
@@ -120,7 +124,7 @@
   grid-template-columns: 40% 60%;
   gap: clamp(0.75rem, 1.5vw, 1.25rem);
   overflow: hidden;
-  border-radius: clamp(30px, 4vw, 50px);
+  border-radius: 0;
 }
 .proj-card__col1 {
   display: flex;
@@ -132,7 +136,8 @@
   display: block;
   width: 100%;
   object-fit: cover;
-  border-radius: clamp(40px, 5vw, 60px);
+  /* Square corners on every project image. */
+  border-radius: 0;
 }
 .proj-img--t {
   height: clamp(130px, 16vw, 230px);

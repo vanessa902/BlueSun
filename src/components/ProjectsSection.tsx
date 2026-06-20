@@ -60,64 +60,54 @@ function ProjectCard({
   total: number;
   sectionProgress: MotionValue<number>;
 }) {
-  const cardRef = useRef<HTMLDivElement>(null);
-
-  const { scrollYProgress: cardScroll } = useScroll({
-    target: cardRef,
-    offset: ["start end", "start 0.35"],
-  });
-
+  // Cards behind the stack shrink slightly as later cards slide over them,
+  // so only the previous card's header text peeks out above the next one.
   const targetScale = 1 - (total - 1 - index) * 0.05;
-  const scale = useTransform(sectionProgress, [index / total, 1], [1, targetScale]);
-
-  const cardY = useTransform(cardScroll, [0, 1], [120, 0]);
-  const cardOpacity = useTransform(cardScroll, [0, 0.6], [0, 1]);
-
-  const imgY1 = useTransform(cardScroll, [0, 1], [40, 0]);
-  const imgY2 = useTransform(cardScroll, [0, 1], [60, 0]);
+  const scale = useTransform(
+    sectionProgress,
+    [index / total, 1],
+    [1, targetScale]
+  );
 
   return (
-    <div className="proj-card-wrap" ref={cardRef}>
-      <motion.article
-        className="proj-card"
-        style={{
-          scale,
-          top: `calc(var(--proj-sticky) + ${index * 28}px)`,
-          y: cardY,
-          opacity: cardOpacity,
-        }}
-      >
-        <div className="proj-card__top">
-          <span className="proj-card__num">{project.n}</span>
-          <div className="proj-card__info">
-            <span className="proj-card__cat">{project.category}</span>
-            <span className="proj-card__name">{project.name}</span>
-          </div>
-          <button className="proj-live" type="button">
-            Live Project
-          </button>
+    <motion.article
+      className="proj-card"
+      style={{
+        scale,
+        // Each card sticks a bit lower than the one before it, revealing the
+        // header (number + name) of the previous card underneath.
+        top: `calc(var(--proj-sticky) + ${index} * var(--proj-step))`,
+        zIndex: index + 1,
+      }}
+      initial={{ opacity: 0, y: 40 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.2 }}
+      transition={{ duration: 0.6, ease: EASE }}
+    >
+      <div className="proj-card__top">
+        <span className="proj-card__num">{project.n}</span>
+        <div className="proj-card__info">
+          <span className="proj-card__cat">{project.category}</span>
+          <span className="proj-card__name">{project.name}</span>
         </div>
+        <button className="proj-live" type="button">
+          Live Project
+        </button>
+      </div>
 
-        <div className="proj-card__grid">
-          <div className="proj-card__col1">
-            <motion.div style={{ y: imgY1 }}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img className="proj-img proj-img--t" src={project.images[0]} alt="" loading="lazy" />
-            </motion.div>
-            <motion.div style={{ y: imgY2 }}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img className="proj-img proj-img--b" src={project.images[1]} alt="" loading="lazy" />
-            </motion.div>
-          </div>
-          <div className="proj-card__col2">
-            <motion.div style={{ y: imgY1 }}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img className="proj-img proj-img--tall" src={project.images[2]} alt="" loading="lazy" />
-            </motion.div>
-          </div>
+      <div className="proj-card__grid">
+        <div className="proj-card__col1">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img className="proj-img proj-img--t" src={project.images[0]} alt="" loading="lazy" />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img className="proj-img proj-img--b" src={project.images[1]} alt="" loading="lazy" />
         </div>
-      </motion.article>
-    </div>
+        <div className="proj-card__col2">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img className="proj-img proj-img--tall" src={project.images[2]} alt="" loading="lazy" />
+        </div>
+      </div>
+    </motion.article>
   );
 }
 
