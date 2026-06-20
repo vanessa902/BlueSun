@@ -11,6 +11,62 @@
   --bg-black: #000000;
 }
 
+/* Reusable glass button: square with chamfered (cut) corners, frosted glass,
+   inverts to solid white on hover. Used by every button on the site. */
+.btn-glass {
+  --btn-cut: 9px;
+  position: relative;
+  border: none;
+  cursor: pointer;
+  padding: 0.75rem 2rem;
+  white-space: nowrap;
+  color: inherit;
+  background: rgba(127, 127, 127, 0.12);
+  -webkit-backdrop-filter: blur(10px) saturate(140%);
+  backdrop-filter: blur(10px) saturate(140%);
+  transition: background 0.25s ease, color 0.25s ease;
+  clip-path: polygon(
+    var(--btn-cut) 0,
+    calc(100% - var(--btn-cut)) 0,
+    100% var(--btn-cut),
+    100% calc(100% - var(--btn-cut)),
+    calc(100% - var(--btn-cut)) 100%,
+    var(--btn-cut) 100%,
+    0 calc(100% - var(--btn-cut)),
+    0 var(--btn-cut)
+  );
+}
+/* Hairline outline following the same chamfered shape. */
+.btn-glass::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: rgba(0, 0, 0, 0.28);
+  clip-path: polygon(
+    var(--btn-cut) 0,
+    calc(100% - var(--btn-cut)) 0,
+    100% var(--btn-cut),
+    100% calc(100% - var(--btn-cut)),
+    calc(100% - var(--btn-cut)) 100%,
+    var(--btn-cut) 100%,
+    0 calc(100% - var(--btn-cut)),
+    0 var(--btn-cut),
+    var(--btn-cut) 1px,
+    1px var(--btn-cut),
+    1px calc(100% - var(--btn-cut)),
+    var(--btn-cut) calc(100% - 1px),
+    calc(100% - var(--btn-cut)) calc(100% - 1px),
+    calc(100% - 1px) calc(100% - var(--btn-cut)),
+    calc(100% - 1px) var(--btn-cut),
+    calc(100% - var(--btn-cut)) 1px
+  );
+}
+.btn-glass:hover {
+  background: #ffffff;
+  color: #111111;
+}
+
 html,
 body {
   overflow-x: clip;

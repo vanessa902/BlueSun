@@ -138,6 +138,40 @@
   font-style: italic;
 }
 
+/* Numeric count-up: an @property-registered integer animates from 0 to
+   --target and is printed via a CSS counter. Runs once .is-counting is set
+   when the section scrolls into view. */
+@property --stat-num {
+  syntax: "<integer>";
+  inherits: false;
+  initial-value: 0;
+}
+.stat-card__count {
+  --target: 0;
+  counter-reset: stat-num var(--stat-num);
+}
+.stat-card__count::after {
+  content: counter(stat-num);
+}
+.stats.is-counting .stat-card__count {
+  animation: stat-count 1.2s cubic-bezier(0.16, 0.84, 0.3, 1) forwards;
+}
+@keyframes stat-count {
+  from {
+    --stat-num: 0;
+  }
+  to {
+    --stat-num: var(--target);
+  }
+}
+/* Reduced motion / no @property support: show the final figure outright. */
+@media (prefers-reduced-motion: reduce) {
+  .stat-card__count {
+    counter-reset: stat-num var(--target);
+    animation: none;
+  }
+}
+
 .stat-card__arrow {
   display: flex;
   align-items: center;

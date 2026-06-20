@@ -62,6 +62,10 @@
   flex-direction: column;
   align-items: center;
 }
+/* Lowercase title, uppercase first letter only. */
+#hero-frame .hf-line:first-child::first-letter {
+  text-transform: uppercase;
+}
 #hero-frame .hf-line--reg {
   font-weight: 400; /* EXPERTS in REGULAR weight */
 }

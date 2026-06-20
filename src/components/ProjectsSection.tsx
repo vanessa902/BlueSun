@@ -90,7 +90,7 @@ function ProjectCard({
           <span className="proj-card__cat">{project.category}</span>
           <span className="proj-card__name">{project.name}</span>
         </div>
-        <button className="proj-live" type="button">
+        <button className="btn-glass proj-live" type="button">
           Live Project
         </button>
       </div>
