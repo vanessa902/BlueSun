@@ -2,7 +2,7 @@ import "../app/footer.css";
 
 export default function Footer() {
   return (
-    <footer className="site-footer">
+    <footer className="site-footer" id="contact">
       <div className="footer-dots" aria-hidden="true">
         <div className="footer-dots__line" />
       </div>

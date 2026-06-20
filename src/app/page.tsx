@@ -7,6 +7,7 @@ import Footer from "@/components/Footer";
 import ProjectsSection from "@/components/ProjectsSection";
 import StatsSection from "@/components/StatsSection";
 import Rocks from "@/components/Rocks";
+import Navbar from "@/components/Navbar";
 import "./hud.css";
 
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
@@ -241,6 +242,9 @@ export default function VeldaraPage() {
 
   return (
     <>
+      {/* Fixed glass header with chamfered (cut) corners */}
+      <Navbar />
+
       {/* Scroll Video Background — clipped to the SVG hero-frame shape via
            clip-path polygon in globals.css (no inline mask needed). */}
       <div id="scroll-video-container">
@@ -264,8 +268,6 @@ export default function VeldaraPage() {
       <div id="hero-frame">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img className="hf-svg" src={`${BASE}/hero-frame.svg`} alt="" />
-        {/* HUD scan line that tracks the hero scrollytelling progress */}
-        <div className="hf-scan" />
         <div className="hf-center" id="hf-center">
           <p className="hf-eyebrow">Residential &amp; Commercial</p>
           <h1 className="hf-title">

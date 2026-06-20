@@ -18,27 +18,6 @@
   object-fit: fill;
 }
 
-/* HUD scan line: a thin readout that travels top->bottom as the hero
-   scrollytelling progresses, so the SVG frame "measures" the scroll. */
-#hero-frame .hf-scan {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: calc(var(--hero-p, 0) * 100%);
-  height: 2px;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(90, 150, 220, 0.65) 18%,
-    rgba(140, 200, 255, 0.9) 50%,
-    rgba(90, 150, 220, 0.65) 82%,
-    transparent 100%
-  );
-  box-shadow: 0 0 18px rgba(120, 190, 255, 0.55);
-  opacity: calc(0.25 + var(--hero-p, 0) * 0.55);
-  mix-blend-mode: screen;
-}
-
 /* centered hero text */
 #hero-frame .hf-center {
   position: absolute;

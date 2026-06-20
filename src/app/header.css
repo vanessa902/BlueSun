@@ -1,0 +1,107 @@
+/* Fixed glass header with chamfered (cut) corners.
+   The chamfer is built with clip-path (the panel) plus a matching SVG-free
+   border drawn on a ::before that shares the same clip, so the cut corners
+   read as a crisp notched glass bar. */
+.bsnav {
+  --bsnav-cut: 14px;
+  position: fixed;
+  top: clamp(0.75rem, 1.6vw, 1.4rem);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 50;
+  width: min(1180px, calc(100% - 2rem));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: 0.7rem clamp(1rem, 2vw, 1.75rem);
+
+  /* Frosted glass */
+  background: rgba(18, 22, 28, 0.38);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  backdrop-filter: blur(16px) saturate(140%);
+  color: #fff;
+
+  /* Square panel with the four corners cut off */
+  clip-path: polygon(
+    var(--bsnav-cut) 0,
+    calc(100% - var(--bsnav-cut)) 0,
+    100% var(--bsnav-cut),
+    100% calc(100% - var(--bsnav-cut)),
+    calc(100% - var(--bsnav-cut)) 100%,
+    var(--bsnav-cut) 100%,
+    0 calc(100% - var(--bsnav-cut)),
+    0 var(--bsnav-cut)
+  );
+}
+
+/* Hairline outline that follows the same chamfered shape */
+.bsnav::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: rgba(255, 255, 255, 0.16);
+  clip-path: polygon(
+    var(--bsnav-cut) 0,
+    calc(100% - var(--bsnav-cut)) 0,
+    100% var(--bsnav-cut),
+    100% calc(100% - var(--bsnav-cut)),
+    calc(100% - var(--bsnav-cut)) 100%,
+    var(--bsnav-cut) 100%,
+    0 calc(100% - var(--bsnav-cut)),
+    0 var(--bsnav-cut),
+    /* inner cutout (1px inset) makes the fill read as a 1px border */
+    var(--bsnav-cut) 1px,
+    1px var(--bsnav-cut),
+    1px calc(100% - var(--bsnav-cut)),
+    var(--bsnav-cut) calc(100% - 1px),
+    calc(100% - var(--bsnav-cut)) calc(100% - 1px),
+    calc(100% - 1px) calc(100% - var(--bsnav-cut)),
+    calc(100% - 1px) var(--bsnav-cut),
+    calc(100% - var(--bsnav-cut)) 1px
+  );
+}
+
+.bsnav__logo {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+.bsnav__logo img {
+  height: clamp(20px, 2.2vw, 28px);
+  width: auto;
+  display: block;
+}
+
+.bsnav__links {
+  display: flex;
+  align-items: center;
+  gap: clamp(0.75rem, 2vw, 2rem);
+}
+.bsnav__link {
+  color: rgba(255, 255, 255, 0.82);
+  text-decoration: none;
+  font-size: 0.82rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition: color 0.2s ease;
+}
+.bsnav__link:hover {
+  color: #fff;
+}
+
+@media (max-width: 720px) {
+  .bsnav {
+    --bsnav-cut: 10px;
+  }
+  .bsnav__links {
+    gap: 0.7rem;
+  }
+  .bsnav__link {
+    font-size: 0.62rem;
+    letter-spacing: 0.02em;
+  }
+}

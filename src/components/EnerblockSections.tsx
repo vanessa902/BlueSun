@@ -59,7 +59,7 @@ export default function EnerblockSections() {
       <div id="rock-zone" style={{ height: "960vh", background: "#000" }} />
 
       {/* 1. Intro: title + 2D->3D blueprint */}
-      <section className="eb-intro">
+      <section className="eb-intro" id="about">
         <div className="eb-intro__left">
           <h2 className="eb-title eb-intro__title" id="eb-intro-title">
             <span className="eb-intro__line">
