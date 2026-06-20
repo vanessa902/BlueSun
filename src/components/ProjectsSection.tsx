@@ -97,14 +97,20 @@ function ProjectCard({
 
       <div className="proj-card__grid">
         <div className="proj-card__col1">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img className="proj-img proj-img--t" src={project.images[0]} alt="" loading="lazy" />
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img className="proj-img proj-img--b" src={project.images[1]} alt="" loading="lazy" />
+          <div className="proj-img-wrap proj-img-wrap--t">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img className="proj-img" src={project.images[0]} alt="" loading="lazy" />
+          </div>
+          <div className="proj-img-wrap proj-img-wrap--b">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img className="proj-img" src={project.images[1]} alt="" loading="lazy" />
+          </div>
         </div>
         <div className="proj-card__col2">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img className="proj-img proj-img--tall" src={project.images[2]} alt="" loading="lazy" />
+          <div className="proj-img-wrap proj-img-wrap--tall">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img className="proj-img" src={project.images[2]} alt="" loading="lazy" />
+          </div>
         </div>
       </div>
     </motion.article>
