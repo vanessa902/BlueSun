@@ -6,6 +6,11 @@
   box-sizing: border-box;
 }
 
+/* Single source of truth for every solid black background on the site. */
+:root {
+  --bg-black: #000000;
+}
+
 html,
 body {
   overflow-x: clip;
@@ -25,7 +30,7 @@ html.lenis body {
 
 body {
   font-family: var(--font-haffer), sans-serif;
-  background: #000000;
+  background: var(--bg-black);
   color: #fff;
 }
 
@@ -50,7 +55,7 @@ body {
   position: fixed;
   inset: 0;
   z-index: -10;
-  background: #000;
+  background: var(--bg-black);
 }
 #scroll-video-container canvas,
 #scroll-video-container video {
@@ -216,7 +221,7 @@ body {
   color: #9ca3af;
   margin-bottom: 1.25rem;
   letter-spacing: 0.12em;
-  text-transform: uppercase;
+  text-transform: lowercase;
 }
 #hero h1 {
   font-size: clamp(2.75rem, 8vw, 6.5rem);
@@ -256,7 +261,7 @@ body {
   opacity: 0;
   color: #fff;
   font-weight: 600;
-  text-transform: uppercase;
+  text-transform: lowercase;
   letter-spacing: 0.12em;
   font-size: clamp(2rem, 6vw, 5rem);
   white-space: nowrap;
@@ -270,7 +275,7 @@ body {
   position: fixed;
   inset: 0;
   z-index: 40;
-  background: #000;
+  background: var(--bg-black);
   opacity: 0;
   pointer-events: none;
   overflow: hidden;
@@ -336,7 +341,7 @@ body {
 #hero-cover {
   position: fixed;
   inset: 0;
-  background: #000;
+  background: var(--bg-black);
   z-index: 1;
   pointer-events: none;
   will-change: opacity;
@@ -377,13 +382,13 @@ body {
 }
 #hero .code-box .prompt {
   color: #2c5c88;
-  font-family: monospace;
+  font-family: var(--font-haffer), sans-serif;
   font-size: 0.875rem;
 }
 #hero .code-box code {
   font-size: 0.875rem;
   color: #e5e7eb;
-  font-family: monospace;
+  font-family: var(--font-haffer), sans-serif;
 }
 #hero .cta-btn {
   display: inline-flex;

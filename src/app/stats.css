@@ -2,7 +2,7 @@
 .stats {
   position: relative;
   z-index: 10;
-  background: #0c0c0c;
+  background: var(--bg-black);
   color: #fff;
   /* No horizontal padding so the marquee can span full width; the grid
      supplies its own side gutters. */
@@ -68,7 +68,7 @@
   justify-content: space-between;
   padding: clamp(1.25rem, 2vw, 1.75rem);
   cursor: pointer;
-  background: #0c0c0c;
+  background: var(--bg-black);
 }
 
 .stat-card--low {

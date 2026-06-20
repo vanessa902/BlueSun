@@ -31,7 +31,7 @@
 }
 .cs-float {
   position: absolute;
-  background: #000;
+  background: var(--bg-black);
 }
 .cases__head {
   position: relative;
@@ -42,7 +42,7 @@
 .cs-badge {
   margin-bottom: 1.25rem;
   display: inline-block;
-  background: #000;
+  background: var(--bg-black);
   color: #fff;
   padding: 6px 16px;
   font-size: 13px;
@@ -96,7 +96,7 @@
 }
 .cs-mag {
   position: absolute;
-  background: #000;
+  background: var(--bg-black);
   z-index: 4;
 }
 .cs-plus {
@@ -182,7 +182,7 @@
   align-items: center;
   gap: 10px;
   border: 1px solid rgba(0, 0, 0, 0.2);
-  background: #000;
+  background: var(--bg-black);
   color: #fff;
   padding: 8px 12px;
   font-size: 1rem;
@@ -195,7 +195,7 @@
 .cs-cta-btn__badge {
   height: 1.5rem;
   width: 1.5rem;
-  background: #000;
+  background: var(--bg-black);
   margin-bottom: 1.5rem;
   display: flex;
   align-items: center;

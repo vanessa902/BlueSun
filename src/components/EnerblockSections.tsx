@@ -56,7 +56,7 @@ export default function EnerblockSections() {
     <div className="eb" ref={root}>
       {/* Tall pure-black scroll zone where the rock animation plays out.
           The fixed black stage + rock + text live in <Rocks/>. */}
-      <div id="rock-zone" style={{ height: "960vh", background: "#000" }} />
+      <div id="rock-zone" style={{ height: "960vh", background: "var(--bg-black)" }} />
 
       {/* 1. Intro: title + 2D->3D blueprint */}
       <section className="eb-intro" id="about">

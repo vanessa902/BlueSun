@@ -37,7 +37,7 @@ export default function Footer() {
         </div>
 
         <div className="site-footer__brand-row">
-          <a className="site-footer__brand" href="/" aria-label="BlueSun home">
+          <a className="site-footer__brand" href="#hero" aria-label="BlueSun home">
             <span className="site-footer__mark" aria-hidden="true" />
             <span className="site-footer__wordmark">BlueSun</span>
           </a>
