@@ -2,9 +2,9 @@ import "../app/header.css";
 
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
-const NAV_ITEMS: { label: string; href: string }[] = [
+const NAV_ITEMS = [
   { label: "Home", href: "#hero" },
-  { label: "About Us", href: "/about" },
+  { label: "About Us", href: `${BASE}/about` },
   { label: "Our Market", href: "#work" },
   { label: "Projects", href: "#work" },
   { label: "Contact us", href: "#contact" },
