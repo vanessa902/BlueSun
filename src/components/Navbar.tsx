@@ -4,7 +4,7 @@ const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
 const NAV_ITEMS: { label: string; href: string }[] = [
   { label: "Home", href: "#hero" },
-  { label: "About Us", href: "#about" },
+  { label: "About Us", href: "/about" },
   { label: "Our Market", href: "#work" },
   { label: "Projects", href: "#work" },
   { label: "Contact us", href: "#contact" },

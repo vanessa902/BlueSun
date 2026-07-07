@@ -5,7 +5,9 @@ import "./globals.css";
 const haffer = localFont({
   src: [
     { path: "../fonts/HafferXH-TRIAL-Thin.otf", weight: "100", style: "normal" },
+    { path: "../fonts/HafferXH-TRIAL-ThinItalic.otf", weight: "100", style: "italic" },
     { path: "../fonts/HafferXH-TRIAL-Light.otf", weight: "300", style: "normal" },
+    { path: "../fonts/HafferXH-TRIAL-LightItalic.otf", weight: "300", style: "italic" },
     { path: "../fonts/HafferXH-TRIAL-Regular.otf", weight: "400", style: "normal" },
     { path: "../fonts/HafferXH-TRIAL-Medium.otf", weight: "500", style: "normal" },
     { path: "../fonts/HafferXH-TRIAL-SemiBold.otf", weight: "600", style: "normal" },
