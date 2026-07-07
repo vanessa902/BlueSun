@@ -1,0 +1,811 @@
+/* Axion Studio — standalone agency landing page (Projects route).
+   Self-contained: system font stack, own nav/palette, independent of the
+   rest of the BlueSun site's Haffer Trial branding. */
+.axion-page {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+    Arial, sans-serif;
+  background: #efefef;
+  color: #111827;
+}
+.axion-page * {
+  box-sizing: border-box;
+}
+.axion-container {
+  max-width: 1440px;
+  margin: 0 auto;
+}
+
+/* ================================================================
+   Hero
+   ================================================================ */
+.axion-hero {
+  position: relative;
+  height: 100vh;
+  overflow: hidden;
+  background: #efefef;
+  display: flex;
+  flex-direction: column;
+}
+.axion-hero__shader {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  pointer-events: none;
+}
+
+/* ---- Nav ---- */
+.axion-nav-wrap {
+  position: relative;
+  z-index: 20;
+}
+.axion-nav-container {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0.5rem;
+}
+@media (min-width: 640px) {
+  .axion-nav-container {
+    padding: 0.75rem;
+  }
+}
+.axion-nav {
+  background: #fff;
+  border-radius: 9999px;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.axion-nav__left {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+.axion-nav__logo {
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 9999px;
+  background: #111827;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+@media (min-width: 640px) {
+  .axion-nav__logo {
+    width: 2.5rem;
+    height: 2.5rem;
+    font-size: 11px;
+  }
+}
+.axion-nav__links {
+  display: none;
+  align-items: center;
+  gap: 1.5rem;
+}
+.axion-nav__links a {
+  font-size: 14px;
+  color: #111827;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+.axion-nav__links a:hover {
+  color: #6b7280;
+}
+.axion-nav__right {
+  display: none;
+  align-items: center;
+  gap: 1rem;
+}
+.axion-nav__note {
+  display: none;
+  font-size: 13px;
+  color: #4b5563;
+  white-space: nowrap;
+}
+.axion-nav__time {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 13px;
+  color: #4b5563;
+  white-space: nowrap;
+}
+.axion-nav__toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 9999px;
+  background: #111827;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}
+@media (min-width: 768px) {
+  .axion-nav__links {
+    display: flex;
+  }
+  .axion-nav__right {
+    display: flex;
+  }
+  .axion-nav__toggle {
+    display: none;
+  }
+}
+@media (min-width: 1024px) {
+  .axion-nav__note {
+    display: block;
+  }
+}
+
+/* ---- Mobile menu overlay ---- */
+.axion-mmenu {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  visibility: hidden;
+}
+.axion-mmenu.is-open {
+  visibility: visible;
+}
+.axion-mmenu__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  opacity: 0;
+  transition: opacity 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+.axion-mmenu.is-open .axion-mmenu__backdrop {
+  opacity: 1;
+}
+.axion-mmenu__sheet {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: 0 0.75rem 0.75rem;
+  background: #fff;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  transform: translateY(100%);
+  transition: transform 0.5s cubic-bezier(0.32, 0.72, 0, 1);
+}
+.axion-mmenu.is-open .axion-mmenu__sheet {
+  transform: translateY(0);
+}
+.axion-mmenu__time {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 13px;
+  color: #4b5563;
+  border: 1px solid #e5e7eb;
+  border-radius: 9999px;
+  padding: 0.4rem 0.9rem;
+  margin-bottom: 1.5rem;
+}
+.axion-mmenu__links {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+.axion-mmenu__links a {
+  font-size: 28px;
+  font-weight: 500;
+  color: #111827;
+  text-decoration: none;
+}
+@media (min-width: 400px) {
+  .axion-mmenu__links a {
+    font-size: 32px;
+  }
+}
+
+/* ================================================================
+   Roll button (text-roll hover, shared by nav/hero/about CTAs)
+   ================================================================ */
+.axion-rollbtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: none;
+  cursor: pointer;
+  border-radius: 9999px;
+  padding: 0.5rem 0.5rem 0.5rem 1.25rem;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+}
+@media (min-width: 640px) {
+  .axion-rollbtn {
+    font-size: 14px;
+  }
+}
+.axion-rollbtn--block {
+  width: 100%;
+  justify-content: space-between;
+}
+.axion-rollbtn--dark {
+  background: #111827;
+  color: #fff;
+}
+.axion-rollbtn--orange {
+  background: #f26522;
+  color: #fff;
+  transition: background 0.3s ease;
+}
+.axion-rollbtn--orange:hover {
+  background: #e05a1a;
+}
+.axion-rollbtn__text {
+  overflow: hidden;
+  height: 20px;
+  display: block;
+}
+.axion-rollbtn__roll {
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+.axion-rollbtn:hover .axion-rollbtn__roll {
+  transform: translateY(-50%);
+}
+.axion-rollbtn__arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 9999px;
+  background: #fff;
+  color: #111827;
+  transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+  flex-shrink: 0;
+}
+.axion-rollbtn--orange .axion-rollbtn__arrow {
+  color: #f26522;
+  width: 1.75rem;
+  height: 1.75rem;
+}
+.axion-rollbtn:hover .axion-rollbtn__arrow {
+  transform: rotate(-45deg);
+}
+
+/* ---- Hero content ---- */
+.axion-hero__content {
+  position: relative;
+  z-index: 20;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+.axion-hero__inner {
+  max-width: 1440px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 0 1.25rem 3.5rem;
+}
+@media (min-width: 640px) {
+  .axion-hero__inner {
+    padding: 0 2rem 4rem;
+  }
+}
+@media (min-width: 1024px) {
+  .axion-hero__inner {
+    padding: 0 3rem 5rem;
+  }
+}
+.axion-hero__label {
+  font-size: 13px;
+  color: #111827;
+  letter-spacing: 0.02em;
+  margin-bottom: 1.25rem;
+}
+@media (min-width: 640px) {
+  .axion-hero__label {
+    font-size: 14px;
+    margin-bottom: 2rem;
+  }
+}
+.axion-hero__headline {
+  font-size: clamp(1.75rem, 7vw, 4.2rem);
+  font-weight: 500;
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  color: #111827;
+  margin: 0;
+}
+@media (min-width: 640px) {
+  .axion-hero__headline {
+    font-size: clamp(2.5rem, 5vw, 4.2rem);
+  }
+}
+.axion-br-desktop {
+  display: none;
+}
+@media (min-width: 640px) {
+  .axion-br-desktop {
+    display: block;
+  }
+  .axion-sp-mobile {
+    display: none;
+  }
+}
+
+.axion-hero__ctas {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+@media (min-width: 640px) {
+  .axion-hero__ctas {
+    flex-direction: row;
+    align-items: center;
+    gap: 1.25rem;
+    margin-top: 3rem;
+  }
+}
+
+.axion-partner {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: #fff;
+  border-radius: 4px;
+  padding: 0.5rem 0.75rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: box-shadow 0.3s ease;
+  width: fit-content;
+}
+.axion-partner:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+.axion-partner__icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  fill: currentColor;
+  color: #e8704e;
+  flex-shrink: 0;
+}
+@media (min-width: 640px) {
+  .axion-partner__icon {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+}
+.axion-partner__text {
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+@media (min-width: 640px) {
+  .axion-partner__text {
+    font-size: 14px;
+  }
+}
+.axion-partner__badge {
+  font-size: 10px;
+  background: #111827;
+  color: #fff;
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+@media (min-width: 640px) {
+  .axion-partner__badge {
+    font-size: 11px;
+    padding: 0.15rem 0.5rem;
+  }
+}
+
+/* ================================================================
+   About (section 2)
+   ================================================================ */
+.axion-about {
+  background: #fff;
+  padding: 4rem 0 3rem;
+  overflow: hidden;
+}
+@media (min-width: 640px) {
+  .axion-about {
+    padding: 5rem 0 4rem;
+  }
+}
+@media (min-width: 1024px) {
+  .axion-about {
+    padding: 8rem 0 6rem;
+  }
+}
+
+.axion-badge-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0 1.25rem;
+  margin-bottom: 1.5rem;
+}
+@media (min-width: 640px) {
+  .axion-badge-row {
+    padding: 0 2rem;
+    margin-bottom: 2rem;
+  }
+}
+@media (min-width: 1024px) {
+  .axion-badge-row {
+    padding: 0 3rem;
+  }
+}
+.axion-badge-num {
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 9999px;
+  background: #111827;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+@media (min-width: 640px) {
+  .axion-badge-num {
+    width: 1.75rem;
+    height: 1.75rem;
+    font-size: 12px;
+  }
+}
+.axion-badge-pill {
+  font-size: 12px;
+  font-weight: 500;
+  border: 1px solid #e5e7eb;
+  border-radius: 9999px;
+  padding: 0.25rem 0.75rem;
+}
+@media (min-width: 640px) {
+  .axion-badge-pill {
+    font-size: 13px;
+    padding: 0.375rem 1rem;
+  }
+}
+.axion-badge-pill--gray300 {
+  border-color: #d1d5db;
+}
+
+.axion-about__heading {
+  font-size: clamp(1.5rem, 4vw, 3.2rem);
+  font-weight: 500;
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+  color: #111827;
+  margin: 0 0 3rem;
+  padding: 0 1.25rem;
+}
+@media (min-width: 640px) {
+  .axion-about__heading {
+    margin-bottom: 4rem;
+    padding: 0 2rem;
+  }
+}
+@media (min-width: 1024px) {
+  .axion-about__heading {
+    margin-bottom: 7rem;
+    padding: 0 3rem;
+  }
+}
+
+.axion-about__copy {
+  font-size: 15px;
+  line-height: 1.6;
+  font-weight: 500;
+  color: #111827;
+  margin: 0 0 1.5rem;
+}
+@media (min-width: 640px) {
+  .axion-about__copy {
+    font-size: 17px;
+  }
+}
+
+.axion-about__img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 0.75rem;
+}
+@media (min-width: 640px) {
+  .axion-about__img {
+    border-radius: 1rem;
+  }
+}
+.axion-about__img--small {
+  aspect-ratio: 438 / 346;
+}
+.axion-about__img--large {
+  aspect-ratio: 900 / 600;
+}
+
+/* mobile / tablet stacked layout */
+.axion-about__stack {
+  padding: 0 1.25rem;
+}
+@media (min-width: 640px) {
+  .axion-about__stack {
+    padding: 0 2rem;
+  }
+}
+@media (min-width: 1024px) {
+  .axion-about__stack {
+    display: none;
+  }
+}
+.axion-about__images {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+@media (min-width: 640px) {
+  .axion-about__images {
+    flex-direction: row;
+    gap: 1.25rem;
+  }
+  .axion-about__images .axion-about__img--small {
+    width: 45%;
+  }
+  .axion-about__images .axion-about__img--large {
+    width: 55%;
+  }
+}
+
+/* desktop grid layout */
+.axion-about__grid {
+  display: none;
+}
+@media (min-width: 1024px) {
+  .axion-about__grid {
+    display: grid;
+    grid-template-columns: 26% 1fr 48%;
+    align-items: end;
+    gap: 1.5rem;
+    padding: 0 3rem;
+  }
+}
+@media (min-width: 1280px) {
+  .axion-about__grid {
+    gap: 2rem;
+  }
+}
+.axion-about__grid-left {
+  align-self: end;
+}
+.axion-about__grid-center {
+  align-self: start;
+  display: flex;
+  justify-content: flex-end;
+}
+.axion-about__grid-right {
+  align-self: end;
+}
+.axion-about__copy--desktop {
+  font-size: 16px;
+  line-height: 1.65;
+  white-space: nowrap;
+}
+@media (min-width: 1280px) {
+  .axion-about__copy--desktop {
+    font-size: 18px;
+  }
+}
+
+/* ================================================================
+   Case studies (section 3)
+   ================================================================ */
+.axion-cases {
+  background: #f5f5f5;
+  padding: 4rem 0;
+}
+@media (min-width: 640px) {
+  .axion-cases {
+    padding: 5rem 0;
+  }
+}
+@media (min-width: 1024px) {
+  .axion-cases {
+    padding: 7rem 0;
+  }
+}
+.axion-cases__heading {
+  font-size: clamp(1.75rem, 7vw, 4.2rem);
+  font-weight: 500;
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  color: #111827;
+  margin: 0 0 2.5rem;
+  padding: 0 1.25rem;
+}
+@media (min-width: 640px) {
+  .axion-cases__heading {
+    font-size: clamp(2.5rem, 5vw, 4.2rem);
+    margin-bottom: 3.5rem;
+    padding: 0 2rem;
+  }
+}
+@media (min-width: 1024px) {
+  .axion-cases__heading {
+    margin-bottom: 4rem;
+    padding: 0 3rem;
+  }
+}
+.axion-cases__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+  padding: 0 1.25rem;
+}
+@media (min-width: 640px) {
+  .axion-cases__grid {
+    padding: 0 2rem;
+  }
+}
+@media (min-width: 768px) {
+  .axion-cases__grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+}
+@media (min-width: 1024px) {
+  .axion-cases__grid {
+    gap: 1.75rem;
+    padding: 0 3rem;
+  }
+}
+
+.axion-case {
+  cursor: pointer;
+}
+.axion-case__media {
+  position: relative;
+  border-radius: 1rem;
+  overflow: hidden;
+}
+@media (min-width: 640px) {
+  .axion-case__media {
+    border-radius: 1rem;
+  }
+}
+.axion-case--narrativ .axion-case__media {
+  aspect-ratio: 329 / 246;
+  background: #1a1d2e;
+}
+.axion-case--luminar .axion-case__media {
+  aspect-ratio: 1 / 1;
+  background: #6b6b6b;
+}
+.axion-case__media video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.axion-case__desc {
+  font-size: 13px;
+  color: #4b5563;
+  line-height: 1.6;
+  margin: 1rem 0 0;
+}
+@media (min-width: 640px) {
+  .axion-case__desc {
+    font-size: 14px;
+  }
+}
+.axion-case__title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #111827;
+  margin: 0.25rem 0 0;
+}
+@media (min-width: 640px) {
+  .axion-case__title {
+    font-size: 15px;
+  }
+}
+
+/* ---- Expand-on-hover circle buttons ---- */
+.axion-expand {
+  position: absolute;
+  bottom: 1rem;
+  left: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  height: 2.25rem;
+  width: 2.25rem;
+  border-radius: 9999px;
+  overflow: hidden;
+  white-space: nowrap;
+  padding: 0 0.75rem;
+  transition: width 0.3s ease-in-out;
+}
+.axion-case:hover .axion-expand {
+  width: var(--axion-expand-w);
+}
+.axion-expand--light {
+  background: #fff;
+  color: #111827;
+}
+.axion-expand--dark {
+  background: #111827;
+  color: #fff;
+}
+.axion-expand__icon {
+  display: inline-flex;
+  flex-shrink: 0;
+  transform: rotate(-45deg);
+  transition: transform 0.3s ease-in-out;
+}
+.axion-case:hover .axion-expand__icon {
+  transform: rotate(0deg);
+}
+.axion-expand__label {
+  font-size: 13px;
+  font-weight: 500;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out 0.1s;
+}
+.axion-case:hover .axion-expand__label {
+  opacity: 1;
+}
+
+/* ================================================================
+   Liquid glass utility classes (defined for reuse, per spec)
+   ================================================================ */
+.axion-page .liquid-glass {
+  position: relative;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.01);
+  background-blend-mode: luminosity;
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1);
+}
+.axion-page .liquid-glass::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.4px;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.45) 0%,
+    rgba(255, 255, 255, 0.15) 20%,
+    rgba(255, 255, 255, 0) 40%,
+    rgba(255, 255, 255, 0) 60%,
+    rgba(255, 255, 255, 0.15) 80%,
+    rgba(255, 255, 255, 0.45) 100%
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+.axion-page .liquid-glass-strong {
+  position: relative;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.01);
+  background-blend-mode: luminosity;
+  -webkit-backdrop-filter: blur(50px);
+  backdrop-filter: blur(50px);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.15);
+}
