@@ -9,8 +9,8 @@ import ScrollScrubVideo from "@/components/ScrollScrubVideo";
 import BlurText from "@/components/BlurText";
 import "../about.css";
 
-const HERO_VIDEO =
-  "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260618_095905_d7b07dbb-1c70-4930-a5ac-391e63428046.mp4";
+const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+const HERO_VIDEO = `${BASE}/about-hero.mp4`;
 const CAP_VIDEO =
   "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260622_093722_ccfc7ebf-182f-419f-8a62-2dc02db7dd9d.mp4";
 
@@ -138,16 +138,19 @@ export default function AboutPage() {
               {/* Headline */}
               <div className="about-headline">
                 <BlurText
-                  text="Crafted Digital Experiences Built to Outlast Trends"
+                  text="Building Spaces That Stand the Test of Time"
                   className="about-headline__text"
                 />
               </div>
 
               {/* Subtext */}
               <motion.p className="about-subtext" {...fadeBlur(0.8)}>
-                We are a small studio of designers and engineers shaping
-                brand-defining websites for ambitious companies. Precise
-                typography, cinematic motion, and code you can be proud of.
+                At BlueSun Construction, we transform ideas into exceptional
+                residential and commercial environments. Through expert
+                craftsmanship, strategic planning, and a commitment to
+                quality, we deliver projects that elevate communities,
+                support businesses, and create places people are proud to
+                call home.
               </motion.p>
 
               {/* CTA */}
