@@ -81,11 +81,7 @@ export default function AboutPage() {
         <div className="about-cap__content">
           <div className="about-cap__header">
             <span className="about-cap__label">// Capabilities</span>
-            <h2 className="about-cap__heading">
-              Studio craft,
-              <br />
-              end to end
-            </h2>
+            <h2 className="about-cap__heading">Why Choose BlueSun</h2>
           </div>
 
           <div className="about-cap__grid">
