@@ -1,14 +1,16 @@
 "use client";
 
+import { useRef } from "react";
 import { motion } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import FadingVideo from "@/components/FadingVideo";
+import ScrollScrubVideo from "@/components/ScrollScrubVideo";
 import BlurText from "@/components/BlurText";
 import "../about.css";
 
 const HERO_VIDEO =
-  "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260619_191346_9d19d66e-86a4-47f7-8dc6-712c1788c3b2.mp4";
+  "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260618_095905_d7b07dbb-1c70-4930-a5ac-391e63428046.mp4";
 const CAP_VIDEO =
   "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260622_093722_ccfc7ebf-182f-419f-8a62-2dc02db7dd9d.mp4";
 
@@ -105,83 +107,88 @@ const CAPABILITIES: Capability[] = [
 const TRUST_NAMES = ["Aeon", "Vela", "Apex", "Orbit", "Zeno"];
 
 export default function AboutPage() {
+  const heroTrackRef = useRef<HTMLDivElement>(null);
+
   return (
     <>
       <Navbar />
 
       {/* ============================================================
-          Section 1 — Hero
+          Section 1 — Hero (scrollytelling: pinned while the video scrubs)
           ============================================================ */}
-      <section className="about-hero">
-        <FadingVideo
-          src={HERO_VIDEO}
-          className="about-hero__video"
-          style={{ width: "120%", height: "120%" }}
-        />
+      <div className="about-hero-track" ref={heroTrackRef}>
+        <section className="about-hero">
+          <ScrollScrubVideo
+            src={HERO_VIDEO}
+            trackRef={heroTrackRef}
+            className="about-hero__video"
+            style={{ width: "120%", height: "120%" }}
+          />
 
-        <div className="about-hero__content">
-          <div className="about-hero__main">
-            {/* Badge */}
-            <motion.div className="about-badge liquid-glass" {...fadeBlur(0.4)}>
-              <span className="about-badge__new">New</span>
-              <span className="about-badge__text">
-                Booking Q3 2026 engagements &mdash; limited capacity
-              </span>
-            </motion.div>
+          <div className="about-hero__content">
+            <div className="about-hero__main">
+              {/* Badge */}
+              <motion.div className="about-badge liquid-glass" {...fadeBlur(0.4)}>
+                <span className="about-badge__new">New</span>
+                <span className="about-badge__text">
+                  Booking Q3 2026 engagements &mdash; limited capacity
+                </span>
+              </motion.div>
 
-            {/* Headline */}
-            <div className="about-headline">
-              <BlurText
-                text="Crafted Digital Experiences Built to Outlast Trends"
-                className="about-headline__text"
-              />
+              {/* Headline */}
+              <div className="about-headline">
+                <BlurText
+                  text="Crafted Digital Experiences Built to Outlast Trends"
+                  className="about-headline__text"
+                />
+              </div>
+
+              {/* Subtext */}
+              <motion.p className="about-subtext" {...fadeBlur(0.8)}>
+                We are a small studio of designers and engineers shaping
+                brand-defining websites for ambitious companies. Precise
+                typography, cinematic motion, and code you can be proud of.
+              </motion.p>
+
+              {/* CTA */}
+              <motion.div className="about-cta" {...fadeBlur(1.1)}>
+                <button className="about-cta__btn liquid-glass-strong" type="button">
+                  Start a Project <ArrowUpRight />
+                </button>
+                <button className="about-cta__link" type="button">
+                  <PlayIcon /> Watch Showreel
+                </button>
+              </motion.div>
+
+              {/* Stats */}
+              <motion.div className="about-stats" {...fadeBlur(1.3)}>
+                <div className="about-stat liquid-glass">
+                  <span className="about-stat__icon"><ClockIcon /></span>
+                  <div className="about-stat__num">6 Weeks</div>
+                  <div className="about-stat__label">Average End-to-End Launch Time</div>
+                </div>
+                <div className="about-stat liquid-glass">
+                  <span className="about-stat__icon"><GlobeIcon /></span>
+                  <div className="about-stat__num">140+</div>
+                  <div className="about-stat__label">Brands Shipped Across Four Continents</div>
+                </div>
+              </motion.div>
             </div>
 
-            {/* Subtext */}
-            <motion.p className="about-subtext" {...fadeBlur(0.8)}>
-              We are a small studio of designers and engineers shaping
-              brand-defining websites for ambitious companies. Precise
-              typography, cinematic motion, and code you can be proud of.
-            </motion.p>
-
-            {/* CTA */}
-            <motion.div className="about-cta" {...fadeBlur(1.1)}>
-              <button className="about-cta__btn liquid-glass-strong" type="button">
-                Start a Project <ArrowUpRight />
-              </button>
-              <button className="about-cta__link" type="button">
-                <PlayIcon /> Watch Showreel
-              </button>
-            </motion.div>
-
-            {/* Stats */}
-            <motion.div className="about-stats" {...fadeBlur(1.3)}>
-              <div className="about-stat liquid-glass">
-                <span className="about-stat__icon"><ClockIcon /></span>
-                <div className="about-stat__num">6 Weeks</div>
-                <div className="about-stat__label">Average End-to-End Launch Time</div>
+            {/* Trust bar */}
+            <motion.div className="about-trust" {...fadeBlur(1.4)}>
+              <div className="about-trust__pill liquid-glass">
+                Trusted by founders, operators, and creative directors worldwide
               </div>
-              <div className="about-stat liquid-glass">
-                <span className="about-stat__icon"><GlobeIcon /></span>
-                <div className="about-stat__num">140+</div>
-                <div className="about-stat__label">Brands Shipped Across Four Continents</div>
+              <div className="about-trust__logos">
+                {TRUST_NAMES.map((name) => (
+                  <span key={name} className="about-trust__name">{name}</span>
+                ))}
               </div>
             </motion.div>
           </div>
-
-          {/* Trust bar */}
-          <motion.div className="about-trust" {...fadeBlur(1.4)}>
-            <div className="about-trust__pill liquid-glass">
-              Trusted by founders, operators, and creative directors worldwide
-            </div>
-            <div className="about-trust__logos">
-              {TRUST_NAMES.map((name) => (
-                <span key={name} className="about-trust__name">{name}</span>
-              ))}
-            </div>
-          </motion.div>
-        </div>
-      </section>
+        </section>
+      </div>
 
       {/* ============================================================
           Section 2 — Capabilities

@@ -70,8 +70,16 @@
 /* ================================================================
    Section 1 — Hero
    ================================================================ */
-.about-hero {
+/* Tall scroll track: the hero pins in place (position: sticky) while the
+   user scrolls through this extra height, and that scroll progress drives
+   the video's currentTime — a scrollytelling scrub instead of autoplay. */
+.about-hero-track {
   position: relative;
+  height: 260vh;
+}
+.about-hero {
+  position: sticky;
+  top: 0;
   height: 100vh;
   overflow: hidden;
   background: var(--bg-black);
