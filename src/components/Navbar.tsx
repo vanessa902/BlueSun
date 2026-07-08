@@ -1,9 +1,13 @@
 import "../app/header.css";
 
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+// "#hero" only resolves on the homepage itself, so route through it
+// explicitly — this is what both the logo and the "Home" link use, so
+// they always land on the same place regardless of which page you're on.
+const HOME_HREF = `${BASE}/#hero`;
 
 const NAV_ITEMS = [
-  { label: "Home", href: "#hero" },
+  { label: "Home", href: HOME_HREF },
   { label: "About Us", href: `${BASE}/about` },
   { label: "Our Market", href: "#work" },
   { label: "Projects", href: `${BASE}/projects` },
@@ -17,7 +21,7 @@ const NAV_ITEMS = [
 export default function Navbar() {
   return (
     <header className="bsnav">
-      <a className="bsnav__logo" href="#hero" aria-label="Home">
+      <a className="bsnav__logo" href={HOME_HREF} aria-label="Home">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={`${BASE}/logo.webp`} alt="BlueSun" />
       </a>
