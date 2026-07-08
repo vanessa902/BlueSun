@@ -117,6 +117,15 @@ export default function AboutPage() {
   const imageY = useTransform(scrollYProgress, [0, 1], ["0%", "18%"]);
   const contentY = useTransform(scrollYProgress, [0, 1], ["0%", "-12%"]);
 
+  // Stat cards: hidden and pushed back until the user actually scrolls, then
+  // rise into place on top of the content's own parallax drift — the two
+  // stacked motions is what makes the depth read as more pronounced here.
+  const statsOpacity = useTransform(scrollYProgress, [0, 0.28], [0, 1]);
+  const statsY = useTransform(scrollYProgress, [0, 0.32], [160, 0]);
+  const statsBlur = useTransform(scrollYProgress, [0, 0.28], [18, 0]);
+  const statsFilter = useTransform(statsBlur, (v) => `blur(${v}px)`);
+  const statsScale = useTransform(scrollYProgress, [0, 0.32], [0.88, 1]);
+
   return (
     <>
       <Navbar />
@@ -165,7 +174,15 @@ export default function AboutPage() {
             </motion.div>
 
             {/* Stats */}
-            <motion.div className="about-stats" {...fadeBlur(1.3)}>
+            <motion.div
+              className="about-stats"
+              style={{
+                opacity: statsOpacity,
+                y: statsY,
+                scale: statsScale,
+                filter: statsFilter,
+              }}
+            >
               <div className="about-stat liquid-glass">
                 <span className="about-stat__icon"><ClockIcon /></span>
                 <div className="about-stat__num">6 Weeks</div>
