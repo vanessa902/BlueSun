@@ -1,58 +1,16 @@
 "use client";
 
-import { useRef } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import FadingVideo from "@/components/FadingVideo";
-import BlurText from "@/components/BlurText";
+import AboutHeroStory from "@/components/AboutHeroStory";
 import "../about.css";
 
-const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
-const HERO_IMAGE = `${BASE}/about-hero.png`;
 const CAP_VIDEO =
   "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260622_093722_ccfc7ebf-182f-419f-8a62-2dc02db7dd9d.mp4";
 
-function fadeBlur(delay: number) {
-  return {
-    initial: { filter: "blur(10px)", opacity: 0, y: 20 } as const,
-    animate: { filter: "blur(0px)", opacity: 1, y: 0 } as const,
-    transition: { duration: 0.8, ease: "easeOut" as const, delay },
-  };
-}
-
 /* ---- SVG Icons ---- */
-function ArrowUpRight() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M7 17L17 7M7 7h10v10" />
-    </svg>
-  );
-}
-function PlayIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-      <polygon points="6 4 20 12 6 20 6 4" />
-    </svg>
-  );
-}
-function ClockIcon() {
-  return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-      <circle cx="12" cy="12" r="9" />
-      <path d="M12 7v5l3 2" />
-    </svg>
-  );
-}
-function GlobeIcon() {
-  return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-      <circle cx="12" cy="12" r="9" />
-      <path d="M3 12h18" />
-      <path d="M12 3a15 15 0 0 1 4 9 15 15 0 0 1-4 9 15 15 0 0 1-4-9 15 15 0 0 1 4-9z" />
-    </svg>
-  );
-}
 function ImageIcon() {
   return (
     <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
@@ -103,112 +61,16 @@ const CAPABILITIES: Capability[] = [
   },
 ];
 
-const TRUST_NAMES = ["Aeon", "Vela", "Apex", "Orbit", "Zeno"];
-
 export default function AboutPage() {
-  const heroRef = useRef<HTMLElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: heroRef,
-    offset: ["start start", "end start"],
-  });
-  // Parallax depth: the image (far layer) drifts down and lags behind the
-  // scroll, while the text (near layer) drifts up faster — the gap between
-  // the two is what reads as depth as the user scrolls the hero away.
-  const imageY = useTransform(scrollYProgress, [0, 1], ["0%", "18%"]);
-  const contentY = useTransform(scrollYProgress, [0, 1], ["0%", "-12%"]);
-
-  // Stat cards: hidden and pushed back until the user actually scrolls, then
-  // rise into place on top of the content's own parallax drift — the two
-  // stacked motions is what makes the depth read as more pronounced here.
-  const statsOpacity = useTransform(scrollYProgress, [0, 0.28], [0, 1]);
-  const statsY = useTransform(scrollYProgress, [0, 0.32], [160, 0]);
-  const statsBlur = useTransform(scrollYProgress, [0, 0.28], [18, 0]);
-  const statsFilter = useTransform(statsBlur, (v) => `blur(${v}px)`);
-  const statsScale = useTransform(scrollYProgress, [0, 0.32], [0.88, 1]);
-
   return (
     <>
       <Navbar />
 
       {/* ============================================================
-          Section 1 — Hero (parallax: image and text drift at different
-          rates as the user scrolls, reading as depth)
+          Section 1 — Hero (scroll-choreographed story: title -> grows ->
+          disappears -> paragraph types in -> disappears -> cards rise in)
           ============================================================ */}
-      <section className="about-hero" ref={heroRef}>
-        <motion.div className="about-hero__image-wrap" style={{ y: imageY }}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img className="about-hero__image" src={HERO_IMAGE} alt="" />
-        </motion.div>
-        <div className="about-hero__gradient" aria-hidden="true" />
-
-        <motion.div className="about-hero__content" style={{ y: contentY }}>
-          <div className="about-hero__main">
-            {/* Badge */}
-            <motion.div className="about-badge liquid-glass" {...fadeBlur(0.4)}>
-              <span className="about-badge__text">Company</span>
-            </motion.div>
-
-            {/* Headline */}
-            <div className="about-headline">
-              <BlurText text="About Us" className="about-headline__text" />
-            </div>
-
-            {/* Subtext */}
-            <motion.p className="about-subtext" {...fadeBlur(0.8)}>
-              At BlueSun Construction, we transform ideas into exceptional
-              residential and commercial environments. Through expert
-              craftsmanship, strategic planning, and a commitment to
-              quality, we deliver projects that elevate communities,
-              support businesses, and create places people are proud to
-              call home.
-            </motion.p>
-
-            {/* CTA */}
-            <motion.div className="about-cta" {...fadeBlur(1.1)}>
-              <button className="about-cta__btn liquid-glass-strong" type="button">
-                Start a Project <ArrowUpRight />
-              </button>
-              <button className="about-cta__link" type="button">
-                <PlayIcon /> Watch Showreel
-              </button>
-            </motion.div>
-
-            {/* Stats */}
-            <motion.div
-              className="about-stats"
-              style={{
-                opacity: statsOpacity,
-                y: statsY,
-                scale: statsScale,
-                filter: statsFilter,
-              }}
-            >
-              <div className="about-stat liquid-glass">
-                <span className="about-stat__icon"><ClockIcon /></span>
-                <div className="about-stat__num">6 Weeks</div>
-                <div className="about-stat__label">Average End-to-End Launch Time</div>
-              </div>
-              <div className="about-stat liquid-glass">
-                <span className="about-stat__icon"><GlobeIcon /></span>
-                <div className="about-stat__num">140+</div>
-                <div className="about-stat__label">Brands Shipped Across Four Continents</div>
-              </div>
-            </motion.div>
-          </div>
-
-          {/* Trust bar */}
-          <motion.div className="about-trust" {...fadeBlur(1.4)}>
-            <div className="about-trust__pill liquid-glass">
-              Trusted by founders, operators, and creative directors worldwide
-            </div>
-            <div className="about-trust__logos">
-              {TRUST_NAMES.map((name) => (
-                <span key={name} className="about-trust__name">{name}</span>
-              ))}
-            </div>
-          </motion.div>
-        </motion.div>
-      </section>
+      <AboutHeroStory />
 
       {/* ============================================================
           Section 2 — Capabilities
