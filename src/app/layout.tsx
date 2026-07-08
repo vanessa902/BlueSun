@@ -11,6 +11,7 @@ const haffer = localFont({
     { path: "../fonts/HafferXH-TRIAL-Regular.otf", weight: "400", style: "normal" },
     { path: "../fonts/HafferXH-TRIAL-Medium.otf", weight: "500", style: "normal" },
     { path: "../fonts/HafferXH-TRIAL-SemiBold.otf", weight: "600", style: "normal" },
+    { path: "../fonts/HafferXH-TRIAL-SemiBoldItalic.otf", weight: "600", style: "italic" },
     { path: "../fonts/HafferXH-TRIAL-Bold.otf", weight: "700", style: "normal" },
   ],
   variable: "--font-haffer",

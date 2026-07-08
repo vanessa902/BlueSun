@@ -159,7 +159,7 @@
 }
 .about-headline__text {
   font-size: clamp(3.75rem, 8vw, 5.5rem);
-  font-weight: 100;
+  font-weight: 600;
   font-style: italic;
   color: #fff;
   line-height: 0.85;
