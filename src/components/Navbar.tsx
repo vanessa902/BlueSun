@@ -11,7 +11,7 @@ const NAV_ITEMS = [
   { label: "About Us", href: `${BASE}/about` },
   { label: "Our Market", href: `${BASE}/our-markets` },
   { label: "Projects", href: `${BASE}/projects` },
-  { label: "Contact us", href: "#contact" },
+  { label: "Contact us", href: `${BASE}/contact` },
 ];
 
 /**

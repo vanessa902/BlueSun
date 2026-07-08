@@ -1,0 +1,531 @@
+/* Contact page — liquid glass, Instrument Serif italic accents, full black
+   background, five sections. Self-contained: scoped under .contact-page so
+   its reset/glass classes can't leak into the rest of the site (Next.js CSS
+   imports are global). Header/footer are the site's shared Navbar/Footer;
+   the spec's own "Asme" nav (Sign Up/Login etc.) isn't used. */
+
+.contact-page {
+  background: #000;
+  color: #fff;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+    Arial, sans-serif;
+}
+.contact-page * {
+  box-sizing: border-box;
+}
+.contact-page em,
+.contact-page .serif {
+  font-family: var(--font-instrument-serif), serif;
+  font-style: italic;
+  font-weight: 400;
+}
+
+/* ================================================================
+   Liquid Glass
+   ================================================================ */
+.contact-page .liquid-glass {
+  background: rgba(255, 255, 255, 0.01);
+  background-blend-mode: luminosity;
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  border: none;
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+.contact-page .liquid-glass::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.4px;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.45) 0%,
+    rgba(255, 255, 255, 0.15) 20%,
+    rgba(255, 255, 255, 0) 40%,
+    rgba(255, 255, 255, 0) 60%,
+    rgba(255, 255, 255, 0.15) 80%,
+    rgba(255, 255, 255, 0.45) 100%
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* ================================================================
+   Section 1 — Hero
+   ================================================================ */
+.contact-hero {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.contact-hero__video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: bottom;
+  z-index: 0;
+}
+.contact-hero__content {
+  position: relative;
+  z-index: 10;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1.5rem;
+  text-align: center;
+  transform: translateY(-14%);
+  gap: 1.5rem;
+}
+.contact-hero__heading {
+  font-size: clamp(2.75rem, 9vw, 8rem);
+  color: #fff;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+  font-family: var(--font-instrument-serif), serif;
+  font-weight: 400;
+}
+.contact-hero__email {
+  max-width: 36rem;
+  width: 100%;
+  border-radius: 9999px;
+  padding: 0.5rem 0.5rem 0.5rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.contact-hero__email-input {
+  flex: 1;
+  background: none;
+  border: none;
+  outline: none;
+  color: #fff;
+  font-size: 0.9rem;
+  font-family: inherit;
+  min-width: 0;
+}
+.contact-hero__email-input::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+.contact-hero__email-submit {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  color: #000;
+  border-radius: 9999px;
+  padding: 0.75rem;
+  border: none;
+  cursor: pointer;
+}
+.contact-hero__subtitle {
+  color: #fff;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  padding: 0 1rem;
+  max-width: 34rem;
+}
+.contact-hero__manifesto {
+  border-radius: 9999px;
+  padding: 0.75rem 2rem;
+  color: #fff;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background-color 0.2s ease;
+}
+.contact-hero__manifesto:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+.contact-hero__socials {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  padding-bottom: 3rem;
+}
+.contact-hero__social-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  padding: 1rem;
+  color: rgba(255, 255, 255, 0.8);
+  border: none;
+  cursor: pointer;
+  transition: color 0.2s ease, background-color 0.2s ease;
+}
+.contact-hero__social-btn:hover {
+  color: #fff;
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* ================================================================
+   Section 2 — About
+   ================================================================ */
+.contact-about {
+  position: relative;
+  background: #000;
+  padding: 8rem 1.5rem 2.5rem;
+  overflow: hidden;
+}
+@media (min-width: 768px) {
+  .contact-about {
+    padding: 11rem 1.5rem 3.5rem;
+  }
+}
+.contact-about::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse at top,
+    rgba(255, 255, 255, 0.03) 0%,
+    transparent 70%
+  );
+  pointer-events: none;
+}
+.contact-about__label {
+  position: relative;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.875rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+.contact-about__heading {
+  position: relative;
+  margin-top: 1.25rem;
+  font-size: clamp(2rem, 6vw, 4.5rem);
+  color: #fff;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  max-width: 60rem;
+}
+.contact-about__heading .serif {
+  color: rgba(255, 255, 255, 0.6);
+}
+.contact-about__break {
+  display: none;
+}
+@media (min-width: 768px) {
+  .contact-about__break {
+    display: block;
+  }
+}
+
+/* ================================================================
+   Section 3 — Featured video
+   ================================================================ */
+.contact-featured {
+  background: #000;
+  padding: 1.5rem 1.5rem 5rem;
+  overflow: hidden;
+}
+@media (min-width: 768px) {
+  .contact-featured {
+    padding: 2.5rem 1.5rem 8rem;
+  }
+}
+.contact-featured__inner {
+  max-width: 72rem;
+  margin: 0 auto;
+}
+.contact-featured__frame {
+  position: relative;
+  border-radius: 1.5rem;
+  overflow: hidden;
+  aspect-ratio: 16 / 9;
+}
+.contact-featured__video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.contact-featured__gradient {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.6) 0%,
+    rgba(0, 0, 0, 0) 45%,
+    rgba(0, 0, 0, 0) 100%
+  );
+  pointer-events: none;
+}
+.contact-featured__bottom {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+@media (min-width: 768px) {
+  .contact-featured__bottom {
+    padding: 2.5rem;
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: space-between;
+  }
+}
+.contact-featured__card {
+  border-radius: 1rem;
+  padding: 1.5rem;
+  max-width: 28rem;
+}
+@media (min-width: 768px) {
+  .contact-featured__card {
+    padding: 2rem;
+  }
+}
+.contact-featured__card-label {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 0.75rem;
+}
+.contact-featured__card-body {
+  color: #fff;
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+@media (min-width: 768px) {
+  .contact-featured__card-body {
+    font-size: 1rem;
+  }
+}
+.contact-featured__explore {
+  align-self: flex-start;
+  border-radius: 9999px;
+  padding: 0.75rem 2rem;
+  color: #fff;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  flex-shrink: 0;
+}
+
+/* ================================================================
+   Section 4 — Philosophy (Innovation x Vision)
+   ================================================================ */
+.contact-philosophy {
+  background: #000;
+  padding: 7rem 1.5rem;
+  overflow: hidden;
+}
+@media (min-width: 768px) {
+  .contact-philosophy {
+    padding: 10rem 1.5rem;
+  }
+}
+.contact-philosophy__inner {
+  max-width: 72rem;
+  margin: 0 auto;
+}
+.contact-philosophy__heading {
+  font-size: clamp(2.5rem, 7vw, 6rem);
+  color: #fff;
+  letter-spacing: -0.02em;
+  margin-bottom: 4rem;
+}
+@media (min-width: 768px) {
+  .contact-philosophy__heading {
+    margin-bottom: 6rem;
+  }
+}
+.contact-philosophy__heading .serif {
+  color: rgba(255, 255, 255, 0.4);
+}
+.contact-philosophy__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+}
+@media (min-width: 768px) {
+  .contact-philosophy__grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+  }
+}
+.contact-philosophy__video-wrap {
+  border-radius: 1.5rem;
+  overflow: hidden;
+  aspect-ratio: 4 / 3;
+}
+.contact-philosophy__video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.contact-philosophy__text {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+.contact-philosophy__divider {
+  width: 100%;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.1);
+}
+.contact-philosophy__block-label {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+.contact-philosophy__block-body {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 1rem;
+  line-height: 1.7;
+}
+@media (min-width: 768px) {
+  .contact-philosophy__block-body {
+    font-size: 1.125rem;
+  }
+}
+
+/* ================================================================
+   Section 5 — Services
+   ================================================================ */
+.contact-services {
+  position: relative;
+  background: #000;
+  padding: 7rem 1.5rem;
+  overflow: hidden;
+}
+@media (min-width: 768px) {
+  .contact-services {
+    padding: 10rem 1.5rem;
+  }
+}
+.contact-services::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(255, 255, 255, 0.02) 0%,
+    transparent 60%
+  );
+  pointer-events: none;
+}
+.contact-services__inner {
+  position: relative;
+  max-width: 72rem;
+  margin: 0 auto;
+}
+.contact-services__header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 3rem;
+}
+.contact-services__title {
+  font-size: clamp(1.875rem, 4vw, 3rem);
+  color: #fff;
+  letter-spacing: -0.02em;
+}
+.contact-services__label {
+  display: none;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.875rem;
+}
+@media (min-width: 768px) {
+  .contact-services__label {
+    display: block;
+  }
+}
+.contact-services__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+@media (min-width: 768px) {
+  .contact-services__grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+}
+.contact-services__card {
+  border-radius: 1.5rem;
+  overflow: hidden;
+}
+.contact-services__card-media {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+}
+.contact-services__card-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.7s ease;
+}
+.contact-services__card:hover .contact-services__card-video {
+  transform: scale(1.05);
+}
+.contact-services__card-gradient {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.4), transparent);
+  pointer-events: none;
+}
+.contact-services__card-body {
+  padding: 1.5rem;
+}
+@media (min-width: 768px) {
+  .contact-services__card-body {
+    padding: 2rem;
+  }
+}
+.contact-services__card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+.contact-services__card-tag {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+.contact-services__card-arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  padding: 0.5rem;
+  color: #fff;
+  flex-shrink: 0;
+}
+.contact-services__card-title {
+  font-size: clamp(1.25rem, 2.5vw, 1.5rem);
+  color: #fff;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.75rem;
+}
+.contact-services__card-desc {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
