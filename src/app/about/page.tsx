@@ -7,8 +7,8 @@ import FadingVideo from "@/components/FadingVideo";
 import AboutHeroStory from "@/components/AboutHeroStory";
 import "../about.css";
 
-const CAP_VIDEO =
-  "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260622_093722_ccfc7ebf-182f-419f-8a62-2dc02db7dd9d.mp4";
+const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+const CAP_VIDEO = `${BASE}/about-capabilities.mp4`;
 
 /* ---- SVG Icons ---- */
 function ImageIcon() {
@@ -77,6 +77,7 @@ export default function AboutPage() {
           ============================================================ */}
       <section className="about-cap">
         <FadingVideo src={CAP_VIDEO} className="about-cap__video" />
+        <div className="about-cap__vignette" aria-hidden="true" />
 
         <div className="about-cap__content">
           <div className="about-cap__header">
