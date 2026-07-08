@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useCallback } from "react";
+import { useRef, useCallback, useEffect } from "react";
 
 type Props = {
   src: string | string[];
@@ -19,6 +19,17 @@ export default function FadingVideo({ src, className, style }: Props) {
     v.style.transition = "opacity 0.5s ease";
     v.style.opacity = "1";
   }, []);
+
+  // The browser can start loading a server-rendered <video src=...> before
+  // React hydrates and attaches onLoadedData — for a small/cached clip that
+  // load can finish first, so the event fires with no listener yet and the
+  // video stays invisible. Catch that by checking the state we already have.
+  useEffect(() => {
+    const v = videoRef.current;
+    if (v && v.readyState >= 2) {
+      handleLoadedData();
+    }
+  }, [handleLoadedData]);
 
   const handleTimeUpdate = useCallback(() => {
     const v = videoRef.current;

@@ -23,11 +23,33 @@ export default function ScrollScrubVideo({ src, trackRef, className, style }: Pr
     let raf = 0;
     let destroyed = false;
 
-    const onLoaded = () => {
+    const reveal = () => {
       video.style.transition = "opacity 0.6s ease";
       video.style.opacity = "1";
     };
-    video.addEventListener("loadeddata", onLoaded);
+
+    // A <video> that's only ever seeked (never played) can stay blank in
+    // several browsers — they don't decode/paint a frame until playback has
+    // actually started once. A muted play-then-immediately-pause forces
+    // that first paint; scrubbing via currentTime then works as expected.
+    const primeFrame = () => {
+      const playPromise = video.play();
+      if (playPromise) {
+        playPromise.then(() => video.pause()).catch(() => {});
+      }
+      reveal();
+    };
+
+    // The browser can start loading (and finish loading) a <video src=...>
+    // from the server-rendered HTML before hydration attaches this effect —
+    // if "loadeddata" already fired by then, waiting for the event alone
+    // means it never comes and the video stays invisible. Check the state
+    // we already have first, and only fall back to the event otherwise.
+    if (video.readyState >= 2) {
+      primeFrame();
+    } else {
+      video.addEventListener("loadeddata", primeFrame, { once: true });
+    }
 
     function tick() {
       if (destroyed) return;
@@ -49,7 +71,7 @@ export default function ScrollScrubVideo({ src, trackRef, className, style }: Pr
     return () => {
       destroyed = true;
       cancelAnimationFrame(raf);
-      video.removeEventListener("loadeddata", onLoaded);
+      video.removeEventListener("loadeddata", primeFrame);
     };
   }, [trackRef]);
 
