@@ -10,13 +10,14 @@ const seg = (v: number, a: number, b: number) => clamp((v - a) / (b - a));
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 
 // The whole story is paced in "scroll units" (~1 chunky wheel-scroll each):
-// 2 to grow the title, 1 for it to disappear, 1 for the paragraph to type
-// in, 2 for it to disappear, then 3 for the cards to rise in (the last of
-// those is a hold so they don't vanish the instant the section unpins).
+// 2 to grow the title, 1 for it to disappear, 4 for the paragraph to type
+// in (slow and deliberate), 2 for it to disappear, then 3 for the cards to
+// rise in (the last of those is a hold so they don't vanish the instant
+// the section unpins).
 const UNIT_VH = 60;
 const GROW_UNITS = 2;
 const TITLE_OUT_UNITS = 1;
-const PARA_IN_UNITS = 1;
+const PARA_IN_UNITS = 4;
 const PARA_OUT_UNITS = 2;
 const CARDS_IN_UNITS = 2;
 const HOLD_UNITS = 1;
