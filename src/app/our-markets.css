@@ -187,13 +187,24 @@
   justify-content: center;
   overflow: hidden;
 }
+/* Carousel viewport: clips the draggable track so items can overflow off
+   either edge until dragged into view. */
 .markets-page .gallery-wrapper {
+  width: 100%;
+  overflow: hidden;
+  margin-bottom: calc(1.5 * var(--u));
+  padding: calc(2 * var(--u)) 0;
+}
+/* The actual draggable row (Framer Motion drag="x" lives on this). */
+.markets-page .gallery-track {
   display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
   gap: calc(2 * var(--u));
-  margin-bottom: calc(3 * var(--u));
-  overflow: visible;
+  padding: 0 calc(2 * var(--u));
+  cursor: grab;
+  width: max-content;
+}
+.markets-page .gallery-track:active {
+  cursor: grabbing;
 }
 .markets-page .gallery-item {
   flex: 0 0 calc(25 * var(--u));
@@ -208,6 +219,10 @@
   filter: grayscale(100%);
   transition: filter 0.5s ease;
   display: block;
+  /* The hover-grow scale lives on the item wrapper (Framer Motion
+     whileHover) — this only keeps the image from spilling past its own
+     frame while that happens. */
+  pointer-events: none;
 }
 .markets-page .gallery-item:hover img {
   filter: grayscale(0%);
@@ -222,6 +237,7 @@
   text-transform: uppercase;
   letter-spacing: 0.04em;
   text-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
+  pointer-events: none;
 }
 .markets-page .gallery-caption {
   max-width: calc(80 * var(--u));

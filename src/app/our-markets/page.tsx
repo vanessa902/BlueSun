@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -20,7 +21,63 @@ const MARKETS: MarketItem[] = [
   { label: "Commercial", image: U("1486406146926-c627a92ad1ab") },
   { label: "Industrial", image: U("1581094794329-c8112c4e1190") },
   { label: "Institutional", image: U("1503387762-592deb58ef4e") },
+  { label: "Multi-Family", image: U("1545324418-cc1a3fa10c00") },
+  { label: "Renovation", image: U("1503387762-592deb58ef4e") },
 ];
+
+/** Draggable carousel: whileHover grows the item under the cursor, and the
+ * whole row drags horizontally within however far its content overflows
+ * the visible viewport (recomputed on resize). */
+function MarketCarousel() {
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const [dragLimit, setDragLimit] = useState(0);
+
+  useEffect(() => {
+    function measure() {
+      const wrapper = wrapperRef.current;
+      const track = trackRef.current;
+      if (!wrapper || !track) return;
+      setDragLimit(Math.max(0, track.scrollWidth - wrapper.offsetWidth));
+    }
+    measure();
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, []);
+
+  return (
+    <div className="gallery-wrapper" ref={wrapperRef}>
+      <motion.div
+        className="gallery-track"
+        ref={trackRef}
+        drag="x"
+        dragConstraints={{ left: -dragLimit, right: 0 }}
+        dragElastic={0.12}
+        dragTransition={{ bounceStiffness: 300, bounceDamping: 30 }}
+      >
+        {MARKETS.map((market, i) => (
+          <motion.div
+            key={market.label}
+            className="gallery-item"
+            initial={{ opacity: 0, y: 50, scale: 0.94 }}
+            whileInView={{ opacity: 1, y: 0, scale: 1 }}
+            whileHover={{ scale: 1.08 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{
+              duration: 0.9,
+              ease: [0.16, 1, 0.3, 1],
+              delay: i * 0.1,
+            }}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={market.image} alt={market.label} loading="lazy" draggable={false} />
+            <span className="gallery-item__label">{market.label}</span>
+          </motion.div>
+        ))}
+      </motion.div>
+    </div>
+  );
+}
 
 export default function OurMarketsPage() {
   return (
@@ -67,30 +124,13 @@ export default function OurMarketsPage() {
         </section>
 
         {/* ============================================================
-            Gallery
+            Gallery (draggable carousel)
             ============================================================ */}
         <section className="gallery">
           <div className="container">
             <div className="row">
-              <div className="col-12 gallery-wrapper">
-                {MARKETS.map((market, i) => (
-                  <motion.div
-                    key={market.label}
-                    className="gallery-item"
-                    initial={{ opacity: 0, y: 50, scale: 0.94 }}
-                    whileInView={{ opacity: 1, y: 0, scale: 1 }}
-                    viewport={{ once: true, amount: 0.3 }}
-                    transition={{
-                      duration: 0.9,
-                      ease: [0.16, 1, 0.3, 1],
-                      delay: i * 0.12,
-                    }}
-                  >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={market.image} alt={market.label} loading="lazy" />
-                    <span className="gallery-item__label">{market.label}</span>
-                  </motion.div>
-                ))}
+              <div className="col-12">
+                <MarketCarousel />
               </div>
             </div>
             <div className="row">
