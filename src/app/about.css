@@ -151,8 +151,14 @@
   font-weight: 300;
   line-height: 1.6;
   color: #fff;
+  will-change: filter;
+}
+/* Each letter's own opacity is driven per scroll frame (see
+   AboutHeroStory.tsx), giving a true letter-by-letter typewriter reveal
+   instead of a single block-wide clip-path wipe. */
+.about-hero__char {
   opacity: 0;
-  will-change: opacity, clip-path, filter;
+  will-change: opacity;
 }
 
 /* Stat cards */

@@ -31,6 +31,14 @@ const CARDS_IN_END = PARA_OUT_END + CARDS_IN_UNITS / TOTAL_UNITS;
 
 const TRACK_HEIGHT_VH = 100 + UNIT_VH * TOTAL_UNITS;
 
+const PARA_TEXT =
+  "At BlueSun Construction, we transform ideas into exceptional " +
+  "residential and commercial environments. Through expert " +
+  "craftsmanship, strategic planning, and a commitment to quality, " +
+  "we deliver projects that elevate communities, support businesses, " +
+  "and create places people are proud to call home.";
+const PARA_CHARS = Array.from(PARA_TEXT);
+
 function ClockIcon() {
   return (
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -85,12 +93,17 @@ export default function AboutHeroStory() {
         title.style.transform = `scale(${lerp(1, 1.7, growP)})`;
         title.style.filter = `blur(${titleFadeOut * 14}px)`;
 
-        // ---- Paragraph: types in (clip-path reveal), then disappears ----
+        // ---- Paragraph: types in letter by letter, then disappears ----
         const typeP = seg(p, TITLE_OUT_END, PARA_IN_END);
         const paraFadeOut = seg(p, PARA_IN_END, PARA_OUT_END);
-        para.style.opacity = String((typeP > 0 ? 1 : 0) * (1 - paraFadeOut));
-        para.style.clipPath = `inset(0 ${(1 - typeP) * 100}% 0 0)`;
         para.style.filter = `blur(${paraFadeOut * 10}px)`;
+        const visibleChars = typeP * PARA_CHARS.length;
+        const fadeMul = 1 - paraFadeOut;
+        const chars = para.children;
+        for (let i = 0; i < chars.length; i++) {
+          const char = chars[i] as HTMLElement;
+          char.style.opacity = String(clamp(visibleChars - i) * fadeMul);
+        }
 
         // ---- Stat cards: rise in, then hold ----
         const cardsInP = seg(p, PARA_OUT_END, CARDS_IN_END);
@@ -124,11 +137,11 @@ export default function AboutHeroStory() {
           </h1>
 
           <p className="about-hero__story-para" ref={paraRef}>
-            At BlueSun Construction, we transform ideas into exceptional
-            residential and commercial environments. Through expert
-            craftsmanship, strategic planning, and a commitment to quality,
-            we deliver projects that elevate communities, support
-            businesses, and create places people are proud to call home.
+            {PARA_CHARS.map((char, i) => (
+              <span key={i} className="about-hero__char">
+                {char}
+              </span>
+            ))}
           </p>
 
           <div className="about-stats" ref={cardsRef}>
