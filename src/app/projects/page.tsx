@@ -1,12 +1,11 @@
 "use client";
 
-import { useState } from "react";
 import dynamic from "next/dynamic";
-import { ArrowRight, Clock, Menu, X, Link2 } from "lucide-react";
+import { ArrowRight, Link2 } from "lucide-react";
+import Navbar from "@/components/Navbar";
 import RollButton from "@/components/axion/RollButton";
 import ExpandButton from "@/components/axion/ExpandButton";
 import PartnerBadgeIcon from "@/components/axion/PartnerBadgeIcon";
-import useLondonTime from "@/components/axion/useLondonTime";
 import "../axion.css";
 import "../axion-swap.css";
 
@@ -63,83 +62,17 @@ const NARRATIV_VIDEO =
 const LUMINAR_VIDEO =
   "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260516_123323_f909c2b8-ff6c-4edf-882b-8ebcdbe389b5.mp4";
 
-const NAV_LINKS = ["Projects", "Studio", "Journal", "Connect"];
-
 export default function ProjectsPage() {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const time = useLondonTime();
-
   return (
-    <div className="axion-page">
+    <>
+      <Navbar />
+
+      <div className="axion-page">
       {/* ============================================================
           Section 1 — Hero
           ============================================================ */}
       <section className="axion-hero">
         <AxionHeroShader />
-
-        <div className="axion-nav-wrap">
-          <div className="axion-nav-container">
-            <nav className="axion-nav">
-              <div className="axion-nav__left">
-                <a className="axion-nav__logo" href="#hero" aria-label="Axion Studio">
-                  AX
-                </a>
-                <div className="axion-nav__links">
-                  {NAV_LINKS.map((label) => (
-                    <a key={label} href={`#${label.toLowerCase()}`}>
-                      {label}
-                    </a>
-                  ))}
-                </div>
-              </div>
-
-              <div className="axion-nav__right">
-                <span className="axion-nav__note">
-                  Taking on projects for Q1 2026
-                </span>
-                <span className="axion-nav__time">
-                  <Clock size={14} />
-                  {time} in London
-                </span>
-                <RollButton label="Book a strategy call" variant="dark" />
-              </div>
-
-              <button
-                type="button"
-                className="axion-nav__toggle"
-                aria-label={menuOpen ? "Close menu" : "Open menu"}
-                onClick={() => setMenuOpen((o) => !o)}
-              >
-                {menuOpen ? <X size={18} /> : <Menu size={18} />}
-              </button>
-            </nav>
-          </div>
-        </div>
-
-        <div className={`axion-mmenu${menuOpen ? " is-open" : ""}`}>
-          <div
-            className="axion-mmenu__backdrop"
-            onClick={() => setMenuOpen(false)}
-          />
-          <div className="axion-mmenu__sheet">
-            <span className="axion-mmenu__time">
-              <Clock size={14} />
-              {time} in London
-            </span>
-            <nav className="axion-mmenu__links">
-              {NAV_LINKS.map((label) => (
-                <a
-                  key={label}
-                  href={`#${label.toLowerCase()}`}
-                  onClick={() => setMenuOpen(false)}
-                >
-                  {label}
-                </a>
-              ))}
-            </nav>
-            <RollButton label="Start a project" variant="dark" block />
-          </div>
-        </div>
 
         <div className="axion-hero__content">
           <div className="axion-hero__inner">
@@ -172,11 +105,6 @@ export default function ProjectsPage() {
           ============================================================ */}
       <section className="axion-about" id="studio">
         <div className="axion-container">
-          <div className="axion-badge-row">
-            <span className="axion-badge-num">1</span>
-            <span className="axion-badge-pill">Introducing Axion</span>
-          </div>
-
           <h2 className="axion-about__heading">
             Strategy-led creatives, delivering
             <br className="axion-br-desktop" />
@@ -246,13 +174,6 @@ export default function ProjectsPage() {
           ============================================================ */}
       <section className="axion-cases" id="projects">
         <div className="axion-container">
-          <div className="axion-badge-row">
-            <span className="axion-badge-num">2</span>
-            <span className="axion-badge-pill axion-badge-pill--gray300">
-              Featured client work
-            </span>
-          </div>
-
           <h2 className="axion-cases__heading">Our projects</h2>
 
           <div className="axion-cases__grid">
@@ -357,6 +278,7 @@ export default function ProjectsPage() {
           </section>
         </main>
       </div>
-    </div>
+      </div>
+    </>
   );
 }
