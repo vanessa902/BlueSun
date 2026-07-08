@@ -229,9 +229,8 @@
   display: block;
 }
 .about-cap__heading {
-  font-size: clamp(3.75rem, 8vw, 6rem);
+  font-size: clamp(3.375rem, 7.2vw, 5.4rem);
   font-weight: 100;
-  font-style: italic;
   line-height: 0.9;
   letter-spacing: -0.03em;
   color: #fff;
