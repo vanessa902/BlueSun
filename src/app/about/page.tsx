@@ -72,12 +72,15 @@ export default function AboutPage() {
           ============================================================ */}
       <AboutHeroStory />
 
+      <div className="about-section-divider" aria-hidden="true" />
+
       {/* ============================================================
           Section 2 — Capabilities
           ============================================================ */}
       <section className="about-cap">
         <FadingVideo src={CAP_VIDEO} className="about-cap__video" />
         <div className="about-cap__vignette" aria-hidden="true" />
+        <div className="about-cap__gradient" aria-hidden="true" />
 
         <div className="about-cap__content">
           <div className="about-cap__header">
