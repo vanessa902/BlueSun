@@ -124,6 +124,7 @@ export default function AboutPage() {
             className="about-hero__video"
             style={{ width: "120%", height: "120%" }}
           />
+          <div className="about-hero__gradient" aria-hidden="true" />
 
           <div className="about-hero__content">
             <div className="about-hero__main">

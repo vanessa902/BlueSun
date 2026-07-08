@@ -95,6 +95,20 @@
   object-position: top;
   z-index: 0;
 }
+/* Darkens toward the bottom (where the content sits) and fades to fully
+   transparent at the top, so the video reads clearly up top. */
+.about-hero__gradient {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.85) 0%,
+    rgba(0, 0, 0, 0.45) 35%,
+    rgba(0, 0, 0, 0) 70%
+  );
+}
 .about-hero__content {
   position: relative;
   z-index: 10;
