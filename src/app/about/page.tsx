@@ -85,19 +85,19 @@ type Capability = {
 
 const CAPABILITIES: Capability[] = [
   {
-    title: "Design",
+    title: "Our Story",
     Icon: ImageIcon,
     tags: ["Brand Systems", "Art Direction", "Visual Identity", "Motion"],
     body: "We shape identities and interfaces that feel unmistakably yours — typographic systems, component libraries, and art-directed pages that scale without losing soul.",
   },
   {
-    title: "Engineering",
+    title: "Our Mission",
     Icon: MovieIcon,
     tags: ["React", "Next.js", "Headless CMS", "Edge-Ready"],
     body: "Production-grade front-ends built on modern stacks. Performant, accessible, and instrumented — with code your team will enjoy extending long after launch.",
   },
   {
-    title: "Growth",
+    title: "Our Vision",
     Icon: LightbulbIcon,
     tags: ["SEO", "Analytics", "A/B Testing", "Retention"],
     body: "Launch is the starting line. We partner with your team on conversion, content, and iteration loops that turn a beautiful site into a compounding asset.",
