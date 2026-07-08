@@ -1,0 +1,297 @@
+/* Our Markets — dark-on-light editorial page, self-contained design system
+   (PP Neue Montreal, fluid "10px @ 1512px" rem scale, warm gold accent).
+   Everything is scoped under .markets-page so it can't leak into the rest
+   of the site — Next.js CSS imports are global, and this page's reset/
+   font/scale choices are deliberately different from the rest of BlueSun.
+   The header/footer stay the site's shared <Navbar>/<Footer>; only the
+   content between them uses this stylesheet. */
+
+:root {
+  --accent-color: #ffd700;
+  --offwhite: #f5f5f0;
+  --offblack: #3a3a38;
+}
+
+@font-face {
+  src: url("https://fonts.cdnfonts.com/css/pp-neue-montreal") format("woff2");
+  font-family: "PP Neue Montreal", sans-serif;
+  font-weight: 400;
+}
+
+/* Fluid "rem" scale for this page only: --u == 1 of the design's rem units,
+   10px at the 1512px reference width. Every size below is `calc(N * var(--u))`
+   instead of `Nrem` so it can't touch the real :root font-size other pages
+   rely on. */
+.markets-page {
+  --u: calc(100vw / 1512 * 10);
+  font-family: "PP Neue Montreal", sans-serif;
+  font-weight: 700;
+  font-size: calc(1.8 * var(--u));
+  letter-spacing: -0.02em;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--offwhite);
+  color: var(--offblack);
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Background noise effect */
+.markets-page::before {
+  content: "";
+  position: fixed;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: transparent
+    url("http://assets.iceable.com/img/noise-transparent.png") repeat 0 0;
+  background-size: 300px 300px;
+  animation: markets-noise 0.3s steps(5) infinite;
+  opacity: 0.9;
+  will-change: transform;
+  z-index: 100;
+  pointer-events: none;
+}
+
+@keyframes markets-noise {
+  0% {
+    transform: translate(0, 0);
+  }
+  10% {
+    transform: translate(-2%, -3%);
+  }
+  20% {
+    transform: translate(-4%, 2%);
+  }
+  30% {
+    transform: translate(2%, -4%);
+  }
+  40% {
+    transform: translate(-2%, 5%);
+  }
+  50% {
+    transform: translate(-4%, 2%);
+  }
+  60% {
+    transform: translate(3%, 0);
+  }
+  70% {
+    transform: translate(0, 3%);
+  }
+  80% {
+    transform: translate(-3%, 0);
+  }
+  90% {
+    transform: translate(2%, 2%);
+  }
+  100% {
+    transform: translate(1%, 0);
+  }
+}
+
+/* ================================================================
+   Grid System
+   ================================================================ */
+.markets-page .container {
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 0 calc(2 * var(--u));
+  height: 100%;
+}
+.markets-page .row {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: calc(1 * var(--u));
+  width: 100%;
+}
+.markets-page .row-content {
+  align-items: end;
+  margin-bottom: calc(2 * var(--u));
+}
+.markets-page .col-1 { grid-column: span 1; }
+.markets-page .col-2 { grid-column: span 2; }
+.markets-page .col-3 { grid-column: span 3; }
+.markets-page .col-4 { grid-column: span 4; }
+.markets-page .col-5 { grid-column: span 5; }
+.markets-page .col-6 { grid-column: span 6; }
+.markets-page .col-7 { grid-column: span 7; }
+.markets-page .col-8 { grid-column: span 8; }
+.markets-page .col-9 { grid-column: span 9; }
+.markets-page .col-10 { grid-column: span 10; }
+.markets-page .col-11 { grid-column: span 11; }
+.markets-page .col-12 { grid-column: span 12; }
+
+/* ================================================================
+   Hero Section
+   ================================================================ */
+.markets-page .hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  padding-top: calc(9 * var(--u));
+}
+.markets-page .hero-left {
+  position: relative;
+}
+.markets-page .hero-image {
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+  transform-origin: bottom;
+}
+.markets-page .hero-image img {
+  width: 100%;
+  height: auto;
+  filter: grayscale(100%);
+  object-fit: cover;
+  position: relative;
+  z-index: 1;
+  display: block;
+}
+.markets-page .texture-overlay {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url("https://cdn.cosmos.so/00c1aedd-73e6-4e74-a278-2252a626bbff?format=jpeg");
+  background-position: top right;
+  background-size: cover;
+  mix-blend-mode: screen;
+  opacity: 0.2;
+  z-index: 2;
+}
+.markets-page .hero-right {
+  padding-left: calc(2 * var(--u));
+  text-align: right;
+  overflow: hidden;
+}
+.markets-page .about-text {
+  font-size: calc(1.6 * var(--u));
+  line-height: 1.6;
+  text-transform: none;
+  font-weight: 400;
+}
+
+/* ================================================================
+   Gallery Section
+   ================================================================ */
+.markets-page .gallery {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.markets-page .gallery-wrapper {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: calc(2 * var(--u));
+  margin-bottom: calc(3 * var(--u));
+  overflow: visible;
+}
+.markets-page .gallery-item {
+  flex: 0 0 calc(25 * var(--u));
+  height: calc(35 * var(--u));
+  overflow: hidden;
+  position: relative;
+}
+.markets-page .gallery-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(100%);
+  transition: filter 0.5s ease;
+  display: block;
+}
+.markets-page .gallery-item:hover img {
+  filter: grayscale(0%);
+}
+.markets-page .gallery-item__label {
+  position: absolute;
+  left: calc(1 * var(--u));
+  bottom: calc(1 * var(--u));
+  z-index: 2;
+  color: #fff;
+  font-size: calc(1.3 * var(--u));
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
+}
+.markets-page .gallery-caption {
+  max-width: calc(80 * var(--u));
+  margin: 0 auto;
+  padding: calc(2 * var(--u));
+  font-size: calc(1.4 * var(--u));
+  line-height: 1.6;
+  text-transform: none;
+  font-weight: 400;
+  text-align: center;
+}
+
+/* ================================================================
+   Closing CTA ("Footer" section from the design — the shared site
+   <Footer> still follows this; this is just the last content section)
+   ================================================================ */
+.markets-page .cta-section {
+  min-height: 45vh;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: linear-gradient(
+    to bottom,
+    rgba(245, 245, 240, 0.1) 0%,
+    rgba(245, 245, 240, 0.7) 40%,
+    var(--offwhite) 100%
+  );
+  z-index: 10;
+  padding-top: calc(5 * var(--u));
+}
+.markets-page .footer-cta {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: calc(0.25 * var(--u));
+}
+.markets-page .footer-button {
+  padding: calc(0.5 * var(--u)) 0;
+  text-decoration: none;
+  text-transform: uppercase;
+  color: var(--accent-color);
+  font-size: calc(1.8 * var(--u));
+}
+.markets-page .footer-email {
+  color: var(--offblack);
+  text-decoration: none;
+  font-size: calc(1.4 * var(--u));
+  font-weight: 400;
+}
+
+/* ================================================================
+   Responsive
+   ================================================================ */
+@media (max-width: 900px) {
+  .markets-page .row-content {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .markets-page .hero-right {
+    text-align: left;
+    padding-left: 0;
+    margin-top: calc(2 * var(--u));
+  }
+  .markets-page .col-6 {
+    grid-column: span 12;
+  }
+}

@@ -9,7 +9,7 @@ const HOME_HREF = `${BASE}/#hero`;
 const NAV_ITEMS = [
   { label: "Home", href: HOME_HREF },
   { label: "About Us", href: `${BASE}/about` },
-  { label: "Our Market", href: "#work" },
+  { label: "Our Market", href: `${BASE}/our-markets` },
   { label: "Projects", href: `${BASE}/projects` },
   { label: "Contact us", href: "#contact" },
 ];
