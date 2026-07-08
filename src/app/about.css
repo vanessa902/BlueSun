@@ -133,17 +133,7 @@
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.35rem 1rem 0.35rem 0.35rem;
-}
-.about-badge__new {
-  background: #fff;
-  color: #000;
-  font-size: 0.7rem;
-  font-weight: 600;
-  padding: 0.15rem 0.6rem;
-  border-radius: 9999px;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  padding: 0.35rem 1rem;
 }
 .about-badge__text {
   font-size: 0.8rem;

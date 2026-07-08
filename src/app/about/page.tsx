@@ -136,10 +136,7 @@ export default function AboutPage() {
           <div className="about-hero__main">
             {/* Badge */}
             <motion.div className="about-badge liquid-glass" {...fadeBlur(0.4)}>
-              <span className="about-badge__new">New</span>
-              <span className="about-badge__text">
-                Booking Q3 2026 engagements &mdash; limited capacity
-              </span>
+              <span className="about-badge__text">Company</span>
             </motion.div>
 
             {/* Headline */}
