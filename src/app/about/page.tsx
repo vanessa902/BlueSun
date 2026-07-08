@@ -1,16 +1,15 @@
 "use client";
 
 import { useRef } from "react";
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import FadingVideo from "@/components/FadingVideo";
-import ScrollScrubVideo from "@/components/ScrollScrubVideo";
 import BlurText from "@/components/BlurText";
 import "../about.css";
 
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
-const HERO_VIDEO = `${BASE}/about-hero.mp4`;
+const HERO_IMAGE = `${BASE}/about-hero.png`;
 const CAP_VIDEO =
   "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260622_093722_ccfc7ebf-182f-419f-8a62-2dc02db7dd9d.mp4";
 
@@ -107,92 +106,95 @@ const CAPABILITIES: Capability[] = [
 const TRUST_NAMES = ["Aeon", "Vela", "Apex", "Orbit", "Zeno"];
 
 export default function AboutPage() {
-  const heroTrackRef = useRef<HTMLDivElement>(null);
+  const heroRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: heroRef,
+    offset: ["start start", "end start"],
+  });
+  // Parallax depth: the image (far layer) drifts down and lags behind the
+  // scroll, while the text (near layer) drifts up faster — the gap between
+  // the two is what reads as depth as the user scrolls the hero away.
+  const imageY = useTransform(scrollYProgress, [0, 1], ["0%", "18%"]);
+  const contentY = useTransform(scrollYProgress, [0, 1], ["0%", "-12%"]);
 
   return (
     <>
       <Navbar />
 
       {/* ============================================================
-          Section 1 — Hero (scrollytelling: pinned while the video scrubs)
+          Section 1 — Hero (parallax: image and text drift at different
+          rates as the user scrolls, reading as depth)
           ============================================================ */}
-      <div className="about-hero-track" ref={heroTrackRef}>
-        <section className="about-hero">
-          <ScrollScrubVideo
-            src={HERO_VIDEO}
-            trackRef={heroTrackRef}
-            className="about-hero__video"
-            style={{ width: "120%", height: "120%" }}
-          />
-          <div className="about-hero__gradient" aria-hidden="true" />
+      <section className="about-hero" ref={heroRef}>
+        <motion.div className="about-hero__image-wrap" style={{ y: imageY }}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img className="about-hero__image" src={HERO_IMAGE} alt="" />
+        </motion.div>
+        <div className="about-hero__gradient" aria-hidden="true" />
 
-          <div className="about-hero__content">
-            <div className="about-hero__main">
-              {/* Badge */}
-              <motion.div className="about-badge liquid-glass" {...fadeBlur(0.4)}>
-                <span className="about-badge__new">New</span>
-                <span className="about-badge__text">
-                  Booking Q3 2026 engagements &mdash; limited capacity
-                </span>
-              </motion.div>
+        <motion.div className="about-hero__content" style={{ y: contentY }}>
+          <div className="about-hero__main">
+            {/* Badge */}
+            <motion.div className="about-badge liquid-glass" {...fadeBlur(0.4)}>
+              <span className="about-badge__new">New</span>
+              <span className="about-badge__text">
+                Booking Q3 2026 engagements &mdash; limited capacity
+              </span>
+            </motion.div>
 
-              {/* Headline */}
-              <div className="about-headline">
-                <BlurText
-                  text="Building Spaces That Stand the Test of Time"
-                  className="about-headline__text"
-                />
-              </div>
-
-              {/* Subtext */}
-              <motion.p className="about-subtext" {...fadeBlur(0.8)}>
-                At BlueSun Construction, we transform ideas into exceptional
-                residential and commercial environments. Through expert
-                craftsmanship, strategic planning, and a commitment to
-                quality, we deliver projects that elevate communities,
-                support businesses, and create places people are proud to
-                call home.
-              </motion.p>
-
-              {/* CTA */}
-              <motion.div className="about-cta" {...fadeBlur(1.1)}>
-                <button className="about-cta__btn liquid-glass-strong" type="button">
-                  Start a Project <ArrowUpRight />
-                </button>
-                <button className="about-cta__link" type="button">
-                  <PlayIcon /> Watch Showreel
-                </button>
-              </motion.div>
-
-              {/* Stats */}
-              <motion.div className="about-stats" {...fadeBlur(1.3)}>
-                <div className="about-stat liquid-glass">
-                  <span className="about-stat__icon"><ClockIcon /></span>
-                  <div className="about-stat__num">6 Weeks</div>
-                  <div className="about-stat__label">Average End-to-End Launch Time</div>
-                </div>
-                <div className="about-stat liquid-glass">
-                  <span className="about-stat__icon"><GlobeIcon /></span>
-                  <div className="about-stat__num">140+</div>
-                  <div className="about-stat__label">Brands Shipped Across Four Continents</div>
-                </div>
-              </motion.div>
+            {/* Headline */}
+            <div className="about-headline">
+              <BlurText text="About Us" className="about-headline__text" />
             </div>
 
-            {/* Trust bar */}
-            <motion.div className="about-trust" {...fadeBlur(1.4)}>
-              <div className="about-trust__pill liquid-glass">
-                Trusted by founders, operators, and creative directors worldwide
+            {/* Subtext */}
+            <motion.p className="about-subtext" {...fadeBlur(0.8)}>
+              At BlueSun Construction, we transform ideas into exceptional
+              residential and commercial environments. Through expert
+              craftsmanship, strategic planning, and a commitment to
+              quality, we deliver projects that elevate communities,
+              support businesses, and create places people are proud to
+              call home.
+            </motion.p>
+
+            {/* CTA */}
+            <motion.div className="about-cta" {...fadeBlur(1.1)}>
+              <button className="about-cta__btn liquid-glass-strong" type="button">
+                Start a Project <ArrowUpRight />
+              </button>
+              <button className="about-cta__link" type="button">
+                <PlayIcon /> Watch Showreel
+              </button>
+            </motion.div>
+
+            {/* Stats */}
+            <motion.div className="about-stats" {...fadeBlur(1.3)}>
+              <div className="about-stat liquid-glass">
+                <span className="about-stat__icon"><ClockIcon /></span>
+                <div className="about-stat__num">6 Weeks</div>
+                <div className="about-stat__label">Average End-to-End Launch Time</div>
               </div>
-              <div className="about-trust__logos">
-                {TRUST_NAMES.map((name) => (
-                  <span key={name} className="about-trust__name">{name}</span>
-                ))}
+              <div className="about-stat liquid-glass">
+                <span className="about-stat__icon"><GlobeIcon /></span>
+                <div className="about-stat__num">140+</div>
+                <div className="about-stat__label">Brands Shipped Across Four Continents</div>
               </div>
             </motion.div>
           </div>
-        </section>
-      </div>
+
+          {/* Trust bar */}
+          <motion.div className="about-trust" {...fadeBlur(1.4)}>
+            <div className="about-trust__pill liquid-glass">
+              Trusted by founders, operators, and creative directors worldwide
+            </div>
+            <div className="about-trust__logos">
+              {TRUST_NAMES.map((name) => (
+                <span key={name} className="about-trust__name">{name}</span>
+              ))}
+            </div>
+          </motion.div>
+        </motion.div>
+      </section>
 
       {/* ============================================================
           Section 2 — Capabilities
