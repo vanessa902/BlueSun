@@ -8,6 +8,47 @@ import ExpandButton from "@/components/axion/ExpandButton";
 import PartnerBadgeIcon from "@/components/axion/PartnerBadgeIcon";
 import useLondonTime from "@/components/axion/useLondonTime";
 import "../axion.css";
+import "../axion-swap.css";
+
+const SWAP = (id: string) =>
+  `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=1400&q=85`;
+
+type SwapProject = {
+  title: string;
+  desc: string;
+  swapImages: [string, string];
+  bigImage: string;
+  reversed?: boolean;
+};
+
+const SWAP_PROJECTS: SwapProject[] = [
+  {
+    title: "Solace",
+    desc: "A wellness platform redesigned around calm, unhurried pacing.",
+    swapImages: [SWAP("1600607687939-ce8a6c25118c"), SWAP("1600585154340-be6161a56a0c")],
+    bigImage: SWAP("1600607687644-a94e6a2c0b3f"),
+  },
+  {
+    title: "Northline",
+    desc: "Logistics tooling that makes dense operational data legible.",
+    swapImages: [SWAP("1553413077-190dd305871c"), SWAP("1581091226825-a6a2a5aee158")],
+    bigImage: SWAP("1565043666747-69f6646db940"),
+  },
+  {
+    title: "Verve",
+    desc: "An editorial-first storefront for a fashion label's US launch.",
+    swapImages: [SWAP("1441984904996-e0b6ba687e04"), SWAP("1490481651871-ab68de25d43d")],
+    bigImage: SWAP("1483985988355-763728e1935b"),
+    reversed: true,
+  },
+  {
+    title: "Continuum",
+    desc: "A fintech dashboard rebuilt for clarity under real load.",
+    swapImages: [SWAP("1454165804606-c3d57bc86b40"), SWAP("1551288049-bebda4e38f71")],
+    bigImage: SWAP("1487958449943-2429e8be8625"),
+    reversed: true,
+  },
+];
 
 const AxionHeroShader = dynamic(() => import("@/components/AxionHeroShader"), {
   ssr: false,
@@ -257,6 +298,65 @@ export default function ProjectsPage() {
           </div>
         </div>
       </section>
+
+      {/* ============================================================
+          Section 4 — Scroll-driven work showcase
+          ============================================================ */}
+      <div className="axion-swap">
+        <header>
+          <h1>
+            <span>Selected work</span>
+            Built to hold up
+          </h1>
+          <h2>Scroll to explore</h2>
+        </header>
+
+        <main>
+          {SWAP_PROJECTS.map((project) => (
+            <section key={project.title}>
+              <div className="image-box">
+                {project.reversed && (
+                  <div className="controller">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={project.bigImage} alt="" />
+                  </div>
+                )}
+
+                <div className="swapper">
+                  <div className="progress">
+                    <div>
+                      <div />
+                    </div>
+                    <div>
+                      <div />
+                    </div>
+                  </div>
+                  <div className="caption">
+                    <h2>{project.title}</h2>
+                    <p>{project.desc}</p>
+                  </div>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={project.swapImages[0]} alt="" />
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={project.swapImages[1]} alt="" />
+                </div>
+
+                {!project.reversed && (
+                  <div className="controller">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={project.bigImage} alt="" />
+                  </div>
+                )}
+              </div>
+            </section>
+          ))}
+
+          <section>
+            <h2>Let&rsquo;s build something worth scrolling for.</h2>
+            <h2>Available for new projects — Q1 2026</h2>
+          </section>
+        </main>
+      </div>
     </div>
   );
 }

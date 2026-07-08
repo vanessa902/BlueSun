@@ -1,0 +1,276 @@
+/* Scroll-driven "image swapper" showcase — a new section appended to the
+   Projects (Axion Studio) page. The source spec styled bare tags (body,
+   header, h1, h2, img, section, main) directly, which would leak into the
+   rest of the page/site since Next.js CSS is global — everything below is
+   scoped under .axion-swap instead. Progressive: the CSS scroll-driven
+   part (animation-timeline: view()) only runs where @supports matches
+   (Chromium 115+); elsewhere it's a static two-column layout. */
+
+.axion-swap {
+  --left-pad: calc(48px + 2rem);
+  --container-width: calc(100vw - 1rem - var(--left-pad));
+  --column-one: calc(var(--container-width) * (1.2 / 3.2));
+  --column-two: calc(var(--container-width) * (2 / 3.2));
+  --col-one-height: min(70vh, calc((380 / 272) * var(--column-one)));
+  --col-two-height: min(110vh, calc((1148 / 940) * var(--column-two)));
+  --catch-up: calc(var(--col-two-height) - var(--col-one-height));
+  --heading: clamp(2rem, 6vw + 1rem, 10rem);
+
+  width: 100%;
+  background: #efefef;
+  color: #111827;
+  font-family: "SF Pro Text", "SF Pro Icons", "Helvetica Neue", Helvetica,
+    Arial, sans-serif, system-ui;
+}
+.axion-swap :where(main, section) {
+  width: 100%;
+}
+.axion-swap header {
+  height: 100vh;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  margin-bottom: 25vh;
+  text-align: center;
+  padding: 0 1.5rem;
+}
+.axion-swap section:last-of-type {
+  height: 50vh;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  text-align: center;
+}
+.axion-swap section:last-of-type h2:last-of-type {
+  font-size: calc(var(--heading) * 0.15);
+  text-transform: uppercase;
+}
+.axion-swap img {
+  background: hsl(0 0% 90%);
+  width: 100%;
+  height: 100%;
+  border-radius: 6px;
+  object-fit: cover;
+  mix-blend-mode: plus-lighter;
+}
+.axion-swap h1 {
+  font-size: var(--heading);
+  margin: 0;
+  position: relative;
+}
+.axion-swap h1 span {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  display: inline-block;
+  translate: -50% 50%;
+  font-size: calc(var(--heading) * 0.2);
+  text-transform: uppercase;
+  color: hsl(6 100% 50%);
+}
+.axion-swap h2 {
+  font-size: calc(var(--heading) * 0.8);
+}
+.axion-swap section > h2 {
+  text-align: center;
+}
+.axion-swap header h2 {
+  text-transform: uppercase;
+  opacity: 0.8;
+  font-size: calc(var(--heading) * 0.25);
+}
+.axion-swap :where(h1, h2, p) {
+  margin: 0;
+}
+.axion-swap main {
+  display: flex;
+  flex-direction: column;
+  gap: 12rem;
+}
+
+/* The main container that splits the two columns */
+.axion-swap .image-box {
+  display: grid;
+  gap: 1rem;
+  padding: 1rem 1rem 1rem var(--left-pad);
+  min-height: 100vh;
+  grid-template-columns: 1.2fr 2fr;
+}
+.axion-swap section:nth-of-type(3) .image-box,
+.axion-swap section:nth-of-type(4) .image-box {
+  grid-template-columns: 2fr 1.2fr;
+}
+
+/* Swapper container */
+.axion-swap .swapper {
+  height: var(--col-one-height);
+  width: 100%;
+  position: relative;
+  transform: translate3d(0, 0, 0);
+  border-radius: 6px;
+  isolation: isolate;
+}
+.axion-swap .swapper img:first-of-type {
+  opacity: 0;
+}
+
+.axion-swap .progress {
+  position: absolute;
+  height: min(100px, 15%);
+  width: 6px;
+  top: 50%;
+  translate: 0 -50%;
+  display: flex;
+  flex-direction: column;
+  gap: 5%;
+  z-index: 10;
+}
+.axion-swap .progress > div {
+  border-radius: 100px;
+  background: hsl(0 0% 100% / 0.25);
+  transition: flex 0.25s ease-in-out;
+  flex: 10;
+  position: relative;
+}
+.axion-swap .progress div > div {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  border-radius: 100px;
+  height: 0%;
+  background: white;
+}
+.axion-swap .progress > div:last-of-type {
+  flex: calc(1 + (var(--flip, 0) * 99));
+}
+.axion-swap .swapper:first-of-type .progress {
+  right: 6px;
+}
+.axion-swap .swapper:last-of-type .progress {
+  left: 6px;
+}
+
+.axion-swap .caption {
+  position: absolute;
+  bottom: 100%;
+  padding: 1rem;
+  font-size: 12px;
+  width: 40ch;
+  max-width: 90%;
+  text-align: right;
+  right: 6px;
+  text-transform: uppercase;
+  display: grid;
+  gap: 0.25rem;
+}
+.axion-swap .caption h2 {
+  font-size: 12px;
+}
+.axion-swap .swapper img {
+  position: absolute;
+}
+
+.axion-swap .controller {
+  height: var(--col-two-height);
+  width: 100%;
+  border-radius: 6px;
+}
+.axion-swap .swapper,
+.axion-swap .controller {
+  background: black;
+}
+
+@supports (animation-timeline: scroll()) {
+  @property --flip {
+    inherits: true;
+    initial-value: 0;
+    syntax: "<number>";
+  }
+  @keyframes axion-swap-fade {
+    to {
+      opacity: 0;
+    }
+  }
+  @keyframes axion-swap-fill-up {
+    to {
+      height: 100%;
+    }
+  }
+  @keyframes axion-swap-move {
+    to {
+      translate: 0 var(--catch-up);
+    }
+  }
+  @keyframes axion-swap-flip {
+    to {
+      --flip: 1;
+    }
+  }
+
+  .axion-swap .image-box {
+    /* The ViewTimeline for use by the children */
+    view-timeline: --axion-container;
+  }
+
+  .axion-swap .swapper {
+    /* Translates from top to bottom of the container */
+    animation: axion-swap-move both linear, axion-swap-flip both steps(1);
+    animation-timeline: --axion-container, view();
+    animation-range: 50vh calc(100vh + (var(--col-two-height) * 0.25)), cover 50% cover 50%;
+  }
+
+  .axion-swap .swapper img {
+    animation: axion-swap-fade both linear;
+    animation-timeline: view();
+    animation-range: cover 45% cover 55%;
+  }
+  .axion-swap .swapper img:first-of-type {
+    opacity: 1;
+    animation-direction: reverse;
+  }
+
+  .axion-swap .progress div > div {
+    animation: axion-swap-fill-up both linear;
+    animation-timeline: --axion-container;
+  }
+  .axion-swap .progress div:first-of-type > div {
+    animation-range: 50vh calc(50vh + (var(--col-two-height) * 0.125));
+  }
+  .axion-swap .progress div:last-of-type > div {
+    animation-range: calc(75vh + (var(--col-two-height) * 0.25)) calc(100vh + (var(--col-two-height) * 0.25));
+  }
+
+  @media (max-width: 768px) {
+    .axion-swap .controller {
+      height: calc(var(--col-two-height) * 1.5);
+    }
+    .axion-swap .swapper {
+      view-timeline-name: --axion-swapper;
+      width: 65%;
+      min-width: 300px;
+      height: calc(var(--col-one-height) * 2);
+      animation: axion-swap-flip both steps(1, end);
+      animation-timeline: view();
+      animation-range: 50vh calc(75vh + (var(--col-two-height) * 0.25));
+    }
+    .axion-swap .swapper img {
+      mix-blend-mode: normal;
+      animation-timeline: view();
+    }
+    .axion-swap .progress div > div {
+      animation-timeline: --axion-swapper;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .axion-swap main {
+    gap: 6rem;
+  }
+  .axion-swap section .image-box {
+    display: flex;
+    flex-direction: column;
+    gap: 8rem;
+    min-height: 0;
+  }
+}
