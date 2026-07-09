@@ -257,49 +257,6 @@
 }
 
 /* ================================================================
-   Closing CTA ("Footer" section from the design — the shared site
-   <Footer> still follows this; this is just the last content section)
-   ================================================================ */
-.markets-page .cta-section {
-  min-height: 45vh;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  background: linear-gradient(
-    to bottom,
-    rgba(245, 245, 240, 0.1) 0%,
-    rgba(245, 245, 240, 0.7) 40%,
-    var(--offwhite) 100%
-  );
-  z-index: 10;
-  padding-top: calc(5 * var(--u));
-}
-.markets-page .footer-cta {
-  position: relative;
-  z-index: 3;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: calc(0.25 * var(--u));
-}
-.markets-page .footer-button {
-  padding: calc(0.5 * var(--u)) 0;
-  text-decoration: none;
-  text-transform: uppercase;
-  color: var(--accent-color);
-  font-size: calc(1.8 * var(--u));
-}
-.markets-page .footer-email {
-  color: var(--offblack);
-  text-decoration: none;
-  font-size: calc(1.4 * var(--u));
-  font-weight: 400;
-}
-
-/* ================================================================
    Responsive
    ================================================================ */
 @media (max-width: 900px) {

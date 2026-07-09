@@ -18,7 +18,7 @@ type MarketItem = {
 const MARKETS: MarketItem[] = [
   { label: "Residential", image: U("1560518883-ce09059eeffa") },
   { label: "Commercial", image: U("1486406146926-c627a92ad1ab") },
-  { label: "Industrial", image: U("1581094794329-c8112c4e1190") },
+  { label: "Industrial", image: `${BASE}/about-studio-small.jpg` },
   { label: "Institutional", image: U("1503387762-592deb58ef4e") },
   { label: "Multi-Family", image: U("1545324418-cc1a3fa10c00") },
   { label: "Renovation", image: U("1503387762-592deb58ef4e") },
@@ -160,25 +160,6 @@ export default function OurMarketsPage() {
           </div>
         </section>
 
-        {/* ============================================================
-            Closing CTA
-            ============================================================ */}
-        <section className="cta-section">
-          <motion.div
-            className="footer-cta"
-            initial={{ opacity: 0, y: 20, filter: "blur(5px)" }}
-            whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-            viewport={{ once: true, amount: 0.4 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-          >
-            <a className="footer-button" href="#contact">
-              Get in touch
-            </a>
-            <a className="footer-email" href="mailto:hello@bluesun.build">
-              hello@bluesun.build
-            </a>
-          </motion.div>
-        </section>
       </div>
 
       <Footer />
