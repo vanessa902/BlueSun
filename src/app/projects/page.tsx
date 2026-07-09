@@ -3,6 +3,7 @@
 import dynamic from "next/dynamic";
 import Navbar from "@/components/Navbar";
 import RollButton from "@/components/axion/RollButton";
+import TypewriterHeading from "@/components/axion/TypewriterHeading";
 import "../axion.css";
 import "../axion-swap.css";
 
@@ -82,11 +83,10 @@ export default function ProjectsPage() {
           ============================================================ */}
       <section className="axion-about" id="studio">
         <div className="axion-container">
-          <h2 className="axion-about__heading">
-            Our projects are more than structures—they are environments
-            designed to support businesses, strengthen communities, and
-            improve everyday living.
-          </h2>
+          <TypewriterHeading
+            className="axion-about__heading"
+            text="Our projects are more than structures—they are environments designed to support businesses, strengthen communities, and improve everyday living."
+          />
 
           {/* mobile / tablet stacked layout */}
           <div className="axion-about__stack">

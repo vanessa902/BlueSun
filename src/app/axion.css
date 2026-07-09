@@ -197,6 +197,17 @@
   }
 }
 
+/* Letter-by-letter typewriter reveal (see TypewriterHeading.tsx): each
+   char starts invisible and snaps in on its own staggered delay once the
+   heading scrolls into view. */
+.axion-typewriter__char {
+  opacity: 0;
+  transition: opacity 0.05s linear;
+}
+.axion-typewriter.is-visible .axion-typewriter__char {
+  opacity: 1;
+}
+
 .axion-about__copy {
   font-size: 15px;
   line-height: 1.6;

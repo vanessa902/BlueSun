@@ -6,6 +6,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import "../our-markets.css";
 
+const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 const U = (id: string) =>
   `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=1400&q=85`;
 
@@ -89,6 +90,11 @@ export default function OurMarketsPage() {
             Hero
             ============================================================ */}
         <section className="hero">
+          {/* Same technical HUD frame as the homepage hero (hero-frame.svg),
+              recolored for this page's light background. */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img className="hero-frame-overlay" src={`${BASE}/hero-frame-light.svg`} alt="" />
+
           <div className="container">
             <div className="row row-content">
               <div className="col-6 hero-left">
