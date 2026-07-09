@@ -19,8 +19,8 @@ const haffer = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Veldara",
-  description: "Instantly craft immersive 3D worlds on the web.",
+  title: "BlueSun",
+  description: "Residential & commercial construction experts.",
 };
 
 export default function RootLayout({

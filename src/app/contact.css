@@ -1,23 +1,24 @@
-/* Contact page — liquid glass, Instrument Serif italic accents, full black
-   background, five sections. Self-contained: scoped under .contact-page so
-   its reset/glass classes can't leak into the rest of the site (Next.js CSS
-   imports are global). Header/footer are the site's shared Navbar/Footer;
-   the spec's own "Asme" nav (Sign Up/Login etc.) isn't used. */
+/* Contact page — liquid glass, italic accents, full black background, five
+   sections. Self-contained: scoped under .contact-page so its reset/glass
+   classes can't leak into the rest of the site (Next.js CSS imports are
+   global). Header/footer are the site's shared Navbar/Footer; the spec's
+   own "Asme" nav (Sign Up/Login etc.) isn't used. Typeface is the site's
+   shared Haffer Trial family — the accent words just use its light italic
+   cut instead of a separate serif font. */
 
 .contact-page {
   background: #000;
   color: #fff;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
-    Arial, sans-serif;
+  font-family: var(--font-haffer), sans-serif;
 }
 .contact-page * {
   box-sizing: border-box;
 }
 .contact-page em,
 .contact-page .serif {
-  font-family: var(--font-instrument-serif), serif;
+  font-family: var(--font-haffer), sans-serif;
   font-style: italic;
-  font-weight: 400;
+  font-weight: 300;
 }
 
 /* ================================================================
@@ -91,7 +92,7 @@
   color: #fff;
   letter-spacing: -0.02em;
   white-space: nowrap;
-  font-family: var(--font-instrument-serif), serif;
+  font-family: var(--font-haffer), sans-serif;
   font-weight: 400;
 }
 .contact-hero__email {

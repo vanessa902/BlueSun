@@ -1,5 +1,7 @@
 import "../app/footer.css";
 
+const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+
 export default function Footer() {
   return (
     <footer className="site-footer" id="contact">
@@ -38,7 +40,10 @@ export default function Footer() {
 
         <div className="site-footer__brand-row">
           <a className="site-footer__brand" href="#hero" aria-label="BlueSun home">
-            <span className="site-footer__mark" aria-hidden="true" />
+            <span className="site-footer__mark">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={`${BASE}/bluesun-icon.png`} alt="" />
+            </span>
             <span className="site-footer__wordmark">BlueSun</span>
           </a>
         </div>

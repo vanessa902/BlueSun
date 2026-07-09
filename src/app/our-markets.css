@@ -1,21 +1,16 @@
-/* Our Markets — dark-on-light editorial page, self-contained design system
-   (PP Neue Montreal, fluid "10px @ 1512px" rem scale, warm gold accent).
-   Everything is scoped under .markets-page so it can't leak into the rest
-   of the site — Next.js CSS imports are global, and this page's reset/
-   font/scale choices are deliberately different from the rest of BlueSun.
-   The header/footer stay the site's shared <Navbar>/<Footer>; only the
-   content between them uses this stylesheet. */
+/* Our Markets — dark-on-light editorial page, self-contained layout system
+   (fluid "10px @ 1512px" rem scale, warm gold accent) but using the site's
+   shared Haffer Trial typeface throughout. Everything is scoped under
+   .markets-page so it can't leak into the rest of the site — Next.js CSS
+   imports are global, and this page's reset/scale choices are deliberately
+   different from the rest of BlueSun. The header/footer stay the site's
+   shared <Navbar>/<Footer>; only the content between them uses this
+   stylesheet. */
 
 :root {
   --accent-color: #ffd700;
   --offwhite: #f5f5f0;
   --offblack: #3a3a38;
-}
-
-@font-face {
-  src: url("https://fonts.cdnfonts.com/css/pp-neue-montreal") format("woff2");
-  font-family: "PP Neue Montreal", sans-serif;
-  font-weight: 400;
 }
 
 /* Fluid "rem" scale for this page only: --u == 1 of the design's rem units,
@@ -24,7 +19,7 @@
    rely on. */
 .markets-page {
   --u: calc(100vw / 1512 * 10);
-  font-family: "PP Neue Montreal", sans-serif;
+  font-family: var(--font-haffer), sans-serif;
   font-weight: 700;
   font-size: calc(1.8 * var(--u));
   letter-spacing: -0.02em;

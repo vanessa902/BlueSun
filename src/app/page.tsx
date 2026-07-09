@@ -14,7 +14,7 @@ const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 // Scroll-driven background video, served same-origin from /public.
 const VIDEO_URL = `${BASE}/hero.mp4`;
 
-export default function VeldaraPage() {
+export default function BlueSunPage() {
   useEffect(() => {
     let destroyed = false;
     const cleanups: Array<() => void> = [];

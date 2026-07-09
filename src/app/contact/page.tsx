@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { Instrument_Serif } from "next/font/google";
 import { ArrowRight, AtSign, X as XIcon, Globe } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -11,14 +10,6 @@ import FeaturedVideoSection from "@/components/contact/FeaturedVideoSection";
 import PhilosophySection from "@/components/contact/PhilosophySection";
 import ServicesSection from "@/components/contact/ServicesSection";
 import "../contact.css";
-
-const instrumentSerif = Instrument_Serif({
-  subsets: ["latin"],
-  weight: "400",
-  style: ["normal", "italic"],
-  variable: "--font-instrument-serif",
-  display: "swap",
-});
 
 const HERO_VIDEO =
   "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260405_074625_a81f018a-956b-43fb-9aee-4d1508e30e6a.mp4";
@@ -35,7 +26,7 @@ export default function ContactPage() {
     <>
       <Navbar />
 
-      <div className={`contact-page ${instrumentSerif.variable}`}>
+      <div className="contact-page">
         {/* ============================================================
             Section 1 — Hero
             ============================================================ */}

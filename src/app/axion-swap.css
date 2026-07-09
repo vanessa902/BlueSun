@@ -19,8 +19,7 @@
   width: 100%;
   background: #efefef;
   color: #111827;
-  font-family: "SF Pro Text", "SF Pro Icons", "Helvetica Neue", Helvetica,
-    Arial, sans-serif, system-ui;
+  font-family: var(--font-haffer), sans-serif;
 }
 .axion-swap :where(main, section) {
   width: 100%;
