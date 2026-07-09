@@ -4,7 +4,7 @@
   position: relative;
   z-index: 10;
   background: #ffffff;
-  color: #111;
+  color: #111827;
   border-top-left-radius: clamp(40px, 5vw, 60px);
   border-top-right-radius: clamp(40px, 5vw, 60px);
   margin-top: clamp(-3.5rem, -3vw, -2.5rem);
@@ -81,7 +81,7 @@
   font-weight: 900;
   font-size: clamp(2.5rem, 8vw, 110px);
   line-height: 1;
-  color: #111;
+  color: #111827;
 }
 .proj-card__info {
   display: flex;
@@ -111,7 +111,7 @@
 }
 .proj-live:hover {
   background: #fff;
-  color: #111;
+  color: #111827;
 }
 
 /* ---- image grid ---- */

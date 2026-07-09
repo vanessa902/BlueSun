@@ -64,7 +64,7 @@
 }
 .btn-glass:hover {
   background: #ffffff;
-  color: #111111;
+  color: #111827;
 }
 
 html,
@@ -367,7 +367,7 @@ body {
   transform: translate(-50%, -50%);
   font-weight: 600;
   font-size: clamp(2rem, 4.2vw, 3.8rem);
-  color: #ededea;
+  color: #ffffff;
   letter-spacing: -0.015em;
   white-space: nowrap;
   opacity: 0;
@@ -386,7 +386,7 @@ body {
   font-weight: 600;
   line-height: 1.02;
   font-size: clamp(1.6rem, 3.2vw, 2.8rem);
-  color: #ededea;
+  color: #ffffff;
   letter-spacing: -0.015em;
   white-space: nowrap;
   opacity: 0;

@@ -7,7 +7,7 @@
 
 .eb {
   --eb-paper: #000000;
-  --eb-ink: #ededea;
+  --eb-ink: #ffffff;
   --eb-red: #ff2e23;
   --eb-line: rgba(255, 255, 255, 0.14);
   --eb-head: 3.25rem; /* visible collapsed strip height when stacked */
@@ -36,7 +36,7 @@
   padding: 8rem 3rem 3rem;
 }
 .eb-intro__title {
-  color: #9a9a9a;
+  color: rgba(255, 255, 255, 0.92);
   font-size: clamp(1.5rem, 3.4vw, 3.25rem);
   width: 100%;
   max-width: 18ch;
@@ -99,7 +99,7 @@
 }
 .eb-intro__desc {
   max-width: 58ch;
-  color: #8a8a8a;
+  color: rgba(255, 255, 255, 0.6);
   font-size: 0.95rem;
   line-height: 1.6;
   font-weight: 400;
@@ -241,7 +241,7 @@
   border: none;
   cursor: pointer;
   background: transparent;
-  color: #b6b6b1;
+  color: rgba(255, 255, 255, 0.55);
   border-radius: 9999px;
   padding: 0.6rem 1.5rem;
   font-size: 0.85rem;
@@ -252,7 +252,7 @@
 }
 .eb-toggle button.is-active {
   background: #fff;
-  color: #0a0a0a;
+  color: #111827;
 }
 .eb-sol__list {
   position: relative;
@@ -292,7 +292,7 @@
   font-weight: 500;
   letter-spacing: 0.06em;
   text-transform: lowercase;
-  color: #8f8f8a;
+  color: rgba(255, 255, 255, 0.55);
 }
 .eb-item__title {
   font-weight: 600;
@@ -307,7 +307,7 @@
   max-width: 46ch;
   font-size: 0.95rem;
   line-height: 1.6;
-  color: #b6b6b1;
+  color: rgba(255, 255, 255, 0.65);
   font-weight: 400;
 }
 .eb-item__more {
