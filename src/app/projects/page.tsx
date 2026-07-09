@@ -76,16 +76,7 @@ export default function ProjectsPage() {
 
         <div className="axion-hero__content">
           <div className="axion-hero__inner">
-            <p className="axion-hero__label">Axion Studio</p>
-            <h1 className="axion-hero__headline">
-              We craft digital experiences
-              <br className="axion-br-desktop" />
-              <span className="axion-sp-mobile"> </span>
-              for brands ready to dominate
-              <br className="axion-br-desktop" />
-              <span className="axion-sp-mobile"> </span>
-              their category online.
-            </h1>
+            <h1 className="axion-hero__headline">Our projects</h1>
 
             <div className="axion-hero__ctas">
               <RollButton label="Start a project" variant="orange" />
