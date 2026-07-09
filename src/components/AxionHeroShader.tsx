@@ -8,10 +8,10 @@ export default function AxionHeroShader() {
       <Swirl colorA="#ffffff" colorB="#f0f0f0" detail={1.7} />
       <ChromaFlow
         baseColor="#ffffff"
-        upColor="#ff5f03"
-        downColor="#ff5f03"
-        leftColor="#ff5f03"
-        rightColor="#ff5f03"
+        upColor="#0066ff"
+        downColor="#0066ff"
+        leftColor="#0066ff"
+        rightColor="#0066ff"
         momentum={13}
         radius={3.5}
       />
