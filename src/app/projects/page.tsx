@@ -69,7 +69,11 @@ export default function ProjectsPage() {
 
         <div className="axion-hero__content">
           <div className="axion-hero__inner">
-            <h1 className="axion-hero__headline">Projects Built with Purpose</h1>
+            <h1 className="axion-hero__headline">
+              Projects Built
+              <br />
+              with Purpose
+            </h1>
 
             <div className="axion-hero__ctas">
               <RollButton label="Start a project" variant="orange" />
