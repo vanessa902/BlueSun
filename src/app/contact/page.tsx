@@ -8,6 +8,7 @@ import FadingVideo from "@/components/FadingVideo";
 import AboutSection from "@/components/contact/AboutSection";
 import FeaturedVideoSection from "@/components/contact/FeaturedVideoSection";
 import PhilosophySection from "@/components/contact/PhilosophySection";
+import ScrollVideoSection from "@/components/contact/ScrollVideoSection";
 import ServicesSection from "@/components/contact/ServicesSection";
 import "../contact.css";
 
@@ -91,7 +92,12 @@ export default function ContactPage() {
         <PhilosophySection />
 
         {/* ============================================================
-            Section 5 — Services
+            Section 5 — Scroll video break
+            ============================================================ */}
+        <ScrollVideoSection />
+
+        {/* ============================================================
+            Section 6 — Services
             ============================================================ */}
         <ServicesSection />
       </div>
