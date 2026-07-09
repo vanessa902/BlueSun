@@ -1,10 +1,8 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
-import { ArrowRight, AtSign, X as XIcon, Globe } from "lucide-react";
+import { motion } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import FadingVideo from "@/components/FadingVideo";
 import AboutSection from "@/components/contact/AboutSection";
 import FeaturedVideoSection from "@/components/contact/FeaturedVideoSection";
 import PhilosophySection from "@/components/contact/PhilosophySection";
@@ -12,67 +10,51 @@ import ScrollVideoSection from "@/components/contact/ScrollVideoSection";
 import ServicesSection from "@/components/contact/ServicesSection";
 import "../contact.css";
 
-const HERO_VIDEO =
-  "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260405_074625_a81f018a-956b-43fb-9aee-4d1508e30e6a.mp4";
+const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
 export default function ContactPage() {
-  const [email, setEmail] = useState("");
-
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    setEmail("");
-  };
-
   return (
     <>
       <Navbar />
 
       <div className="contact-page">
         {/* ============================================================
-            Section 1 — Hero
+            Section 1 — Hero (same treatment as the Our Markets hero:
+            HUD grid overlay + centered eyebrow/title/paragraph)
             ============================================================ */}
         <section className="contact-hero">
-          <FadingVideo src={HERO_VIDEO} className="contact-hero__video" />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img className="contact-hero__frame-overlay" src={`${BASE}/hero-frame-light.svg`} alt="" />
 
-          <div className="contact-hero__content">
-            <h1 className="contact-hero__heading">
-              Know it then <em>all</em>.
-            </h1>
-
-            <form className="contact-hero__email liquid-glass" onSubmit={handleSubmit}>
-              <input
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter your email"
-                className="contact-hero__email-input"
-              />
-              <button type="submit" className="contact-hero__email-submit" aria-label="Subscribe">
-                <ArrowRight size={20} />
-              </button>
-            </form>
-
-            <p className="contact-hero__subtitle">
-              Stay updated with the latest news and insights. Subscribe to
-              our newsletter today and never miss out on exciting updates.
-            </p>
-
-            <button type="button" className="contact-hero__manifesto liquid-glass">
-              Manifesto
-            </button>
-          </div>
-
-          <div className="contact-hero__socials">
-            <button type="button" className="contact-hero__social-btn liquid-glass" aria-label="Instagram">
-              <AtSign size={20} />
-            </button>
-            <button type="button" className="contact-hero__social-btn liquid-glass" aria-label="X (Twitter)">
-              <XIcon size={20} />
-            </button>
-            <button type="button" className="contact-hero__social-btn liquid-glass" aria-label="Website">
-              <Globe size={20} />
-            </button>
+          <div className="contact-hero__center">
+            <motion.p
+              className="contact-hero__eyebrow"
+              initial={{ opacity: 0, filter: "blur(8px)" }}
+              whileInView={{ opacity: 1, filter: "blur(0px)" }}
+              viewport={{ once: true, amount: 0.3 }}
+              transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+            >
+              Get in touch
+            </motion.p>
+            <motion.h1
+              className="contact-hero__title"
+              initial={{ opacity: 0, scale: 0.9, filter: "blur(10px)" }}
+              whileInView={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+              viewport={{ once: true, amount: 0.3 }}
+              transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: 0.15 }}
+            >
+              Contact Us
+            </motion.h1>
+            <motion.p
+              className="contact-hero__desc"
+              initial={{ opacity: 0, y: 40, filter: "blur(5px)" }}
+              whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              viewport={{ once: true, amount: 0.3 }}
+              transition={{ duration: 0.9, ease: "easeOut", delay: 0.3 }}
+            >
+              Have a project in mind? Tell us about it and a member of our
+              team will get back to you within one business day.
+            </motion.p>
           </div>
         </section>
 
