@@ -10,8 +10,6 @@ const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 const U = (id: string) =>
   `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=1400&q=85`;
 
-const HERO_IMAGE = U("1541888946425-d81bb19240f5");
-
 type MarketItem = {
   label: string;
   image: string;
@@ -97,26 +95,31 @@ export default function OurMarketsPage() {
 
           <div className="container">
             <div className="row row-content">
-              <div className="col-6 hero-left">
-                <motion.div
-                  className="hero-image"
-                  initial={{ opacity: 0, scale: 0, filter: "blur(8px)" }}
+              <div className="col-12 hero-center">
+                <motion.p
+                  className="hero-eyebrow"
+                  initial={{ opacity: 0, filter: "blur(8px)" }}
+                  whileInView={{ opacity: 1, filter: "blur(0px)" }}
+                  viewport={{ once: true, amount: 0.3 }}
+                  transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+                >
+                  Residential &amp; Commercial
+                </motion.p>
+                <motion.h1
+                  className="hero-title"
+                  initial={{ opacity: 0, scale: 0.9, filter: "blur(10px)" }}
                   whileInView={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
                   viewport={{ once: true, amount: 0.3 }}
-                  transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+                  transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: 0.15 }}
                 >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={HERO_IMAGE} alt="" />
-                  <div className="texture-overlay" />
-                </motion.div>
-              </div>
-              <div className="col-6 hero-right">
+                  Our Markets
+                </motion.h1>
                 <motion.p
                   className="about-text"
                   initial={{ opacity: 0, y: 40, filter: "blur(5px)" }}
                   whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
                   viewport={{ once: true, amount: 0.3 }}
-                  transition={{ duration: 0.9, ease: "easeOut", delay: 0.2 }}
+                  transition={{ duration: 0.9, ease: "easeOut", delay: 0.35 }}
                 >
                   BlueSun builds across residential, commercial,
                   industrial, and institutional markets — bringing the

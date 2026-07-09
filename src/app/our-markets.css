@@ -146,43 +146,36 @@
   pointer-events: none;
   z-index: 5;
 }
-.markets-page .hero-left {
+.markets-page .hero-center {
   position: relative;
+  z-index: 6;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: calc(1 * var(--u));
 }
-.markets-page .hero-image {
-  width: 100%;
-  overflow: hidden;
-  position: relative;
-  transform-origin: bottom;
+.markets-page .hero-eyebrow {
+  font-size: calc(1.4 * var(--u));
+  letter-spacing: 0.4em;
+  text-transform: lowercase;
+  font-weight: 400;
+  color: var(--offblack);
+  opacity: 0.6;
+  margin: 0;
 }
-.markets-page .hero-image img {
-  width: 100%;
-  height: auto;
-  filter: grayscale(100%);
-  object-fit: cover;
-  position: relative;
-  z-index: 1;
-  display: block;
-}
-.markets-page .texture-overlay {
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 100%;
-  height: 100%;
-  background-image: url("https://cdn.cosmos.so/00c1aedd-73e6-4e74-a278-2252a626bbff?format=jpeg");
-  background-position: top right;
-  background-size: cover;
-  mix-blend-mode: screen;
-  opacity: 0.2;
-  z-index: 2;
-}
-.markets-page .hero-right {
-  padding-left: calc(2 * var(--u));
-  text-align: right;
-  overflow: hidden;
+.markets-page .hero-title {
+  font-size: calc(10 * var(--u));
+  line-height: 0.95;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  font-weight: 700;
+  color: var(--offblack);
+  margin: 0;
 }
 .markets-page .about-text {
+  max-width: calc(70 * var(--u));
+  margin-top: calc(1 * var(--u));
   font-size: calc(1.6 * var(--u));
   line-height: 1.6;
   text-transform: none;
@@ -314,13 +307,5 @@
     display: flex;
     flex-direction: column;
     align-items: stretch;
-  }
-  .markets-page .hero-right {
-    text-align: left;
-    padding-left: 0;
-    margin-top: calc(2 * var(--u));
-  }
-  .markets-page .col-6 {
-    grid-column: span 12;
   }
 }
