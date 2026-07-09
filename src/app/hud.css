@@ -103,15 +103,24 @@
   50% { transform: translateY(5px); }
 }
 
-/* bottom-left chip (sits inside the SVG's angled tab) */
+/* Bottom-left chip. Rather than relying on pixel-precise alignment with
+   the SVG's decorative corner tab (which drifts at aspect ratios other
+   than the artwork's own, since object-fit: fill stretches each axis
+   independently), it carries its own background/border so it always
+   reads cleanly as a self-contained label regardless of viewport shape. */
 #hero-frame .hf-chip {
   position: absolute;
   left: 1.8%;
-  bottom: 1.2%;
+  bottom: 2.2%;
   font-size: clamp(0.6rem, 0.95vw, 0.85rem);
   letter-spacing: 0.12em;
   text-transform: lowercase;
-  padding: 0.4rem 0.6rem;
+  white-space: nowrap;
+  padding: 0.5rem 0.85rem;
+  background: rgba(0, 0, 0, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
 }
 #hero-frame .hf-chip b { font-weight: 700; }
 #hero-frame .hf-chip .dim { opacity: 0.55; }

@@ -7,46 +7,6 @@ import TypewriterHeading from "@/components/axion/TypewriterHeading";
 import "../axion.css";
 import "../axion-swap.css";
 
-const SWAP = (id: string) =>
-  `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=1400&q=85`;
-
-type SwapProject = {
-  title: string;
-  desc: string;
-  swapImages: [string, string];
-  bigImage: string;
-  reversed?: boolean;
-};
-
-const SWAP_PROJECTS: SwapProject[] = [
-  {
-    title: "Solace",
-    desc: "A wellness platform redesigned around calm, unhurried pacing.",
-    swapImages: [SWAP("1600607687939-ce8a6c25118c"), SWAP("1600585154340-be6161a56a0c")],
-    bigImage: SWAP("1600607687644-a94e6a2c0b3f"),
-  },
-  {
-    title: "Northline",
-    desc: "Logistics tooling that makes dense operational data legible.",
-    swapImages: [SWAP("1553413077-190dd305871c"), SWAP("1581091226825-a6a2a5aee158")],
-    bigImage: SWAP("1565043666747-69f6646db940"),
-  },
-  {
-    title: "Verve",
-    desc: "An editorial-first storefront for a fashion label's US launch.",
-    swapImages: [SWAP("1441984904996-e0b6ba687e04"), SWAP("1490481651871-ab68de25d43d")],
-    bigImage: SWAP("1483985988355-763728e1935b"),
-    reversed: true,
-  },
-  {
-    title: "Continuum",
-    desc: "A fintech dashboard rebuilt for clarity under real load.",
-    swapImages: [SWAP("1454165804606-c3d57bc86b40"), SWAP("1551288049-bebda4e38f71")],
-    bigImage: SWAP("1487958449943-2429e8be8625"),
-    reversed: true,
-  },
-];
-
 const AxionHeroShader = dynamic(() => import("@/components/AxionHeroShader"), {
   ssr: false,
 });
@@ -54,6 +14,64 @@ const AxionHeroShader = dynamic(() => import("@/components/AxionHeroShader"), {
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 const SMALL_IMG = `${BASE}/about-studio-small.jpg`;
 const LARGE_IMG = `${BASE}/about-studio-large.jpg`;
+
+const CREW_WATCH = `${BASE}/project-crew-watch.jpg`;
+const CREW_GROUP = `${BASE}/project-crew-group.jpg`;
+const ROOFTOP_AERIAL = `${BASE}/project-rooftop-aerial.jpg`;
+const AERIAL_VIDEO = `${BASE}/contact-aerial.mp4`;
+const ROOFTOP_VIDEO = `${BASE}/contact-rooftop.mp4`;
+const NIGHT_VIDEO = `${BASE}/contact-scroll.mp4`;
+
+type SwapProject = {
+  title: string;
+  desc: string;
+  swapImages: [string, string];
+  bigImage?: string;
+  bigVideo?: string;
+  reversed?: boolean;
+};
+
+const SWAP_PROJECTS: SwapProject[] = [
+  {
+    title: "Rooftop HVAC Lift",
+    desc: "A full mechanical unit lifted by helicopter and set in place without ever shutting the building down.",
+    swapImages: [CREW_WATCH, LARGE_IMG],
+    bigVideo: AERIAL_VIDEO,
+  },
+  {
+    title: "Mechanical Retrofit",
+    desc: "Rooftop-level upgrades planned around live building operations, from survey to final tie-in.",
+    swapImages: [ROOFTOP_AERIAL, SMALL_IMG],
+    bigVideo: ROOFTOP_VIDEO,
+  },
+  {
+    title: "Boots on the Ground",
+    desc: "Every lift starts with a crew that knows the site cold — safety briefed, positioned, and ready.",
+    swapImages: [CREW_GROUP, CREW_WATCH],
+    bigImage: LARGE_IMG,
+    reversed: true,
+  },
+  {
+    title: "Built After Hours",
+    desc: "Night and weekend phasing kept the job moving without disrupting tenants or traffic.",
+    swapImages: [SMALL_IMG, ROOFTOP_AERIAL],
+    bigVideo: NIGHT_VIDEO,
+    reversed: true,
+  },
+];
+
+function ControllerMedia({ project }: { project: SwapProject }) {
+  return (
+    <div className="controller">
+      {project.bigVideo ? (
+        <video src={project.bigVideo} autoPlay muted loop playsInline />
+      ) : (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={project.bigImage} alt="" />
+      )}
+    </div>
+  );
+}
 
 export default function ProjectsPage() {
   return (
@@ -165,12 +183,7 @@ export default function ProjectsPage() {
           {SWAP_PROJECTS.map((project) => (
             <section key={project.title}>
               <div className="image-box">
-                {project.reversed && (
-                  <div className="controller">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={project.bigImage} alt="" />
-                  </div>
-                )}
+                {project.reversed && <ControllerMedia project={project} />}
 
                 <div className="swapper">
                   <div className="progress">
@@ -191,12 +204,7 @@ export default function ProjectsPage() {
                   <img src={project.swapImages[1]} alt="" />
                 </div>
 
-                {!project.reversed && (
-                  <div className="controller">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={project.bigImage} alt="" />
-                  </div>
-                )}
+                {!project.reversed && <ControllerMedia project={project} />}
               </div>
             </section>
           ))}

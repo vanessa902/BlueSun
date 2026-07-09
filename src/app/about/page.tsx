@@ -44,20 +44,20 @@ const CAPABILITIES: Capability[] = [
   {
     title: "Our Story",
     Icon: ImageIcon,
-    tags: ["Brand Systems", "Art Direction", "Visual Identity", "Motion"],
-    body: "We shape identities and interfaces that feel unmistakably yours — typographic systems, component libraries, and art-directed pages that scale without losing soul.",
+    tags: ["Licensed & Insured", "Family-Owned", "20+ Years", "Local Crews"],
+    body: "Built from the ground up on hard work and a handshake, BlueSun has grown from a small local crew into a full-service construction partner — without losing the craftsmanship and accountability that got us here.",
   },
   {
     title: "Our Mission",
     Icon: MovieIcon,
-    tags: ["React", "Next.js", "Headless CMS", "Edge-Ready"],
-    body: "Production-grade front-ends built on modern stacks. Performant, accessible, and instrumented — with code your team will enjoy extending long after launch.",
+    tags: ["Safety First", "Quality Craftsmanship", "On-Time Delivery", "Clear Communication"],
+    body: "We deliver every project on schedule and to code, backed by skilled crews and hands-on project management. Safety and quality aren't line items — they're how we operate on every site, every day.",
   },
   {
     title: "Our Vision",
     Icon: LightbulbIcon,
-    tags: ["SEO", "Analytics", "A/B Testing", "Retention"],
-    body: "Launch is the starting line. We partner with your team on conversion, content, and iteration loops that turn a beautiful site into a compounding asset.",
+    tags: ["Sustainable Building", "Community Impact", "Long-Term Partnerships", "Growth-Ready"],
+    body: "We build for what's next — durable, sustainable structures that support growing businesses and stronger communities for decades to come, not just through ribbon-cutting day.",
   },
 ];
 
@@ -84,7 +84,7 @@ export default function AboutPage() {
 
         <div className="about-cap__content">
           <div className="about-cap__header">
-            <span className="about-cap__label">// Capabilities</span>
+            <span className="about-cap__label">{"// Capabilities"}</span>
             <h2 className="about-cap__heading">
               Why Choose
               <br />
