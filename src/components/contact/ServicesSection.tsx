@@ -5,6 +5,8 @@ import { motion, useInView } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import FadingVideo from "@/components/FadingVideo";
 
+const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+
 type Service = {
   video: string;
   tag: string;
@@ -14,15 +16,13 @@ type Service = {
 
 const SERVICES: Service[] = [
   {
-    video:
-      "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260314_131748_f2ca2a28-fed7-44c8-b9a9-bd9acdd5ec31.mp4",
+    video: `${BASE}/about-capabilities.mp4`,
     tag: "Strategy",
     title: "Research & Insight",
     desc: "We dig deep into data, culture, and human behavior to surface the insights that drive meaningful, lasting change.",
   },
   {
-    video:
-      "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260324_151826_c7218672-6e92-402c-9e45-f1e0f454bdc4.mp4",
+    video: `${BASE}/contact-scroll.mp4`,
     tag: "Craft",
     title: "Design & Execution",
     desc: "From concept to launch, we obsess over every detail to deliver experiences that feel effortless and look extraordinary.",

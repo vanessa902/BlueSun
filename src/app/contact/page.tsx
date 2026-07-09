@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import AboutSection from "@/components/contact/AboutSection";
+import ContactFormSection from "@/components/contact/ContactFormSection";
 import FeaturedVideoSection from "@/components/contact/FeaturedVideoSection";
 import PhilosophySection from "@/components/contact/PhilosophySection";
 import ScrollVideoSection from "@/components/contact/ScrollVideoSection";
@@ -82,6 +83,11 @@ export default function ContactPage() {
             Section 6 — Services
             ============================================================ */}
         <ServicesSection />
+
+        {/* ============================================================
+            Section 7 — Contact form
+            ============================================================ */}
+        <ContactFormSection />
       </div>
 
       <Footer />

@@ -4,8 +4,8 @@ import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import FadingVideo from "@/components/FadingVideo";
 
-const PHILOSOPHY_VIDEO =
-  "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260307_083826_e938b29f-a43a-41ec-a153-3d4730578ab8.mp4";
+const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+const PHILOSOPHY_VIDEO = `${BASE}/contact-rooftop.mp4`;
 
 export default function PhilosophySection() {
   const headingRef = useRef(null);
