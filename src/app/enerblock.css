@@ -195,13 +195,15 @@
 
 /* ---------- 1b. Scrollytelling video break ----------
    A tall track (eb-scrollvideo-track) scrolls past a pinned (sticky) stage;
-   its height is set inline (ScrollVideoShowcase.tsx) proportionally to the
-   video's own duration, so every second of the clip gets an even, dedicated
-   slice of scroll distance. Scroll progress across that track drives both
-   the frame's cosmetic scale/radius reveal and, more importantly, the
-   video's own currentTime — so scrolling scrubs through the clip's scenes
-   instead of it playing on a timer. All driven from ScrollVideoShowcase.tsx
-   via Framer Motion's useScroll. ---------- */
+   its height is set inline (ScrollVideoShowcase.tsx), sized to two phases:
+   one scroll unit to grow the frame in, then one scroll unit per second of
+   video to scrub through it. Scroll progress across that track drives the
+   frame's grow-in scale during phase 1 and, throughout phase 2, the video's
+   own currentTime — so scrolling steps through the clip's scenes one second
+   at a time instead of it playing on a timer. All driven from
+   ScrollVideoShowcase.tsx via Framer Motion's useScroll. The frame itself is
+   kept small and centered so this section reads as a contained card, not a
+   full-viewport takeover. ---------- */
 .eb-scrollvideo-track {
   position: relative;
 }
@@ -223,11 +225,12 @@
 .eb-scrollvideo__frame {
   position: relative;
   width: 100%;
-  max-width: 80rem;
+  max-width: 42rem;
   margin: 0 auto;
   aspect-ratio: 16 / 9;
+  border-radius: 1.5rem;
   overflow: hidden;
-  will-change: transform, border-radius;
+  will-change: transform;
 }
 .eb-scrollvideo__video {
   display: block;

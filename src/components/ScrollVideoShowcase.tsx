@@ -6,46 +6,47 @@ import { motion, useScroll, useTransform, useMotionValueEvent } from "framer-mot
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 const SHOWCASE_VIDEO = `${BASE}/home-showcase.mp4`;
 
-// How much scroll (in vh) is dedicated to each second of video — higher
-// means a slower, more deliberate scrub. The pinned viewport itself adds
-// another 100vh on top of this.
-const VH_PER_SECOND = 14;
+// One "scroll unit" is one chunky wheel-scroll — same pacing convention used
+// by the About page's hero story (AboutHeroStory.tsx).
+const UNIT_VH = 60;
+// Scroll 1: the video grows from small to full size.
+const GROW_UNITS = 1;
 const PIN_VH = 100;
-// Used only until the real video duration is known (metadata load is fast,
-// but this avoids a 0-height track flashing before then).
-const FALLBACK_TRACK_VH = 400;
+// Used only until the real video duration is known, so the track doesn't
+// flash at zero height before metadata loads.
+const FALLBACK_SCRUB_UNITS = 12;
 
-/** Scrollytelling video: the frame pins in place while a tall track scrolls
- * beneath it. Scroll progress across the FULL track maps one-to-one onto
- * the video's complete duration, so every second of the clip gets its own
- * dedicated scroll distance — nothing is skipped or compressed. The
- * grow-in/shrink-out of the frame at the very edges of the scroll range is
- * a purely cosmetic overlay and doesn't affect that time mapping. */
+/** Scrollytelling video, in two distinct phases:
+ *  1. Grow — the first scroll unit grows the video from a small centered
+ *     card up to its full (still modest) size.
+ *  2. Scrub — every scroll unit after that advances the video by exactly
+ *     one second, so the clip's scenes step forward slowly, one per
+ *     scroll, instead of playing on a timer. */
 export default function ScrollVideoShowcase() {
   const trackRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [trackVh, setTrackVh] = useState(FALLBACK_TRACK_VH);
+  const [scrubUnits, setScrubUnits] = useState(FALLBACK_SCRUB_UNITS);
+
+  const totalUnits = GROW_UNITS + scrubUnits;
+  const growEnd = GROW_UNITS / totalUnits;
+  const trackVh = PIN_VH + totalUnits * UNIT_VH;
 
   const { scrollYProgress } = useScroll({
     target: trackRef,
     offset: ["start start", "end end"],
   });
 
-  const scale = useTransform(scrollYProgress, [0, 0.04, 0.96, 1], [0.86, 1, 1, 0.92]);
-  const radius = useTransform(
-    scrollYProgress,
-    [0, 0.04, 0.96, 1],
-    ["3rem", "0rem", "0rem", "3rem"]
-  );
+  // Phase 1 only: grows the frame. Holds steady at full size for all of
+  // phase 2 (useTransform clamps outside its input range by default).
+  const scale = useTransform(scrollYProgress, [0, growEnd], [0.42, 1]);
 
-  // The full 0→1 scroll range always maps to the full 0→duration of the
-  // video, regardless of the cosmetic scale/radius above — every second of
-  // the clip is reachable by scrolling, none of it is skipped.
   useMotionValueEvent(scrollYProgress, "change", (latest) => {
     const v = videoRef.current;
     if (!v || !v.duration || Number.isNaN(v.duration)) return;
-    const clamped = Math.max(0, Math.min(1, latest));
-    v.currentTime = clamped * v.duration;
+    // Video stays on its first frame throughout phase 1, then scrubs
+    // linearly across its full duration throughout phase 2.
+    const scrubProgress = Math.max(0, Math.min(1, (latest - growEnd) / (1 - growEnd)));
+    v.currentTime = scrubProgress * v.duration;
   });
 
   useEffect(() => {
@@ -54,7 +55,7 @@ export default function ScrollVideoShowcase() {
     const onMeta = () => {
       v.currentTime = 0.001;
       if (v.duration && !Number.isNaN(v.duration)) {
-        setTrackVh(PIN_VH + v.duration * VH_PER_SECOND);
+        setScrubUnits(Math.max(1, Math.ceil(v.duration)));
       }
     };
     if (v.readyState >= 1 && v.duration) onMeta();
@@ -64,7 +65,7 @@ export default function ScrollVideoShowcase() {
   return (
     <div className="eb-scrollvideo-track" ref={trackRef} style={{ height: `${trackVh}vh` }}>
       <section className="eb-scrollvideo">
-        <motion.div className="eb-scrollvideo__frame" style={{ scale, borderRadius: radius }}>
+        <motion.div className="eb-scrollvideo__frame" style={{ scale }}>
           <video
             ref={videoRef}
             className="eb-scrollvideo__video"
