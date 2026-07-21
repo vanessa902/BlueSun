@@ -18,11 +18,14 @@ const VIDEO_FPS = 24;
 // feel stuck, since a real scroll gesture fires wildly different numbers of
 // events depending on the input device.
 const PX_PER_FRAME = 10;
-// Extra scroll room left after the pin so lifting off the first/last frame
-// hands scrolling back to the page smoothly instead of snapping. Kept small
-// on purpose — this space renders black (matching the video), so anything
-// beyond a sliver reads as unwanted dead space before the next section.
-const BUFFER_VH = 5;
+// Extra scroll room left after the pin so a real scroll input reliably has
+// a wide enough window to be caught and released — too small a buffer risks
+// a single large wheel/touch delta jumping clean over it, letting the
+// section be skipped before the video finishes. The track's own
+// margin-bottom (below) pulls the next section up underneath this space, so
+// growing it doesn't cost any visible black — it's purely a reliability
+// margin now, not something the user ever sees.
+const BUFFER_VH = 20;
 const PIN_VH = 100;
 const FALLBACK_TOTAL_FRAMES = Math.round(15 * VIDEO_FPS);
 
@@ -278,7 +281,7 @@ export default function ScrollVideoShowcase({
     <div
       className="eb-scrollvideo-track"
       ref={trackRef}
-      style={{ height: `${PIN_VH + BUFFER_VH}vh` }}
+      style={{ height: `${PIN_VH + BUFFER_VH}vh`, marginBottom: `-${BUFFER_VH}vh` }}
     >
       <section className={`eb-scrollvideo${titleLines ? " eb-scrollvideo--has-title" : ""}`}>
         {titleLines && (

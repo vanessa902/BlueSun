@@ -10,9 +10,15 @@
    ========================================================================== */
 .eb-scrollvideo-track {
   position: relative;
+  /* Sits above whatever follows (see margin-bottom below) so the pinned
+     video stays visibly on top for its entire "stuck" duration instead of
+     the next section's content painting over it. */
+  z-index: 1;
   /* The sticky video detaches before this tall track's own extra buffer
-     space (below it) has scrolled past — without this, that gap shows the
-     page's own background instead of a seamless black. */
+     space (below it) has scrolled past. Rather than showing that space as
+     a black gap, the track's own margin-bottom (set inline, matching
+     BUFFER_VH) pulls the next section up underneath it, so the transition
+     is seamless the instant the pin releases — no gap of any color. */
   background: var(--bg-black);
 }
 .eb-scrollvideo {
