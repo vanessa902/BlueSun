@@ -11,17 +11,20 @@ const SHOWCASE_VIDEO = `${BASE}/home-showcase.mp4`;
 const UNIT_VH = 60;
 // Scroll 1: the video grows from small to full size.
 const GROW_UNITS = 1;
+// Phase 2 pacing: two scroll units per second of video, so scrubbing feels
+// slow and deliberate rather than snapping a full second per scroll.
+const SCRUB_UNITS_PER_SECOND = 2;
 const PIN_VH = 100;
 // Used only until the real video duration is known, so the track doesn't
 // flash at zero height before metadata loads.
-const FALLBACK_SCRUB_UNITS = 12;
+const FALLBACK_SCRUB_UNITS = 24;
 
 /** Scrollytelling video, in two distinct phases:
  *  1. Grow — the first scroll unit grows the video from a small centered
  *     card up to its full (still modest) size.
- *  2. Scrub — every scroll unit after that advances the video by exactly
- *     one second, so the clip's scenes step forward slowly, one per
- *     scroll, instead of playing on a timer. */
+ *  2. Scrub — every two scroll units after that advance the video by one
+ *     second, so the clip's scenes step forward slowly instead of playing
+ *     on a timer. */
 export default function ScrollVideoShowcase() {
   const trackRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -55,7 +58,7 @@ export default function ScrollVideoShowcase() {
     const onMeta = () => {
       v.currentTime = 0.001;
       if (v.duration && !Number.isNaN(v.duration)) {
-        setScrubUnits(Math.max(1, Math.ceil(v.duration)));
+        setScrubUnits(Math.max(1, Math.ceil(v.duration * SCRUB_UNITS_PER_SECOND)));
       }
     };
     if (v.readyState >= 1 && v.duration) onMeta();
