@@ -68,9 +68,14 @@
 .eb-scrollvideo__frame {
   position: relative;
   width: 100%;
-  height: 80vh;
+  height: 100%;
   overflow: hidden;
   will-change: transform;
+}
+/* When there's a typewriter title, the video shrinks to leave room above it
+   instead of filling the whole section. */
+.eb-scrollvideo--has-title .eb-scrollvideo__frame {
+  height: 80vh;
 }
 .eb-scrollvideo__video {
   display: block;

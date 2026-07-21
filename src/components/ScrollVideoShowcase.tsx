@@ -260,7 +260,7 @@ export default function ScrollVideoShowcase({
       ref={trackRef}
       style={{ height: `${PIN_VH + BUFFER_VH}vh` }}
     >
-      <section className="eb-scrollvideo">
+      <section className={`eb-scrollvideo${titleLines ? " eb-scrollvideo--has-title" : ""}`}>
         {titleLines && (
           <div className="eb-scrollvideo__title">
             <span className="eb-scrollvideo__title-text" ref={titleText1Ref}>
