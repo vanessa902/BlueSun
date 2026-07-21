@@ -2,13 +2,14 @@
 
 import { useEffect, useRef } from "react";
 import { lenisBridge } from "@/lib/lenisBridge";
+import "../app/scroll-video.css";
 
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
-const SHOWCASE_VIDEO = `${BASE}/home-showcase.mp4`;
 
-// This video's own encoded frame rate (home-showcase.mp4 is 24fps) — the
-// video is stepped through by these actual frames, so the mapping stays in
-// lockstep with the footage rather than an arbitrary time slice.
+// The video's own encoded frame rate — every clip used with this component
+// so far is 24fps — the video is stepped through by these actual frames, so
+// the mapping stays in lockstep with the footage rather than an arbitrary
+// time slice.
 const VIDEO_FPS = 24;
 // How much accumulated scroll/drag distance (px) counts as "one scroll" and
 // advances a frame. Using distance rather than raw event count keeps the
@@ -23,12 +24,10 @@ const BUFFER_VH = 30;
 const PIN_VH = 100;
 const FALLBACK_TOTAL_FRAMES = Math.round(15 * VIDEO_FPS);
 
-// Intro title: "Commercial" types on, holds, fades out — then "Construction"
-// types on in the same spot, holds, and fades out. One word is on screen at
-// a time. Driven directly off the current frame (not a timer), so it stays
-// in lockstep with scroll like everything else here.
-const TITLE_LINE_1 = "Commercial";
-const TITLE_LINE_2 = "Construction";
+// Optional intro title (two words): the first types on, holds, fades out —
+// then the second types on in the same spot, holds, and fades out. One word
+// is on screen at a time. Driven directly off the current frame (not a
+// timer), so it stays in lockstep with scroll like everything else here.
 const FRAMES_PER_SCROLL = 100 / PX_PER_FRAME;
 const WORD_TYPE_FRAMES = Math.round(1.5 * FRAMES_PER_SCROLL);
 const WORD_HOLD_FRAMES = Math.round(2.5 * FRAMES_PER_SCROLL);
@@ -59,14 +58,29 @@ const LINE2_FADE_START = LINE2_TYPE_END + FINAL_HOLD_FRAMES;
  * watched, we explicitly pause Lenis (lenisBridge) and drive currentTime
  * ourselves; we hand control back the instant the first/last frame is
  * reached. */
-export default function ScrollVideoShowcase() {
+type ScrollVideoShowcaseProps = {
+  /** Filename under /public, e.g. "home-showcase.mp4". */
+  videoFile: string;
+  /** Optional two-word sequential typewriter title overlaid near the top. */
+  titleLines?: readonly [string, string];
+};
+
+export default function ScrollVideoShowcase({
+  videoFile,
+  titleLines,
+}: ScrollVideoShowcaseProps) {
   const trackRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
-  const titleWrapRef = useRef<HTMLDivElement>(null);
   const titleText1Ref = useRef<HTMLSpanElement>(null);
   const titleText2Ref = useRef<HTMLSpanElement>(null);
   const frameRef = useRef(0);
   const totalFramesRef = useRef(FALLBACK_TOTAL_FRAMES);
+  const hasTitleRef = useRef(!!titleLines);
+  const videoSrc = `${BASE}/${videoFile}`;
+
+  useEffect(() => {
+    hasTitleRef.current = !!titleLines;
+  }, [titleLines]);
 
   useEffect(() => {
     const v = videoRef.current;
@@ -106,6 +120,7 @@ export default function ScrollVideoShowcase() {
     }
 
     function updateTitle(frame: number) {
+      if (!hasTitleRef.current) return;
       const t1 = titleText1Ref.current;
       const t2 = titleText2Ref.current;
       if (!t1 || !t2) return;
@@ -246,19 +261,21 @@ export default function ScrollVideoShowcase() {
       style={{ height: `${PIN_VH + BUFFER_VH}vh` }}
     >
       <section className="eb-scrollvideo">
-        <div className="eb-scrollvideo__title" ref={titleWrapRef}>
-          <span className="eb-scrollvideo__title-text" ref={titleText1Ref}>
-            {TITLE_LINE_1}
-          </span>
-          <span className="eb-scrollvideo__title-text" ref={titleText2Ref}>
-            {TITLE_LINE_2}
-          </span>
-        </div>
+        {titleLines && (
+          <div className="eb-scrollvideo__title">
+            <span className="eb-scrollvideo__title-text" ref={titleText1Ref}>
+              {titleLines[0]}
+            </span>
+            <span className="eb-scrollvideo__title-text" ref={titleText2Ref}>
+              {titleLines[1]}
+            </span>
+          </div>
+        )}
         <div className="eb-scrollvideo__frame">
           <video
             ref={videoRef}
             className="eb-scrollvideo__video"
-            src={SHOWCASE_VIDEO}
+            src={videoSrc}
             muted
             playsInline
             preload="auto"

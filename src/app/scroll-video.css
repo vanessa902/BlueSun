@@ -1,0 +1,96 @@
+/* ==========================================================================
+   Shared scroll-video showcase (ScrollVideoShowcase.tsx). A tall track
+   (eb-scrollvideo-track) scrolls past a pinned (sticky) stage. Scroll input
+   is captured by the component and stepped one encoded video frame at a
+   time, so scrolling scrubs through the entire clip instead of it playing
+   on a timer. The video sits lower in the frame (justify-content: flex-end)
+   to leave room above it for the optional typewriter title, which types on
+   during the first few scrolls, holds, then fades — all driven off the
+   current frame, not a timer. Used on both the home page and Our Markets.
+   ========================================================================== */
+.eb-scrollvideo-track {
+  position: relative;
+}
+.eb-scrollvideo {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  background: var(--bg-black);
+  overflow: hidden;
+}
+.eb-scrollvideo__title {
+  position: absolute;
+  top: 12vh;
+  left: 0;
+  right: 0;
+  display: grid;
+  justify-items: center;
+  padding: 0 1.5rem;
+  pointer-events: none;
+  z-index: 2;
+}
+/* Both words occupy the same grid cell so only one shows at a time — line 2
+   fades in only once line 1 has fully faded out (see updateTitle in
+   ScrollVideoShowcase.tsx). */
+.eb-scrollvideo__title-text {
+  grid-area: 1 / 1;
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  width: 0;
+  max-width: 100%;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: #fff;
+  font-size: clamp(2.25rem, 7vw, 5.5rem);
+  line-height: 1.15;
+  transition: opacity 0.2s linear;
+}
+.eb-scrollvideo__title-text.is-typing {
+  border-right: 0.08em solid currentColor;
+  animation: eb-scrollvideo-caret 0.8s steps(1) infinite;
+}
+.eb-scrollvideo__title-text.is-done {
+  border-right-color: transparent;
+}
+@keyframes eb-scrollvideo-caret {
+  0%,
+  100% {
+    border-right-color: currentColor;
+  }
+  50% {
+    border-right-color: transparent;
+  }
+}
+.eb-scrollvideo__frame {
+  position: relative;
+  width: 100%;
+  height: 80vh;
+  overflow: hidden;
+  will-change: transform;
+}
+.eb-scrollvideo__video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.eb-scrollvideo__gradient {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.45) 0%,
+    rgba(0, 0, 0, 0) 30%,
+    rgba(0, 0, 0, 0) 100%
+  );
+  pointer-events: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .eb-scrollvideo__title-text.is-typing {
+    animation: none;
+  }
+}

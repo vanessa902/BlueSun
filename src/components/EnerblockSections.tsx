@@ -132,7 +132,10 @@ export default function EnerblockSections() {
       </section>
 
       {/* 1b. Scrollytelling video break */}
-      <ScrollVideoShowcase />
+      <ScrollVideoShowcase
+        videoFile="home-showcase.mp4"
+        titleLines={["Commercial", "Construction"]}
+      />
 
     </div>
   );

@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import ScrollVideoShowcase from "@/components/ScrollVideoShowcase";
 import "../our-markets.css";
 
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
@@ -131,6 +132,10 @@ export default function OurMarketsPage() {
             </div>
           </div>
         </section>
+
+        {/* Scrollytelling video break, same frame-by-frame scroll effect
+            as the home page's showcase video. */}
+        <ScrollVideoShowcase videoFile="markets-showcase.mp4" />
 
         {/* ============================================================
             Gallery (draggable carousel)
