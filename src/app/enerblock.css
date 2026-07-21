@@ -194,32 +194,41 @@
 }
 
 /* ---------- 1b. Scrollytelling video break ----------
-   The frame's scale/radius and the video's own y-drift are both driven by
-   scroll progress in ScrollVideoShowcase.tsx (Framer Motion useScroll);
-   this just lays out the container the motion values animate. ---------- */
+   A tall track (eb-scrollvideo-track) scrolls past a pinned (sticky) stage;
+   scroll progress across that track drives both the frame's scale/radius
+   reveal and, more importantly, the video's own currentTime — so scrolling
+   scrubs through the clip's scenes instead of it playing on a timer. All
+   driven from ScrollVideoShowcase.tsx via Framer Motion's useScroll. ---------- */
+.eb-scrollvideo-track {
+  position: relative;
+  height: 320vh;
+}
 .eb-scrollvideo {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  align-items: center;
   background: var(--bg-black);
-  padding: 4rem 1.5rem 8rem;
+  padding: 2rem 1.5rem;
+  overflow: hidden;
 }
 @media (min-width: 768px) {
   .eb-scrollvideo {
-    padding: 5rem 3rem 10rem;
+    padding: 2rem 3rem;
   }
 }
 .eb-scrollvideo__frame {
   position: relative;
+  width: 100%;
   max-width: 80rem;
   margin: 0 auto;
   aspect-ratio: 16 / 9;
   overflow: hidden;
   will-change: transform, border-radius;
 }
-.eb-scrollvideo__video-wrap {
-  position: absolute;
-  inset: -15% 0;
-  will-change: transform;
-}
 .eb-scrollvideo__video {
+  display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
