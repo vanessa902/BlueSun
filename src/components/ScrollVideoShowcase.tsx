@@ -297,7 +297,7 @@ export default function ScrollVideoShowcase({
 
   return (
     <div
-      className="eb-scrollvideo-spacer"
+      className={`eb-scrollvideo-spacer${titleLines ? " eb-scrollvideo-spacer--has-title" : ""}`}
       ref={spacerRef}
       style={{ height: `${PIN_VH + BUFFER_VH}vh` }}
     >

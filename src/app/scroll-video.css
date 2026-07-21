@@ -20,6 +20,17 @@
 .eb-scrollvideo-spacer {
   position: relative;
 }
+/* The home page's dark theme wants a black backdrop behind the video for
+   the spacer's entire height, including the reliability buffer past the
+   pinned 100vh — otherwise that tail briefly reveals whatever's underneath
+   in the page (e.g. the next section's own background) before the real
+   transition happens. Our Markets is light-themed and correctly has none,
+   so any gap there shows the page's own background instead. titleLines
+   only exists on the home usage, so it doubles as the flag for which page
+   this is. */
+.eb-scrollvideo-spacer--has-title {
+  background: var(--bg-black);
+}
 .eb-scrollvideo-stage {
   position: absolute;
   top: 0;
@@ -41,14 +52,6 @@
   flex-direction: column;
   justify-content: flex-end;
   overflow: hidden;
-}
-/* The home page's dark theme wants a black backdrop behind the video (its
-   frame doesn't always fill edge-to-edge); Our Markets is light-themed and
-   wants no backdrop at all so any gap shows the page's own background
-   instead. titleLines only exists on the home usage, so it doubles as the
-   flag for which page this is. */
-.eb-scrollvideo--has-title {
-  background: var(--bg-black);
 }
 .eb-scrollvideo__title {
   position: absolute;
