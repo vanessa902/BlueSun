@@ -5,14 +5,17 @@ import { useEffect, useRef } from "react";
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 const SHOWCASE_VIDEO = `${BASE}/home-showcase.mp4`;
 
-// This video's own encoded frame rate (home-showcase.mp4 is 24fps) — each
-// scroll step advances exactly one of these frames, so the mapping stays in
-// lockstep with the actual footage rather than an arbitrary time slice.
+// This video's own encoded frame rate (home-showcase.mp4 is 24fps) — the
+// video is stepped through by these actual frames, so the mapping stays in
+// lockstep with the footage rather than an arbitrary time slice.
 const VIDEO_FPS = 24;
-// How far a touch-drag has to travel, in px, to count as "one scroll" and
-// advance a frame — wheel/trackpad ticks are stepped one-for-one instead,
-// since each fired wheel event already represents one discrete scroll.
-const TOUCH_PX_PER_FRAME = 45;
+// How much accumulated scroll/drag distance (px) counts as "one scroll" and
+// advances a frame. Using distance rather than raw event count keeps the
+// feel consistent across a single mouse-wheel notch, a fast trackpad fling,
+// or a slow touch drag — a fixed 1-event-1-frame mapping made the section
+// feel stuck, since a real scroll gesture fires wildly different numbers of
+// events depending on the input device.
+const PX_PER_FRAME = 10;
 // Extra scroll room left after the pin so lifting off the first/last frame
 // hands scrolling back to the page smoothly instead of snapping.
 const BUFFER_VH = 30;
@@ -20,11 +23,11 @@ const PIN_VH = 100;
 const FALLBACK_TOTAL_FRAMES = Math.round(15 * VIDEO_FPS);
 
 /** Scrollytelling video: the frame pins in place and captures scroll input
- * while active, stepping the video forward or backward exactly one encoded
- * frame per scroll (a mouse-wheel notch, a trackpad tick, or a touch drag
- * increment) instead of mapping continuous scroll distance onto video time.
- * Once the clip reaches its first or last frame, scrolling further releases
- * the pin and the page scrolls on normally. */
+ * while active, stepping the video forward or backward through its actual
+ * encoded frames in proportion to how far the user scrolls or drags,
+ * instead of mapping continuous scroll distance onto video time. Once the
+ * clip reaches its first or last frame, scrolling further releases the pin
+ * and the page scrolls on normally. */
 export default function ScrollVideoShowcase() {
   const trackRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -46,7 +49,7 @@ export default function ScrollVideoShowcase() {
 
   useEffect(() => {
     const touchYRef = { current: null as number | null };
-    const touchAccumRef = { current: 0 };
+    const accumRef = { current: 0 };
 
     function isPinned() {
       const el = trackRef.current;
@@ -62,20 +65,40 @@ export default function ScrollVideoShowcase() {
       if (v) v.currentTime = frameRef.current / VIDEO_FPS;
     }
 
-    function onWheel(e: WheelEvent) {
-      if (!isPinned()) return;
-      const dir = Math.sign(e.deltaY);
-      if (dir === 0) return;
+    // Shared by wheel and touch: accumulates raw scroll/drag distance and
+    // converts it into whole-frame steps, carrying any leftover forward so
+    // fast gestures advance multiple frames at once instead of dropping them.
+    function stepByDistance(rawDelta: number) {
+      const dir = Math.sign(rawDelta);
+      if (dir === 0) return false;
       const atStart = frameRef.current <= 0;
       const atEnd = frameRef.current >= totalFramesRef.current - 1;
-      if ((dir > 0 && atEnd) || (dir < 0 && atStart)) return;
-      e.preventDefault();
-      applyFrame(frameRef.current + dir);
+      if ((dir > 0 && atEnd) || (dir < 0 && atStart)) {
+        accumRef.current = 0;
+        return false;
+      }
+      accumRef.current += rawDelta;
+      while (Math.abs(accumRef.current) >= PX_PER_FRAME) {
+        const step = Math.sign(accumRef.current);
+        const prev = frameRef.current;
+        applyFrame(prev + step);
+        accumRef.current -= step * PX_PER_FRAME;
+        if (frameRef.current === prev) {
+          accumRef.current = 0;
+          break;
+        }
+      }
+      return true;
+    }
+
+    function onWheel(e: WheelEvent) {
+      if (!isPinned()) return;
+      if (stepByDistance(e.deltaY)) e.preventDefault();
     }
 
     function onTouchStart(e: TouchEvent) {
       touchYRef.current = e.touches[0]?.clientY ?? null;
-      touchAccumRef.current = 0;
+      accumRef.current = 0;
     }
 
     function onTouchMove(e: TouchEvent) {
@@ -84,26 +107,7 @@ export default function ScrollVideoShowcase() {
       if (currentY == null) return;
       const deltaY = touchYRef.current - currentY;
       touchYRef.current = currentY;
-      const dir = Math.sign(deltaY);
-      if (dir === 0) return;
-      const atStart = frameRef.current <= 0;
-      const atEnd = frameRef.current >= totalFramesRef.current - 1;
-      if ((dir > 0 && atEnd) || (dir < 0 && atStart)) {
-        touchAccumRef.current = 0;
-        return;
-      }
-      e.preventDefault();
-      touchAccumRef.current += deltaY;
-      while (Math.abs(touchAccumRef.current) >= TOUCH_PX_PER_FRAME) {
-        const step = Math.sign(touchAccumRef.current);
-        const prev = frameRef.current;
-        applyFrame(prev + step);
-        touchAccumRef.current -= step * TOUCH_PX_PER_FRAME;
-        if (frameRef.current === prev) {
-          touchAccumRef.current = 0;
-          break;
-        }
-      }
+      if (stepByDistance(deltaY)) e.preventDefault();
     }
 
     window.addEventListener("wheel", onWheel, { passive: false });
