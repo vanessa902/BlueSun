@@ -23,6 +23,16 @@ const BUFFER_VH = 30;
 const PIN_VH = 100;
 const FALLBACK_TOTAL_FRAMES = Math.round(15 * VIDEO_FPS);
 
+// Intro title: types on during the first ~3 scrolls, holds briefly, then
+// fades away — driven directly off the current frame (not a timer), so it
+// stays in lockstep with scroll like everything else here.
+const TITLE_TEXT = "Commercial construction";
+const SCROLLS_TO_TYPE = 3;
+const TITLE_TYPE_FRAMES = Math.round((SCROLLS_TO_TYPE * 100) / PX_PER_FRAME);
+const TITLE_HOLD_FRAMES = 15;
+const TITLE_FADE_FRAMES = 20;
+const TITLE_FADE_START = TITLE_TYPE_FRAMES + TITLE_HOLD_FRAMES;
+
 /** Scrollytelling video: the frame pins in place and captures scroll input
  * while active, stepping the video forward or backward through its actual
  * encoded frames in proportion to how far the user scrolls or drags,
@@ -43,6 +53,8 @@ const FALLBACK_TOTAL_FRAMES = Math.round(15 * VIDEO_FPS);
 export default function ScrollVideoShowcase() {
   const trackRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const titleWrapRef = useRef<HTMLDivElement>(null);
+  const titleTextRef = useRef<HTMLSpanElement>(null);
   const frameRef = useRef(0);
   const totalFramesRef = useRef(FALLBACK_TOTAL_FRAMES);
 
@@ -83,11 +95,24 @@ export default function ScrollVideoShowcase() {
       lenisBridge.current?.start();
     }
 
+    function updateTitle(frame: number) {
+      const wrap = titleWrapRef.current;
+      const text = titleTextRef.current;
+      if (!wrap || !text) return;
+      const typeRatio = Math.max(0, Math.min(1, frame / TITLE_TYPE_FRAMES));
+      text.style.width = `${Math.round(text.scrollWidth * typeRatio)}px`;
+      text.classList.toggle("is-typing", frame > 0 && frame < TITLE_TYPE_FRAMES);
+      text.classList.toggle("is-done", frame >= TITLE_TYPE_FRAMES);
+      const fadeRatio = Math.max(0, Math.min(1, (frame - TITLE_FADE_START) / TITLE_FADE_FRAMES));
+      wrap.style.opacity = String(1 - fadeRatio);
+    }
+
     function applyFrame(next: number) {
       const total = totalFramesRef.current;
       frameRef.current = Math.max(0, Math.min(total - 1, next));
       const v = videoRef.current;
       if (v) v.currentTime = frameRef.current / VIDEO_FPS;
+      updateTitle(frameRef.current);
     }
 
     // Shared by wheel and touch: accumulates raw scroll/drag distance and
@@ -190,6 +215,11 @@ export default function ScrollVideoShowcase() {
       style={{ height: `${PIN_VH + BUFFER_VH}vh` }}
     >
       <section className="eb-scrollvideo">
+        <div className="eb-scrollvideo__title" ref={titleWrapRef}>
+          <span className="eb-scrollvideo__title-text" ref={titleTextRef}>
+            {TITLE_TEXT}
+          </span>
+        </div>
         <div className="eb-scrollvideo__frame">
           <video
             ref={videoRef}

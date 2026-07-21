@@ -194,14 +194,13 @@
 }
 
 /* ---------- 1b. Scrollytelling video break ----------
-   A tall track (eb-scrollvideo-track) scrolls past a pinned (sticky) stage;
-   its height is set inline (ScrollVideoShowcase.tsx), one scroll unit per
-   second of video. Scroll progress across that track drives the video's own
-   currentTime directly, one second per unit, from first frame to last — so
-   scrolling scrubs through the entire clip instead of it playing on a timer.
-   The frame fills the full viewport width/height and the video uses
-   object-fit: contain so it's never cropped on the sides. All driven from
-   ScrollVideoShowcase.tsx via Framer Motion's useScroll. ---------- */
+   A tall track (eb-scrollvideo-track) scrolls past a pinned (sticky) stage.
+   Scroll input is captured by ScrollVideoShowcase.tsx and stepped one
+   encoded video frame at a time (24fps), so scrolling scrubs through the
+   entire clip instead of it playing on a timer. The video sits lower in the
+   frame (justify-content: flex-end) to leave room above it for the
+   typewriter title, which types on during the first few scrolls, holds,
+   then fades — all driven off the current frame, not a timer. ---------- */
 .eb-scrollvideo-track {
   position: relative;
 }
@@ -210,14 +209,54 @@
   top: 0;
   height: 100vh;
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  justify-content: flex-end;
   background: var(--bg-black);
   overflow: hidden;
+}
+.eb-scrollvideo__title {
+  position: absolute;
+  top: 14vh;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  padding: 0 1.5rem;
+  pointer-events: none;
+  z-index: 2;
+}
+.eb-scrollvideo__title-text {
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  width: 0;
+  max-width: 100%;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  color: #fff;
+  font-size: clamp(1.5rem, 4vw, 3rem);
+}
+.eb-scrollvideo__title-text.is-typing {
+  border-right: 0.08em solid currentColor;
+  animation: eb-scrollvideo-caret 0.8s steps(1) infinite;
+}
+.eb-scrollvideo__title-text.is-done {
+  border-right-color: transparent;
+}
+@keyframes eb-scrollvideo-caret {
+  0%,
+  100% {
+    border-right-color: currentColor;
+  }
+  50% {
+    border-right-color: transparent;
+  }
 }
 .eb-scrollvideo__frame {
   position: relative;
   width: 100%;
-  height: 100%;
+  height: 80vh;
   overflow: hidden;
   will-change: transform;
 }
@@ -237,6 +276,11 @@
     rgba(0, 0, 0, 0) 100%
   );
   pointer-events: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .eb-scrollvideo__title-text.is-typing {
+    animation: none;
+  }
 }
 
 /* ---------- 2. SOLUTIONS sticky-stacking grid ---------- */
