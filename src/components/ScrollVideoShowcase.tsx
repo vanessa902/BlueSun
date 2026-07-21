@@ -23,11 +23,13 @@ const BUFFER_VH = 30;
 const PIN_VH = 100;
 const FALLBACK_TOTAL_FRAMES = Math.round(15 * VIDEO_FPS);
 
-// Intro title: types on during the first ~3 scrolls, holds briefly, then
-// fades away — driven directly off the current frame (not a timer), so it
-// stays in lockstep with scroll like everything else here.
-const TITLE_TEXT = "Commercial construction";
-const SCROLLS_TO_TYPE = 3;
+// Intro title: "Commercial" types on, then "Construction" types on below it,
+// together spanning the first ~5 scrolls; holds briefly, then fades away —
+// driven directly off the current frame (not a timer), so it stays in
+// lockstep with scroll like everything else here.
+const TITLE_LINE_1 = "Commercial";
+const TITLE_LINE_2 = "Construction";
+const SCROLLS_TO_TYPE = 5;
 const TITLE_TYPE_FRAMES = Math.round((SCROLLS_TO_TYPE * 100) / PX_PER_FRAME);
 const TITLE_HOLD_FRAMES = 15;
 const TITLE_FADE_FRAMES = 20;
@@ -54,7 +56,8 @@ export default function ScrollVideoShowcase() {
   const trackRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const titleWrapRef = useRef<HTMLDivElement>(null);
-  const titleTextRef = useRef<HTMLSpanElement>(null);
+  const titleText1Ref = useRef<HTMLSpanElement>(null);
+  const titleText2Ref = useRef<HTMLSpanElement>(null);
   const frameRef = useRef(0);
   const totalFramesRef = useRef(FALLBACK_TOTAL_FRAMES);
 
@@ -97,12 +100,21 @@ export default function ScrollVideoShowcase() {
 
     function updateTitle(frame: number) {
       const wrap = titleWrapRef.current;
-      const text = titleTextRef.current;
-      if (!wrap || !text) return;
+      const t1 = titleText1Ref.current;
+      const t2 = titleText2Ref.current;
+      if (!wrap || !t1 || !t2) return;
+      // "Commercial" types across the first half of the type window, then
+      // "Construction" types across the second half — same split-in-half
+      // pattern the home hero uses for its own two-line typewriter title.
       const typeRatio = Math.max(0, Math.min(1, frame / TITLE_TYPE_FRAMES));
-      text.style.width = `${Math.round(text.scrollWidth * typeRatio)}px`;
-      text.classList.toggle("is-typing", frame > 0 && frame < TITLE_TYPE_FRAMES);
-      text.classList.toggle("is-done", frame >= TITLE_TYPE_FRAMES);
+      const r1 = Math.max(0, Math.min(1, typeRatio * 2));
+      const r2 = Math.max(0, Math.min(1, typeRatio * 2 - 1));
+      t1.style.width = `${Math.round(t1.scrollWidth * r1)}px`;
+      t2.style.width = `${Math.round(t2.scrollWidth * r2)}px`;
+      t1.classList.toggle("is-typing", r1 > 0 && r1 < 1);
+      t1.classList.toggle("is-done", r1 >= 1);
+      t2.classList.toggle("is-typing", r1 >= 1 && r2 < 1);
+      t2.classList.toggle("is-done", r2 >= 1);
       const fadeRatio = Math.max(0, Math.min(1, (frame - TITLE_FADE_START) / TITLE_FADE_FRAMES));
       wrap.style.opacity = String(1 - fadeRatio);
     }
@@ -216,8 +228,11 @@ export default function ScrollVideoShowcase() {
     >
       <section className="eb-scrollvideo">
         <div className="eb-scrollvideo__title" ref={titleWrapRef}>
-          <span className="eb-scrollvideo__title-text" ref={titleTextRef}>
-            {TITLE_TEXT}
+          <span className="eb-scrollvideo__title-text" ref={titleText1Ref}>
+            {TITLE_LINE_1}
+          </span>
+          <span className="eb-scrollvideo__title-text" ref={titleText2Ref}>
+            {TITLE_LINE_2}
           </span>
         </div>
         <div className="eb-scrollvideo__frame">

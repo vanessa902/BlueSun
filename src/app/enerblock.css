@@ -216,11 +216,12 @@
 }
 .eb-scrollvideo__title {
   position: absolute;
-  top: 14vh;
+  top: 12vh;
   left: 0;
   right: 0;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
   padding: 0 1.5rem;
   pointer-events: none;
   z-index: 2;
@@ -233,9 +234,9 @@
   max-width: 100%;
   font-weight: 600;
   letter-spacing: -0.01em;
-  text-transform: uppercase;
   color: #fff;
-  font-size: clamp(1.5rem, 4vw, 3rem);
+  font-size: clamp(2.25rem, 7vw, 5.5rem);
+  line-height: 1.15;
 }
 .eb-scrollvideo__title-text.is-typing {
   border-right: 0.08em solid currentColor;
