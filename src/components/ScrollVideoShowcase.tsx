@@ -299,7 +299,7 @@ export default function ScrollVideoShowcase({
             playsInline
             preload="auto"
           />
-          <div className="eb-scrollvideo__gradient" aria-hidden="true" />
+          {titleLines && <div className="eb-scrollvideo__gradient" aria-hidden="true" />}
         </div>
       </section>
     </div>
