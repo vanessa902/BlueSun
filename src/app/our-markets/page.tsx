@@ -135,7 +135,7 @@ export default function OurMarketsPage() {
 
         {/* Scrollytelling video break, same frame-by-frame scroll effect
             as the home page's showcase video. */}
-        <ScrollVideoShowcase videoFile="markets-showcase.mp4" />
+        <ScrollVideoShowcase videoFile="markets-showcase.mp4" objectFit="cover" />
 
         {/* ============================================================
             Gallery (draggable carousel)

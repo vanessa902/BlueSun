@@ -63,11 +63,16 @@ type ScrollVideoShowcaseProps = {
   videoFile: string;
   /** Optional two-word sequential typewriter title overlaid near the top. */
   titleLines?: readonly [string, string];
+  /** "cover" fills the frame edge-to-edge (cropping as needed, no letterbox
+   * bars); "contain" (default) shows the whole frame uncropped, which can
+   * letterbox if the video's aspect ratio doesn't match the frame's. */
+  objectFit?: "cover" | "contain";
 };
 
 export default function ScrollVideoShowcase({
   videoFile,
   titleLines,
+  objectFit = "contain",
 }: ScrollVideoShowcaseProps) {
   const trackRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -276,6 +281,7 @@ export default function ScrollVideoShowcase({
             ref={videoRef}
             className="eb-scrollvideo__video"
             src={videoSrc}
+            style={{ objectFit }}
             muted
             playsInline
             preload="auto"
