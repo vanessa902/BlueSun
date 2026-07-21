@@ -219,14 +219,17 @@
   top: 12vh;
   left: 0;
   right: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  display: grid;
+  justify-items: center;
   padding: 0 1.5rem;
   pointer-events: none;
   z-index: 2;
 }
+/* Both words occupy the same grid cell so only one shows at a time — line 2
+   fades in only once line 1 has fully faded out (see updateTitle in
+   ScrollVideoShowcase.tsx). */
 .eb-scrollvideo__title-text {
+  grid-area: 1 / 1;
   display: inline-block;
   overflow: hidden;
   white-space: nowrap;
@@ -237,6 +240,7 @@
   color: #fff;
   font-size: clamp(2.25rem, 7vw, 5.5rem);
   line-height: 1.15;
+  transition: opacity 0.2s linear;
 }
 .eb-scrollvideo__title-text.is-typing {
   border-right: 0.08em solid currentColor;

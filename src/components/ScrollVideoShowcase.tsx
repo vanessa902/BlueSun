@@ -23,17 +23,24 @@ const BUFFER_VH = 30;
 const PIN_VH = 100;
 const FALLBACK_TOTAL_FRAMES = Math.round(15 * VIDEO_FPS);
 
-// Intro title: "Commercial" types on, then "Construction" types on below it,
-// together spanning the first ~5 scrolls; holds briefly, then fades away —
-// driven directly off the current frame (not a timer), so it stays in
-// lockstep with scroll like everything else here.
+// Intro title: "Commercial" types on, holds, fades out — then "Construction"
+// types on in the same spot, holds, and fades out. One word is on screen at
+// a time. Driven directly off the current frame (not a timer), so it stays
+// in lockstep with scroll like everything else here.
 const TITLE_LINE_1 = "Commercial";
 const TITLE_LINE_2 = "Construction";
-const SCROLLS_TO_TYPE = 5;
-const TITLE_TYPE_FRAMES = Math.round((SCROLLS_TO_TYPE * 100) / PX_PER_FRAME);
-const TITLE_HOLD_FRAMES = 15;
-const TITLE_FADE_FRAMES = 20;
-const TITLE_FADE_START = TITLE_TYPE_FRAMES + TITLE_HOLD_FRAMES;
+const FRAMES_PER_SCROLL = 100 / PX_PER_FRAME;
+const WORD_TYPE_FRAMES = Math.round(1.5 * FRAMES_PER_SCROLL);
+const WORD_HOLD_FRAMES = Math.round(0.6 * FRAMES_PER_SCROLL);
+const WORD_FADE_FRAMES = Math.round(0.8 * FRAMES_PER_SCROLL);
+const FINAL_HOLD_FRAMES = Math.round(1.2 * FRAMES_PER_SCROLL);
+const FINAL_FADE_FRAMES = Math.round(1.6 * FRAMES_PER_SCROLL);
+
+const LINE1_FADE_START = WORD_TYPE_FRAMES + WORD_HOLD_FRAMES;
+const LINE1_FADE_END = LINE1_FADE_START + WORD_FADE_FRAMES;
+const LINE2_START = LINE1_FADE_END;
+const LINE2_TYPE_END = LINE2_START + WORD_TYPE_FRAMES;
+const LINE2_FADE_START = LINE2_TYPE_END + FINAL_HOLD_FRAMES;
 
 /** Scrollytelling video: the frame pins in place and captures scroll input
  * while active, stepping the video forward or backward through its actual
@@ -99,24 +106,36 @@ export default function ScrollVideoShowcase() {
     }
 
     function updateTitle(frame: number) {
-      const wrap = titleWrapRef.current;
       const t1 = titleText1Ref.current;
       const t2 = titleText2Ref.current;
-      if (!wrap || !t1 || !t2) return;
-      // "Commercial" types across the first half of the type window, then
-      // "Construction" types across the second half — same split-in-half
-      // pattern the home hero uses for its own two-line typewriter title.
-      const typeRatio = Math.max(0, Math.min(1, frame / TITLE_TYPE_FRAMES));
-      const r1 = Math.max(0, Math.min(1, typeRatio * 2));
-      const r2 = Math.max(0, Math.min(1, typeRatio * 2 - 1));
+      if (!t1 || !t2) return;
+
+      // Line 1 ("Commercial"): types in, holds, fades out — fully gone by
+      // LINE1_FADE_END, before line 2 ever starts typing.
+      const r1 = Math.max(0, Math.min(1, frame / WORD_TYPE_FRAMES));
       t1.style.width = `${Math.round(t1.scrollWidth * r1)}px`;
-      t2.style.width = `${Math.round(t2.scrollWidth * r2)}px`;
-      t1.classList.toggle("is-typing", r1 > 0 && r1 < 1);
+      t1.classList.toggle("is-typing", frame > 0 && frame < WORD_TYPE_FRAMES);
       t1.classList.toggle("is-done", r1 >= 1);
-      t2.classList.toggle("is-typing", r1 >= 1 && r2 < 1);
+      const fade1 = Math.max(
+        0,
+        Math.min(1, (frame - LINE1_FADE_START) / WORD_FADE_FRAMES)
+      );
+      t1.style.opacity = String(1 - fade1);
+
+      // Line 2 ("Construction"): stays hidden until line 1 has fully faded,
+      // then types in the same spot, holds, and fades out at the end.
+      const r2 = Math.max(
+        0,
+        Math.min(1, (frame - LINE2_START) / WORD_TYPE_FRAMES)
+      );
+      t2.style.width = `${Math.round(t2.scrollWidth * r2)}px`;
+      t2.classList.toggle("is-typing", frame >= LINE2_START && frame < LINE2_TYPE_END);
       t2.classList.toggle("is-done", r2 >= 1);
-      const fadeRatio = Math.max(0, Math.min(1, (frame - TITLE_FADE_START) / TITLE_FADE_FRAMES));
-      wrap.style.opacity = String(1 - fadeRatio);
+      const fade2 = Math.max(
+        0,
+        Math.min(1, (frame - LINE2_FADE_START) / FINAL_FADE_FRAMES)
+      );
+      t2.style.opacity = frame < LINE2_START ? "0" : String(1 - fade2);
     }
 
     function applyFrame(next: number) {
