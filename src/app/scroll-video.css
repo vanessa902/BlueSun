@@ -10,6 +10,10 @@
    ========================================================================== */
 .eb-scrollvideo-track {
   position: relative;
+  /* The sticky video detaches before this tall track's own extra buffer
+     space (below it) has scrolled past — without this, that gap shows the
+     page's own background instead of a seamless black. */
+  background: var(--bg-black);
 }
 .eb-scrollvideo {
   position: sticky;
