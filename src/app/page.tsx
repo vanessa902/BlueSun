@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import Lenis from "lenis";
+import { lenisBridge } from "@/lib/lenisBridge";
 import EnerblockSections from "@/components/EnerblockSections";
 import Footer from "@/components/Footer";
 import ProjectsSection from "@/components/ProjectsSection";
@@ -42,7 +43,11 @@ export default function BlueSunPage() {
       requestAnimationFrame(lenisLoop);
     }
     requestAnimationFrame(lenisLoop);
-    cleanups.push(() => lenis.destroy());
+    lenisBridge.current = lenis;
+    cleanups.push(() => {
+      lenisBridge.current = null;
+      lenis.destroy();
+    });
 
     // ===================== SCROLL VIDEO =====================
     const canvas = document.getElementById("video-canvas") as HTMLCanvasElement;
