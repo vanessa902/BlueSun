@@ -16,8 +16,9 @@ const VIDEO_FPS = 24;
 // feel consistent across a single mouse-wheel notch, a fast trackpad fling,
 // or a slow touch drag — a fixed 1-event-1-frame mapping made the section
 // feel stuck, since a real scroll gesture fires wildly different numbers of
-// events depending on the input device.
-const PX_PER_FRAME = 10;
+// events depending on the input device. Lower = faster (fewer px needed per
+// frame, so the same scroll gesture advances further through the clip).
+const PX_PER_FRAME = 5;
 // Extra scroll room, on top of the 100vh the stage itself occupies, purely
 // so a real scroll input reliably has a wide enough window to be detected
 // and released — too small risks a single large wheel/touch delta jumping
