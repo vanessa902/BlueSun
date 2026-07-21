@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import ScrollVideoShowcase from "@/components/ScrollVideoShowcase";
 import "../app/enerblock.css";
-const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
 export default function EnerblockSections() {
   const root = useRef<HTMLDivElement>(null);
@@ -130,6 +130,9 @@ export default function EnerblockSections() {
           </div>
         </div>
       </section>
+
+      {/* 1b. Scrollytelling video break */}
+      <ScrollVideoShowcase />
 
     </div>
   );

@@ -193,6 +193,49 @@
   text-transform: lowercase;
 }
 
+/* ---------- 1b. Scrollytelling video break ----------
+   The frame's scale/radius and the video's own y-drift are both driven by
+   scroll progress in ScrollVideoShowcase.tsx (Framer Motion useScroll);
+   this just lays out the container the motion values animate. ---------- */
+.eb-scrollvideo {
+  background: var(--bg-black);
+  padding: 4rem 1.5rem 8rem;
+}
+@media (min-width: 768px) {
+  .eb-scrollvideo {
+    padding: 5rem 3rem 10rem;
+  }
+}
+.eb-scrollvideo__frame {
+  position: relative;
+  max-width: 80rem;
+  margin: 0 auto;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  will-change: transform, border-radius;
+}
+.eb-scrollvideo__video-wrap {
+  position: absolute;
+  inset: -15% 0;
+  will-change: transform;
+}
+.eb-scrollvideo__video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.eb-scrollvideo__gradient {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.45) 0%,
+    rgba(0, 0, 0, 0) 30%,
+    rgba(0, 0, 0, 0) 100%
+  );
+  pointer-events: none;
+}
+
 /* ---------- 2. SOLUTIONS sticky-stacking grid ---------- */
 .eb-sol {
   background: var(--eb-paper);
