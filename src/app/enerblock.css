@@ -195,15 +195,13 @@
 
 /* ---------- 1b. Scrollytelling video break ----------
    A tall track (eb-scrollvideo-track) scrolls past a pinned (sticky) stage;
-   its height is set inline (ScrollVideoShowcase.tsx), sized to two phases:
-   one scroll unit to grow the frame in, then one scroll unit per second of
-   video to scrub through it. Scroll progress across that track drives the
-   frame's grow-in scale during phase 1 and, throughout phase 2, the video's
-   own currentTime — so scrolling steps through the clip's scenes one second
-   at a time instead of it playing on a timer. All driven from
-   ScrollVideoShowcase.tsx via Framer Motion's useScroll. The frame itself is
-   kept small and centered so this section reads as a contained card, not a
-   full-viewport takeover. ---------- */
+   its height is set inline (ScrollVideoShowcase.tsx), one scroll unit per
+   second of video. Scroll progress across that track drives the video's own
+   currentTime directly, one second per unit, from first frame to last — so
+   scrolling scrubs through the entire clip instead of it playing on a timer.
+   The frame fills the full viewport width/height and the video uses
+   object-fit: contain so it's never cropped on the sides. All driven from
+   ScrollVideoShowcase.tsx via Framer Motion's useScroll. ---------- */
 .eb-scrollvideo-track {
   position: relative;
 }
@@ -214,21 +212,12 @@
   display: flex;
   align-items: center;
   background: var(--bg-black);
-  padding: 2rem 1.5rem;
   overflow: hidden;
-}
-@media (min-width: 768px) {
-  .eb-scrollvideo {
-    padding: 2rem 3rem;
-  }
 }
 .eb-scrollvideo__frame {
   position: relative;
   width: 100%;
-  max-width: 42rem;
-  margin: 0 auto;
-  aspect-ratio: 16 / 9;
-  border-radius: 1.5rem;
+  height: 100%;
   overflow: hidden;
   will-change: transform;
 }
@@ -236,7 +225,7 @@
   display: block;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
 }
 .eb-scrollvideo__gradient {
   position: absolute;
