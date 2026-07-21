@@ -112,16 +112,29 @@ export default function ScrollVideoShowcase({
       return rect.top <= 0 && rect.bottom > window.innerHeight;
     }
 
+    // Wheel/touch/keydown interception (below) calls preventDefault(), but a
+    // large or fast-fired burst of native scroll input can still slip a bit
+    // of real scroll through before the JS handler runs on every event —
+    // measured via Playwright, and confirmed live too. document.body's
+    // overflow is a structural backstop: with nothing left to scroll, that
+    // race can't happen no matter how the input is dispatched.
     function lock() {
       if (lockedRef.current) return;
       lockedRef.current = true;
       lenisBridge.current?.stop();
+      const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+      document.body.style.overflow = "hidden";
+      if (scrollbarWidth > 0) {
+        document.body.style.paddingRight = `${scrollbarWidth}px`;
+      }
     }
 
     function unlock() {
       if (!lockedRef.current) return;
       lockedRef.current = false;
       lenisBridge.current?.start();
+      document.body.style.overflow = "";
+      document.body.style.paddingRight = "";
     }
 
     function updateTitle(frame: number) {
