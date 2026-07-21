@@ -18,13 +18,12 @@ const VIDEO_FPS = 24;
 // feel stuck, since a real scroll gesture fires wildly different numbers of
 // events depending on the input device.
 const PX_PER_FRAME = 10;
-// Extra scroll room left after the pin so a real scroll input reliably has
-// a wide enough window to be caught and released — too small a buffer risks
-// a single large wheel/touch delta jumping clean over it, letting the
-// section be skipped before the video finishes. The track's own
-// margin-bottom (below) pulls the next section up underneath this space, so
-// growing it doesn't cost any visible black — it's purely a reliability
-// margin now, not something the user ever sees.
+// Extra scroll room, on top of the 100vh the stage itself occupies, purely
+// so a real scroll input reliably has a wide enough window to be detected
+// and released — too small risks a single large wheel/touch delta jumping
+// clean past it. This never shows as a gap of any color: the stage is
+// position: fixed while pinned (see below), completely independent of how
+// much document space this buffer consumes underneath it.
 const BUFFER_VH = 20;
 const PIN_VH = 100;
 const FALLBACK_TOTAL_FRAMES = Math.round(15 * VIDEO_FPS);
@@ -46,12 +45,21 @@ const LINE2_START = LINE1_FADE_END;
 const LINE2_TYPE_END = LINE2_START + WORD_TYPE_FRAMES;
 const LINE2_FADE_START = LINE2_TYPE_END + FINAL_HOLD_FRAMES;
 
-/** Scrollytelling video: the frame pins in place and captures scroll input
- * while active, stepping the video forward or backward through its actual
- * encoded frames in proportion to how far the user scrolls or drags,
- * instead of mapping continuous scroll distance onto video time. Once the
- * clip reaches its first or last frame, scrolling further releases the pin
- * and the page scrolls on normally.
+/** Scrollytelling video. Pinning is done with a JS-toggled
+ * position: fixed/absolute swap on the stage — not CSS position: sticky.
+ * Before/after the pin window, the stage sits position: absolute, inset: 0
+ * inside the tall spacer (so it visually occupies exactly the spacer's own
+ * box, matching normal document flow). The instant scroll reaches the pin
+ * window, the stage switches to position: fixed, inset: 0 — pixel-identical
+ * to where it already was, so the swap is invisible, but now genuinely
+ * locked to the viewport with zero possible sub-pixel drift, independent of
+ * whatever the surrounding page layout is doing. Scroll input is captured
+ * while pinned and stepped through the video's actual encoded frames in
+ * proportion to how far the user scrolls or drags, instead of mapping
+ * continuous scroll distance onto video time. Once the clip reaches its
+ * first or last frame, scrolling further un-pins (back to absolute) and the
+ * page scrolls on normally, immediately revealing whatever comes next — the
+ * spacer has no background of its own, so there is nothing to show through.
  *
  * The home page runs Lenis smooth-scroll globally (see page.tsx), which has
  * its own wheel/touch listener and animates scrollY independently over
@@ -79,7 +87,8 @@ export default function ScrollVideoShowcase({
   titleLines,
   objectFit = "contain",
 }: ScrollVideoShowcaseProps) {
-  const trackRef = useRef<HTMLDivElement>(null);
+  const spacerRef = useRef<HTMLDivElement>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const titleText1Ref = useRef<HTMLSpanElement>(null);
   const titleText2Ref = useRef<HTMLSpanElement>(null);
@@ -110,22 +119,29 @@ export default function ScrollVideoShowcase({
     const accumRef = { current: 0 };
     const lockedRef = { current: false };
 
+    // True for the whole BUFFER_VH-tall window where the spacer spans the
+    // entire viewport — this is deliberately generous (not a razor-thin
+    // instant) so a real scroll event reliably lands inside it.
     function isPinned() {
-      const el = trackRef.current;
+      const el = spacerRef.current;
       if (!el) return false;
       const rect = el.getBoundingClientRect();
       return rect.top <= 0 && rect.bottom > window.innerHeight;
     }
 
+    function setPinnedVisual(pinned: boolean) {
+      stageRef.current?.classList.toggle("is-fixed", pinned);
+    }
+
     // Wheel/touch/keydown interception (below) calls preventDefault(), but a
     // large or fast-fired burst of native scroll input can still slip a bit
-    // of real scroll through before the JS handler runs on every event —
-    // measured via Playwright, and confirmed live too. document.body's
-    // overflow is a structural backstop: with nothing left to scroll, that
-    // race can't happen no matter how the input is dispatched.
+    // of real scroll through before the JS handler runs on every event.
+    // document.body's overflow is a structural backstop: with nothing left
+    // to scroll, that race can't happen no matter how the input arrives.
     function lock() {
       if (lockedRef.current) return;
       lockedRef.current = true;
+      setPinnedVisual(true);
       lenisBridge.current?.stop();
       const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
       document.body.style.overflow = "hidden";
@@ -137,6 +153,7 @@ export default function ScrollVideoShowcase({
     function unlock() {
       if (!lockedRef.current) return;
       lockedRef.current = false;
+      setPinnedVisual(false);
       lenisBridge.current?.start();
       document.body.style.overflow = "";
       document.body.style.paddingRight = "";
@@ -279,34 +296,36 @@ export default function ScrollVideoShowcase({
 
   return (
     <div
-      className="eb-scrollvideo-track"
-      ref={trackRef}
-      style={{ height: `${PIN_VH + BUFFER_VH}vh`, marginBottom: `-${BUFFER_VH}vh` }}
+      className="eb-scrollvideo-spacer"
+      ref={spacerRef}
+      style={{ height: `${PIN_VH + BUFFER_VH}vh` }}
     >
-      <section className={`eb-scrollvideo${titleLines ? " eb-scrollvideo--has-title" : ""}`}>
-        {titleLines && (
-          <div className="eb-scrollvideo__title">
-            <span className="eb-scrollvideo__title-text" ref={titleText1Ref}>
-              {titleLines[0]}
-            </span>
-            <span className="eb-scrollvideo__title-text" ref={titleText2Ref}>
-              {titleLines[1]}
-            </span>
+      <div className="eb-scrollvideo-stage" ref={stageRef}>
+        <section className={`eb-scrollvideo${titleLines ? " eb-scrollvideo--has-title" : ""}`}>
+          {titleLines && (
+            <div className="eb-scrollvideo__title">
+              <span className="eb-scrollvideo__title-text" ref={titleText1Ref}>
+                {titleLines[0]}
+              </span>
+              <span className="eb-scrollvideo__title-text" ref={titleText2Ref}>
+                {titleLines[1]}
+              </span>
+            </div>
+          )}
+          <div className="eb-scrollvideo__frame">
+            <video
+              ref={videoRef}
+              className="eb-scrollvideo__video"
+              src={videoSrc}
+              style={{ objectFit }}
+              muted
+              playsInline
+              preload="auto"
+            />
+            {titleLines && <div className="eb-scrollvideo__gradient" aria-hidden="true" />}
           </div>
-        )}
-        <div className="eb-scrollvideo__frame">
-          <video
-            ref={videoRef}
-            className="eb-scrollvideo__video"
-            src={videoSrc}
-            style={{ objectFit }}
-            muted
-            playsInline
-            preload="auto"
-          />
-          {titleLines && <div className="eb-scrollvideo__gradient" aria-hidden="true" />}
-        </div>
-      </section>
+        </section>
+      </div>
     </div>
   );
 }

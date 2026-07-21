@@ -1,34 +1,45 @@
 /* ==========================================================================
-   Shared scroll-video showcase (ScrollVideoShowcase.tsx). A tall track
-   (eb-scrollvideo-track) scrolls past a pinned (sticky) stage. Scroll input
-   is captured by the component and stepped one encoded video frame at a
-   time, so scrolling scrubs through the entire clip instead of it playing
-   on a timer. The video sits lower in the frame (justify-content: flex-end)
-   to leave room above it for the optional typewriter title, which types on
-   during the first few scrolls, holds, then fades — all driven off the
-   current frame, not a timer. Used on both the home page and Our Markets.
+   Shared scroll-video showcase (ScrollVideoShowcase.tsx). A tall spacer
+   (eb-scrollvideo-spacer) reserves document space; the actual visible stage
+   (eb-scrollvideo-stage) sits absolute, inset to the spacer's own top 100vh
+   by default — so before/after the pin window it just occupies its normal
+   place in the page. The instant scroll reaches the pin window, the
+   component toggles the stage to .is-fixed (position: fixed instead of
+   absolute), which is pixel-identical to where it already was, so the swap
+   is invisible — but now genuinely locked to the viewport, immune to any
+   CSS position: sticky sub-pixel/compositing quirks. Scroll input is
+   captured while pinned and stepped one encoded video frame at a time, so
+   scrolling scrubs through the entire clip instead of it playing on a
+   timer. Nothing here has a background of its own — there's nothing to
+   show through if the video doesn't perfectly fill every pixel. The video
+   sits lower in the frame (justify-content: flex-end) to leave room above
+   it for the optional typewriter title, which types on during the first
+   few scrolls, holds, then fades. Used on both the home page and Our
+   Markets.
    ========================================================================== */
-.eb-scrollvideo-track {
+.eb-scrollvideo-spacer {
   position: relative;
-  /* Sits above whatever follows (see margin-bottom below) so the pinned
-     video stays visibly on top for its entire "stuck" duration instead of
-     the next section's content painting over it. */
-  z-index: 1;
-  /* The sticky video detaches before this tall track's own extra buffer
-     space (below it) has scrolled past. Rather than showing that space as
-     a black gap, the track's own margin-bottom (set inline, matching
-     BUFFER_VH) pulls the next section up underneath it, so the transition
-     is seamless the instant the pin releases — no gap of any color. */
-  background: var(--bg-black);
+}
+.eb-scrollvideo-stage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100vh;
+}
+.eb-scrollvideo-stage.is-fixed {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100vh;
+  z-index: 5;
 }
 .eb-scrollvideo {
-  position: sticky;
-  top: 0;
-  height: 100vh;
+  height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  background: var(--bg-black);
   overflow: hidden;
 }
 .eb-scrollvideo__title {
@@ -78,15 +89,12 @@
 .eb-scrollvideo__frame {
   position: relative;
   width: 100%;
-  /* Tied directly to the viewport (not 100% of the flex parent) so it
-     always spans the full section regardless of flexbox percentage-height
-     resolution quirks. */
-  height: 100vh;
+  height: 100%;
   overflow: hidden;
   will-change: transform;
 }
 /* When there's a typewriter title, the video shrinks to leave room above it
-   instead of filling the whole section. */
+   instead of filling the whole stage. */
 .eb-scrollvideo--has-title .eb-scrollvideo__frame {
   height: 80vh;
 }
