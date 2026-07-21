@@ -19,8 +19,10 @@ const VIDEO_FPS = 24;
 // events depending on the input device.
 const PX_PER_FRAME = 10;
 // Extra scroll room left after the pin so lifting off the first/last frame
-// hands scrolling back to the page smoothly instead of snapping.
-const BUFFER_VH = 30;
+// hands scrolling back to the page smoothly instead of snapping. Kept small
+// on purpose — this space renders black (matching the video), so anything
+// beyond a sliver reads as unwanted dead space before the next section.
+const BUFFER_VH = 5;
 const PIN_VH = 100;
 const FALLBACK_TOTAL_FRAMES = Math.round(15 * VIDEO_FPS);
 
