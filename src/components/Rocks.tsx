@@ -19,6 +19,7 @@ const easeOutBack = (t: number) => {
 export default function Rocks() {
   const stageRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const fallbackVideoRef = useRef<HTMLVideoElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
   const rockRef = useRef<HTMLImageElement>(null);
   const text1Ref = useRef<HTMLSpanElement>(null);
@@ -31,9 +32,11 @@ export default function Rocks() {
 
     const canvas = canvasRef.current!;
     const ctx = canvas.getContext("2d")!;
+    const fallbackVideo = fallbackVideoRef.current!;
     const frames: ImageBitmap[] = [];
     let framesReady = false;
     let lastIdx = -1;
+    let videoSeeking = false;
 
     function resizeCanvas() {
       const dpr = Math.min(devicePixelRatio, 2);
@@ -46,15 +49,20 @@ export default function Rocks() {
       lastIdx = -1;
     }
 
-    function drawFrame(frame: ImageBitmap) {
+    function drawFrame(frame: ImageBitmap | HTMLVideoElement, sourceW: number, sourceH: number) {
       const cw = canvas.width;
       const ch = canvas.height;
-      const s = Math.max(cw / frame.width, ch / frame.height);
-      const dw = frame.width * s;
-      const dh = frame.height * s;
+      const s = Math.max(cw / sourceW, ch / sourceH);
+      const dw = sourceW * s;
+      const dh = sourceH * s;
       ctx.drawImage(frame, (cw - dw) / 2, (ch - dh) / 2, dw, dh);
     }
 
+    // Extraction runs against its own throwaway video (fetched as a blob) so
+    // it never fights the fallback video below over currentTime/seeking.
+    // Frame extraction alone can take several seconds (seeking is sequential,
+    // one frame at a time) — until it finishes, the fallback video renders
+    // directly so the background never sits blank while loading.
     async function extractFrames() {
       try {
         const res = await fetch(ROCK_BG, { mode: "cors" });
@@ -96,9 +104,13 @@ export default function Rocks() {
         if (frames.length > 0) framesReady = true;
         URL.revokeObjectURL(url);
       } catch {
-        /* silent fallback — canvas stays black */
+        /* fallback video keeps rendering directly */
       }
     }
+
+    fallbackVideo.addEventListener("seeked", () => { videoSeeking = false; });
+    fallbackVideo.addEventListener("stalled", () => { videoSeeking = false; });
+    fallbackVideo.addEventListener("loadeddata", () => { fallbackVideo.currentTime = 0; });
 
     resizeCanvas();
     window.addEventListener("resize", resizeCanvas);
@@ -130,12 +142,25 @@ export default function Rocks() {
         // Only appears after "Building Spaces" finishes typing (p≥0.26)
         const bgFade = seg(p, 0.26, 0.32);
         canvas.style.opacity = String(bgFade);
-        if (framesReady && frames.length > 0 && p >= 0.25) {
+        if (p >= 0.25) {
           const bgP = seg(p, 0.26, 0.95);
-          const idx = Math.round(bgP * (frames.length - 1));
-          if (idx !== lastIdx) {
-            lastIdx = idx;
-            if (frames[idx]) drawFrame(frames[idx]);
+          if (framesReady && frames.length > 0) {
+            const idx = Math.round(bgP * (frames.length - 1));
+            if (idx !== lastIdx) {
+              lastIdx = idx;
+              if (frames[idx]) drawFrame(frames[idx], frames[idx].width, frames[idx].height);
+            }
+          } else if (
+            fallbackVideo.duration &&
+            isFinite(fallbackVideo.duration) &&
+            fallbackVideo.readyState >= 1
+          ) {
+            const target = bgP * fallbackVideo.duration;
+            if (!videoSeeking && Math.abs(fallbackVideo.currentTime - target) > 0.05) {
+              videoSeeking = true;
+              fallbackVideo.currentTime = target;
+            }
+            drawFrame(fallbackVideo, fallbackVideo.videoWidth, fallbackVideo.videoHeight);
           }
         }
 
@@ -219,6 +244,14 @@ export default function Rocks() {
   return (
     <div id="rock-stage" ref={stageRef}>
       <canvas ref={canvasRef} className="rock-stage-bg" />
+      <video
+        ref={fallbackVideoRef}
+        muted
+        playsInline
+        preload="auto"
+        src={ROCK_BG}
+        style={{ display: "none" }}
+      />
       <div ref={overlayRef} className="rock-stage-overlay" />
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img ref={rockRef} id="rock-right" src={ROCK} alt="" />
