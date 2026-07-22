@@ -42,6 +42,14 @@
   margin: 0;
   z-index: 2;
 }
+/* Match the home "Commercial Construction" scroll-video title exactly in
+   size and weight (see .eb-scrollvideo__title-text in scroll-video.css). */
+.cap-stage__inner .about-cap__heading {
+  font-size: clamp(2.25rem, 7vw, 5.5rem);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.15;
+}
 @media (min-width: 1024px) {
   .cap-stage__inner .about-cap__header {
     left: 5rem;
