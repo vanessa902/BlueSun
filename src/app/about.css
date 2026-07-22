@@ -196,29 +196,6 @@
   line-height: 1.3;
 }
 
-/* Seam between the Hero and Capabilities sections: a fully-diffused black
-   bar that blurs and darkens whatever's directly beneath it (the top of
-   the Capabilities video) instead of a hard cut between the two sections.
-   Zero height in the flow (negative margin cancels it) — it just overlaps
-   down onto the section that follows. */
-.about-section-divider {
-  position: relative;
-  height: 14rem;
-  margin-bottom: -14rem;
-  z-index: 5;
-  pointer-events: none;
-  background: linear-gradient(
-    to bottom,
-    var(--bg-black) 0%,
-    rgba(0, 0, 0, 0.55) 55%,
-    rgba(0, 0, 0, 0) 100%
-  );
-  -webkit-backdrop-filter: blur(28px);
-  backdrop-filter: blur(28px);
-  -webkit-mask-image: linear-gradient(to bottom, black 0%, black 60%, transparent 100%);
-  mask-image: linear-gradient(to bottom, black 0%, black 60%, transparent 100%);
-}
-
 /* ================================================================
    Section 2 — Capabilities
    ================================================================ */

@@ -17,8 +17,6 @@ export default function AboutPage() {
           ============================================================ */}
       <AboutHeroStory />
 
-      <div className="about-section-divider" aria-hidden="true" />
-
       {/* ============================================================
           Section 2 — Capabilities (pinned scrollytelling: the excavator
           clip scrubs frame-by-frame on scroll while the header and the
