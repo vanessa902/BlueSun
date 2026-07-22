@@ -1,65 +1,10 @@
 "use client";
 
-import { motion } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import FadingVideo from "@/components/FadingVideo";
 import AboutHeroStory from "@/components/AboutHeroStory";
+import CapabilitiesShowcase from "@/components/CapabilitiesShowcase";
 import "../about.css";
-
-const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
-const CAP_VIDEO = `${BASE}/about-capabilities.mp4`;
-
-/* ---- SVG Icons ---- */
-function ImageIcon() {
-  return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M21 19V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2zM8.5 13.5l2.5 3 3.5-4.5 4.5 6H5l3.5-5z" />
-    </svg>
-  );
-}
-function MovieIcon() {
-  return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M18 4l2 4h-3l-2-4h-2l2 4h-3l-2-4H8l2 4H7L5 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V4h-4z" />
-    </svg>
-  );
-}
-function LightbulbIcon() {
-  return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M9 21h6v-1H9v1zm3-19a7 7 0 0 0-4 12.7V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.3A7 7 0 0 0 12 2z" />
-    </svg>
-  );
-}
-
-type Capability = {
-  title: string;
-  Icon: () => React.JSX.Element;
-  tags: string[];
-  body: string;
-};
-
-const CAPABILITIES: Capability[] = [
-  {
-    title: "Our Story",
-    Icon: ImageIcon,
-    tags: ["Licensed & Insured", "Family-Owned", "20+ Years", "Local Crews"],
-    body: "Built from the ground up on hard work and a handshake, BlueSun has grown from a small local crew into a full-service construction partner — without losing the craftsmanship and accountability that got us here.",
-  },
-  {
-    title: "Our Mission",
-    Icon: MovieIcon,
-    tags: ["Safety First", "Quality Craftsmanship", "On-Time Delivery", "Clear Communication"],
-    body: "We deliver every project on schedule and to code, backed by skilled crews and hands-on project management. Safety and quality aren't line items — they're how we operate on every site, every day.",
-  },
-  {
-    title: "Our Vision",
-    Icon: LightbulbIcon,
-    tags: ["Sustainable Building", "Community Impact", "Long-Term Partnerships", "Growth-Ready"],
-    body: "We build for what's next — durable, sustainable structures that support growing businesses and stronger communities for decades to come, not just through ribbon-cutting day.",
-  },
-];
 
 export default function AboutPage() {
   return (
@@ -75,53 +20,11 @@ export default function AboutPage() {
       <div className="about-section-divider" aria-hidden="true" />
 
       {/* ============================================================
-          Section 2 — Capabilities
+          Section 2 — Capabilities (pinned scrollytelling: the excavator
+          clip scrubs frame-by-frame on scroll while the header and the
+          three cards reveal progressively across the same scroll)
           ============================================================ */}
-      <section className="about-cap">
-        <FadingVideo src={CAP_VIDEO} className="about-cap__video" />
-        <div className="about-cap__vignette" aria-hidden="true" />
-        <div className="about-cap__gradient" aria-hidden="true" />
-
-        <div className="about-cap__content">
-          <div className="about-cap__header">
-            <span className="about-cap__label">{"// Capabilities"}</span>
-            <h2 className="about-cap__heading">
-              Why Choose
-              <br />
-              BlueSun
-            </h2>
-          </div>
-
-          <div className="about-cap__grid">
-            {CAPABILITIES.map((cap) => (
-              <motion.div
-                key={cap.title}
-                className="about-card liquid-glass"
-                initial={{ filter: "blur(10px)", opacity: 0, y: 40 }}
-                whileInView={{ filter: "blur(0px)", opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.2 }}
-                transition={{ duration: 0.8, ease: "easeOut" }}
-              >
-                <div className="about-card__top">
-                  <div className="about-card__icon liquid-glass">
-                    <cap.Icon />
-                  </div>
-                  <div className="about-card__tags">
-                    {cap.tags.map((tag) => (
-                      <span key={tag} className="about-card__tag liquid-glass">
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-                <div className="about-card__spacer" />
-                <h3 className="about-card__title">{cap.title}</h3>
-                <p className="about-card__body">{cap.body}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
+      <CapabilitiesShowcase />
 
       <Footer />
     </>

@@ -1,0 +1,32 @@
+/* ==========================================================================
+   Capabilities scrollytelling section (CapabilitiesShowcase.tsx). A tall
+   spacer scrolls past a pinned (position: sticky) stage; the excavator clip
+   scrubs one encoded frame per scroll step, and the header + three cards
+   reveal progressively across that same scroll. Inner visual styling reuses
+   the existing .about-cap* / .about-card* rules from about.css — this file
+   only adds the pin scaffolding and the reveal base state.
+   ========================================================================== */
+.cap-spacer {
+  position: relative;
+  background: var(--bg-black);
+}
+.cap-stage {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+}
+/* The section fills the stage exactly (overriding its standalone
+   min-height:100vh) so the pinned frame is always one clean viewport. */
+.cap-stage__inner {
+  height: 100vh;
+  min-height: 0;
+}
+/* Reveal targets: JS drives opacity/transform/filter per scroll frame. The
+   base hidden state here prevents a flash of fully-visible content before
+   the effect's first paint on the client. A short transition smooths the
+   discrete per-frame steps into a fluid reveal. */
+.cap-reveal {
+  opacity: 0;
+  will-change: opacity, transform, filter;
+  transition: opacity 0.12s linear, transform 0.12s linear, filter 0.12s linear;
+}
