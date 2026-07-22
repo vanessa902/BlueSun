@@ -133,16 +133,19 @@
   grid-area: 1 / 1;
 }
 
+/* Matches the "Why Choose BlueSun" heading in the capabilities section below
+   (see .about-cap__heading override in capabilities-showcase.css): same
+   size, weight (600), spacing, line-height — not italic, not uppercase. */
 .about-hero__story-title {
-  font-size: clamp(2.75rem, 8vw, 5.5rem);
+  font-size: clamp(2.25rem, 7vw, 5.5rem);
   font-weight: 600;
-  font-style: italic;
-  text-transform: uppercase;
+  font-style: normal;
+  text-transform: none;
   color: #fff;
-  line-height: 1;
-  letter-spacing: -0.02em;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
   opacity: 0;
-  will-change: opacity, transform, filter;
+  will-change: opacity, transform;
 }
 
 .about-hero__story-para {

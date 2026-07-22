@@ -24,20 +24,20 @@
   position: relative;
   z-index: 10;
   height: 100%;
-  padding: 5rem 2rem 2.5rem;
+  padding: 3.5rem 2rem 2rem;
   display: flex;
   flex-direction: column;
 }
 @media (min-width: 1024px) {
   .cap-stage__inner .about-cap__content {
-    padding: 5rem 5rem 2.5rem;
+    padding: 3.5rem 5rem 2rem;
   }
 }
 
 /* Header pinned to the top-left; doesn't take space from the centered zone. */
 .cap-stage__inner .about-cap__header {
   position: absolute;
-  top: 5rem;
+  top: 3.5rem;
   left: 2rem;
   margin: 0;
   z-index: 2;
@@ -64,15 +64,15 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: clamp(1rem, 3vh, 2rem);
+  gap: clamp(0.75rem, 2vh, 1.25rem);
 }
 
 /* Contained video — the whole frame is always visible, no crop. Sized large
    but bounded by height so it still fits above the card within 100vh. */
 .cap-video-frame {
-  height: clamp(240px, 54vh, 580px);
+  height: clamp(240px, 58vh, 640px);
   aspect-ratio: 16 / 9;
-  max-width: 95vw;
+  max-width: 96vw;
   border-radius: 1rem;
   overflow: hidden;
   background: #000;
@@ -92,7 +92,7 @@
   width: min(92vw, 34rem);
   /* Reserve room for the tallest card so nothing below it jumps; the cards
      themselves size to their own content (see below) so text never clips. */
-  min-height: clamp(180px, 30vh, 260px);
+  min-height: clamp(170px, 24vh, 240px);
   flex-shrink: 0;
 }
 /* Cards stack from the top of the reserved area and grow to fit their own

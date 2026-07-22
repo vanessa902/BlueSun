@@ -2,8 +2,6 @@
 
 import { useEffect, useRef } from "react";
 
-const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
-const HERO_IMAGE = `${BASE}/about-hero.png`;
 
 const clamp = (v: number, a = 0, b = 1) => Math.max(a, Math.min(b, v));
 const seg = (v: number, a: number, b: number) => clamp((v - a) / (b - a));
@@ -60,7 +58,6 @@ function GlobeIcon() {
 
 export default function AboutHeroStory() {
   const trackRef = useRef<HTMLDivElement>(null);
-  const imageWrapRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
   const paraRef = useRef<HTMLParagraphElement>(null);
   const cardsRef = useRef<HTMLDivElement>(null);
@@ -72,32 +69,26 @@ export default function AboutHeroStory() {
     function tick() {
       if (destroyed) return;
       const track = trackRef.current;
-      const imageWrap = imageWrapRef.current;
       const title = titleRef.current;
       const para = paraRef.current;
       const cards = cardsRef.current;
 
-      if (track && imageWrap && title && para && cards) {
+      if (track && title && para && cards) {
         const vh = window.innerHeight;
         const rect = track.getBoundingClientRect();
         const range = Math.max(1, rect.height - vh);
         const p = clamp(-rect.top / range);
 
-        // Background image: slow continuous parallax drift for the whole story.
-        imageWrap.style.transform = `translateY(${lerp(0, vh * 0.16, p)}px)`;
-
-        // ---- Title: appears, grows big, then disappears ----
+        // ---- Title: appears, grows big, then disappears (opacity only — no blur) ----
         const growP = seg(p, 0, GROW_END);
         const introFade = seg(p, 0, 0.015);
         const titleFadeOut = seg(p, GROW_END, TITLE_OUT_END);
         title.style.opacity = String(introFade * (1 - titleFadeOut));
         title.style.transform = `scale(${lerp(1, 1.7, growP)})`;
-        title.style.filter = `blur(${titleFadeOut * 14}px)`;
 
         // ---- Paragraph: types in letter by letter, then disappears ----
         const typeP = seg(p, TITLE_OUT_END, PARA_IN_END);
         const paraFadeOut = seg(p, PARA_IN_END, PARA_OUT_END);
-        para.style.filter = `blur(${paraFadeOut * 10}px)`;
         const visibleChars = typeP * PARA_CHARS.length;
         const fadeMul = 1 - paraFadeOut;
         const chars = para.children;
@@ -110,7 +101,6 @@ export default function AboutHeroStory() {
         const cardsInP = seg(p, PARA_OUT_END, CARDS_IN_END);
         cards.style.opacity = String(cardsInP);
         cards.style.transform = `translateY(${lerp(60, 0, cardsInP)}px) scale(${lerp(0.9, 1, cardsInP)})`;
-        cards.style.filter = `blur(${lerp(12, 0, cardsInP)}px)`;
       }
 
       raf = requestAnimationFrame(tick);
@@ -126,12 +116,6 @@ export default function AboutHeroStory() {
   return (
     <div className="about-hero-track" ref={trackRef} style={{ height: `${TRACK_HEIGHT_VH}vh` }}>
       <section className="about-hero">
-        <div className="about-hero__image-wrap" ref={imageWrapRef}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img className="about-hero__image" src={HERO_IMAGE} alt="" />
-        </div>
-        <div className="about-hero__gradient" aria-hidden="true" />
-
         <div className="about-hero__stage">
           <h1 className="about-hero__story-title" ref={titleRef}>
             About Us
