@@ -48,7 +48,13 @@
   text-shadow: 0 4px 30px rgba(0, 0, 0, 0.65);
 }
 /* Typewriter lines: each clips to a JS-driven width with a blinking caret
-   while typing; the caret hides once the line is fully revealed. */
+   while typing; the caret hides once the line is fully revealed. The
+   overflow: hidden that does the horizontal width reveal also clips
+   vertically, and with the title's tight line-height (0.92) that cut off
+   the tops of the caps. The vertical padding gives the glyphs room inside
+   the clip box; the equal negative vertical margin cancels it out of the
+   layout so the tight line stacking is unchanged. Horizontal padding stays
+   0 so the width reveal isn't offset. */
 #hero-frame .hf-line {
   display: inline-block;
   overflow: hidden;
@@ -56,6 +62,10 @@
   vertical-align: bottom;
   width: 0;
   max-width: 100%;
+  padding-top: 0.24em;
+  padding-bottom: 0.16em;
+  margin-top: -0.24em;
+  margin-bottom: -0.16em;
 }
 #hero-frame .hf-title {
   display: flex;
