@@ -17,6 +17,11 @@
    ========================================================================== */
 .eb-scrollvideo-spacer {
   position: relative;
+  /* Full-bleed to the actual viewport width regardless of any padding or
+     max-width constraint on an ancestor container — width: 100% alone would
+     only match whatever box this happens to be nested in. */
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
 }
 /* The home page's dark theme wants a black backdrop behind the video for
    the spacer's entire height, including the reliability buffer past the
