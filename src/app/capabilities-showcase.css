@@ -109,6 +109,11 @@
   justify-content: center;
   gap: 0.5rem;
   padding: 1.75rem;
+  /* No frosted-glass blur over the video — a plain translucent dark panel
+     keeps the title/body legible without any backdrop blur. */
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  background: rgba(0, 0, 0, 0.42);
 }
 .cap-cardstack .about-card__title {
   margin-bottom: 0;
