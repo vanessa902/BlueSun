@@ -28,7 +28,11 @@
   -moz-osx-font-smoothing: grayscale;
   background-color: var(--offwhite);
   color: var(--offblack);
-  overflow-x: hidden;
+  /* clip (not hidden): hidden makes overflow-y compute to auto, turning this
+     into a scroll container — which breaks the scroll video's position:
+     sticky pin (it would stick relative to this box instead of the viewport).
+     clip clips horizontal overflow identically without creating a scroller. */
+  overflow-x: clip;
   position: relative;
 }
 

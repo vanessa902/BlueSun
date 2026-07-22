@@ -119,15 +119,20 @@ export default function ScrollVideoShowcase({
     const touchYRef = { current: null as number | null };
     const accumRef = { current: 0 };
     const lockedRef = { current: false };
+    // After we unlock at a boundary (first/last frame reached), the spacer is
+    // still inside the pin window for a moment — this blocks the per-frame
+    // monitor from instantly re-locking. Cleared once the spacer fully leaves
+    // the window, so the NEXT approach (from either direction) can re-lock.
+    const armedRef = { current: true };
+    let rafId = 0;
 
     // True for the whole BUFFER_VH-tall window where the spacer spans the
     // entire viewport — this is deliberately generous (not a razor-thin
-    // instant) so a real scroll event reliably lands inside it, whichever
-    // direction it's approached from. The actual visual pinning is CSS
-    // position: sticky on the stage (a native browser behavior, so it stays
-    // correctly "stuck" symmetrically for both scroll directions) — this
-    // check only decides when to start intercepting scroll input for frame
-    // stepping.
+    // instant) so entry is reliably caught whichever direction it's
+    // approached from. The actual visual pinning is CSS position: sticky on
+    // the stage (a native browser behavior, so it stays correctly "stuck"
+    // symmetrically for both scroll directions) — this check only decides
+    // when to start intercepting scroll input for frame stepping.
     function isPinned() {
       const el = spacerRef.current;
       if (!el) return false;
@@ -135,28 +140,31 @@ export default function ScrollVideoShowcase({
       return rect.top <= 0 && rect.bottom > window.innerHeight;
     }
 
-    // Wheel/touch/keydown interception (below) calls preventDefault(), but a
-    // large or fast-fired burst of native scroll input can still slip a bit
-    // of real scroll through before the JS handler runs on every event.
-    // document.body's overflow is a structural backstop: with nothing left
-    // to scroll, that race can't happen no matter how the input arrives.
+    // While locked we (a) stop Lenis so its inertia can't glide the page past
+    // the section, (b) preventDefault every wheel/touch/keydown, and (c) set
+    // overflow:hidden on the ROOT <html> element as a structural backstop
+    // against any input that slips through before a handler runs. It must be
+    // <html>, NOT <body>: locking <body> turns it into a scroll container,
+    // which breaks the stage's position: sticky pin (the stage slips upward
+    // instead of staying stuck to the viewport). Locking the root preserves
+    // sticky because sticky still resolves against the viewport. Scrollbar-
+    // width padding avoids a horizontal reflow jump when the bar disappears.
+    const rootEl = document.documentElement;
     function lock() {
       if (lockedRef.current) return;
       lockedRef.current = true;
       lenisBridge.current?.stop();
-      const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
-      document.body.style.overflow = "hidden";
-      if (scrollbarWidth > 0) {
-        document.body.style.paddingRight = `${scrollbarWidth}px`;
-      }
+      const scrollbarWidth = window.innerWidth - rootEl.clientWidth;
+      rootEl.style.overflow = "hidden";
+      if (scrollbarWidth > 0) rootEl.style.paddingRight = `${scrollbarWidth}px`;
     }
 
     function unlock() {
       if (!lockedRef.current) return;
       lockedRef.current = false;
       lenisBridge.current?.start();
-      document.body.style.overflow = "";
-      document.body.style.paddingRight = "";
+      rootEl.style.overflow = "";
+      rootEl.style.paddingRight = "";
     }
 
     function updateTitle(frame: number) {
@@ -214,6 +222,7 @@ export default function ScrollVideoShowcase({
       const atEnd = frameRef.current >= totalFramesRef.current - 1;
       if ((dir > 0 && atEnd) || (dir < 0 && atStart)) {
         accumRef.current = 0;
+        armedRef.current = false;
         unlock();
         return false;
       }
@@ -225,6 +234,7 @@ export default function ScrollVideoShowcase({
         accumRef.current -= step * PX_PER_FRAME;
         if (frameRef.current === prev) {
           accumRef.current = 0;
+          armedRef.current = false;
           unlock();
           return false;
         }
@@ -232,11 +242,30 @@ export default function ScrollVideoShowcase({
       return true;
     }
 
-    function onWheel(e: WheelEvent) {
+    // Per-frame monitor: this is what makes entry into the pin zone reliable.
+    // Sampling isPinned() only on wheel/touch events misses the window,
+    // because Lenis smooth-scrolls glide BETWEEN those sparse events — the
+    // page can slide clean through the ~BUFFER_VH-tall pin window without any
+    // input event landing inside it, so the section would just scroll past
+    // ("passes with the cursor / have to click"). Checking every animation
+    // frame instead catches the window from either direction.
+    function monitorPin() {
       if (!lockedRef.current) {
-        if (!isPinned()) return;
-        lock();
+        if (isPinned()) {
+          if (armedRef.current) lock();
+        } else {
+          armedRef.current = true; // fully left the window → re-arm
+        }
       }
+      rafId = requestAnimationFrame(monitorPin);
+    }
+
+    // The event handlers only SCRUB — locking is owned entirely by the
+    // per-frame monitor above (which respects the armed flag, so it won't
+    // re-trap you at a boundary you just released through). If we're not
+    // locked, let the input scroll the page normally.
+    function onWheel(e: WheelEvent) {
+      if (!lockedRef.current) return;
       if (stepByDistance(e.deltaY)) e.preventDefault();
     }
 
@@ -250,10 +279,7 @@ export default function ScrollVideoShowcase({
       if (currentY == null || touchYRef.current == null) return;
       const deltaY = touchYRef.current - currentY;
       touchYRef.current = currentY;
-      if (!lockedRef.current) {
-        if (!isPinned()) return;
-        lock();
-      }
+      if (!lockedRef.current) return;
       if (stepByDistance(deltaY)) e.preventDefault();
     }
 
@@ -274,10 +300,7 @@ export default function ScrollVideoShowcase({
       const target = e.target as HTMLElement | null;
       if (target && /^(input|textarea|select)$/i.test(target.tagName)) return;
       if (target?.isContentEditable) return;
-      if (!lockedRef.current) {
-        if (!isPinned()) return;
-        lock();
-      }
+      if (!lockedRef.current) return;
       if (stepByDistance(delta)) e.preventDefault();
     }
 
@@ -285,11 +308,13 @@ export default function ScrollVideoShowcase({
     window.addEventListener("touchstart", onTouchStart, { passive: true });
     window.addEventListener("touchmove", onTouchMove, { passive: false });
     window.addEventListener("keydown", onKeyDown, { passive: false });
+    rafId = requestAnimationFrame(monitorPin);
     return () => {
       window.removeEventListener("wheel", onWheel);
       window.removeEventListener("touchstart", onTouchStart);
       window.removeEventListener("touchmove", onTouchMove);
       window.removeEventListener("keydown", onKeyDown);
+      cancelAnimationFrame(rafId);
       unlock();
     };
   }, []);
