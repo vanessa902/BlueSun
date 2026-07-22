@@ -169,9 +169,8 @@ export default function CapabilitiesShowcase() {
           os != null && oe != null ? clamp01((f - os) / (oe - os)) : 0;
         const opacity = inP * (1 - outP);
         card.style.opacity = String(opacity);
-        // rise in on entry, drift up slightly on exit
+        // rise in on entry, drift up slightly on exit (opacity only — no blur)
         card.style.transform = `translateY(${(1 - inP) * 40 - outP * 24}px)`;
-        card.style.filter = `blur(${(1 - inP) * 8 + outP * 6}px)`;
       });
     }
 

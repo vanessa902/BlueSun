@@ -67,11 +67,12 @@
   gap: clamp(1rem, 3vh, 2rem);
 }
 
-/* Smaller, contained video — the whole frame is always visible, no crop. */
+/* Contained video — the whole frame is always visible, no crop. Sized large
+   but bounded by height so it still fits above the card within 100vh. */
 .cap-video-frame {
-  height: clamp(180px, 40vh, 420px);
+  height: clamp(240px, 54vh, 580px);
   aspect-ratio: 16 / 9;
-  max-width: 92vw;
+  max-width: 95vw;
   border-radius: 1rem;
   overflow: hidden;
   background: #000;
@@ -89,7 +90,7 @@
 .cap-cardstack {
   position: relative;
   width: min(92vw, 30rem);
-  min-height: clamp(200px, 30vh, 280px);
+  min-height: clamp(180px, 26vh, 260px);
   flex-shrink: 0;
 }
 .cap-cardstack .cap-card {
@@ -103,6 +104,6 @@
    short transition smooths the discrete per-frame steps. */
 .cap-reveal {
   opacity: 0;
-  will-change: opacity, transform, filter;
-  transition: opacity 0.12s linear, transform 0.12s linear, filter 0.12s linear;
+  will-change: opacity, transform;
+  transition: opacity 0.12s linear, transform 0.12s linear;
 }
