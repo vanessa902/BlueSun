@@ -135,6 +135,7 @@ export default function EnerblockSections() {
       <ScrollVideoShowcase
         videoFile="home-showcase.mp4"
         titleLines={["Commercial", "Construction"]}
+        objectFit="cover"
       />
 
     </div>
