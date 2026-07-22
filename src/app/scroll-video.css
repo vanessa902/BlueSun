@@ -1,21 +1,19 @@
 /* ==========================================================================
    Shared scroll-video showcase (ScrollVideoShowcase.tsx). A tall spacer
-   (eb-scrollvideo-spacer) reserves document space; the actual visible stage
-   (eb-scrollvideo-stage) sits absolute, inset to the spacer's own top 100vh
-   by default — so before/after the pin window it just occupies its normal
-   place in the page. The instant scroll reaches the pin window, the
-   component toggles the stage to .is-fixed (position: fixed instead of
-   absolute), which is pixel-identical to where it already was, so the swap
-   is invisible — but now genuinely locked to the viewport, immune to any
-   CSS position: sticky sub-pixel/compositing quirks. Scroll input is
-   captured while pinned and stepped one encoded video frame at a time, so
-   scrolling scrubs through the entire clip instead of it playing on a
-   timer. Nothing here has a background of its own — there's nothing to
-   show through if the video doesn't perfectly fill every pixel. The video
-   sits lower in the frame (justify-content: flex-end) to leave room above
-   it for the optional typewriter title, which types on during the first
-   few scrolls, holds, then fades. Used on both the home page and Our
-   Markets.
+   (eb-scrollvideo-spacer) scrolls past a pinned (position: sticky) stage —
+   sticky is a native browser behavior that stays "stuck" symmetrically
+   whichever direction it's approached from (scrolling down into it from
+   above, or back up into it from below), which a JS-only pin/unpin toggle
+   turned out not to reproduce reliably: approaching from below, the narrow
+   window used to detect "entering the pin zone" only sat near the spacer's
+   top edge, so scrolling back up from the next section just scrolled the
+   video past normally instead of re-pinning it. Scroll input is captured
+   while pinned and stepped one encoded video frame at a time, so scrolling
+   scrubs through the entire clip (forward AND backward) instead of it
+   playing on a timer. The video sits lower in the frame (justify-content:
+   flex-end) to leave room above it for the optional typewriter title, which
+   types on during the first few scrolls, holds, then fades. Used on both
+   the home page and Our Markets.
    ========================================================================== */
 .eb-scrollvideo-spacer {
   position: relative;
@@ -32,19 +30,9 @@
   background: var(--bg-black);
 }
 .eb-scrollvideo-stage {
-  position: absolute;
+  position: sticky;
   top: 0;
-  left: 0;
-  right: 0;
   height: 100vh;
-}
-.eb-scrollvideo-stage.is-fixed {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 100vh;
-  z-index: 5;
 }
 .eb-scrollvideo {
   height: 100%;

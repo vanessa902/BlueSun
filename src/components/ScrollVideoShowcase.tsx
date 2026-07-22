@@ -122,16 +122,17 @@ export default function ScrollVideoShowcase({
 
     // True for the whole BUFFER_VH-tall window where the spacer spans the
     // entire viewport — this is deliberately generous (not a razor-thin
-    // instant) so a real scroll event reliably lands inside it.
+    // instant) so a real scroll event reliably lands inside it, whichever
+    // direction it's approached from. The actual visual pinning is CSS
+    // position: sticky on the stage (a native browser behavior, so it stays
+    // correctly "stuck" symmetrically for both scroll directions) — this
+    // check only decides when to start intercepting scroll input for frame
+    // stepping.
     function isPinned() {
       const el = spacerRef.current;
       if (!el) return false;
       const rect = el.getBoundingClientRect();
       return rect.top <= 0 && rect.bottom > window.innerHeight;
-    }
-
-    function setPinnedVisual(pinned: boolean) {
-      stageRef.current?.classList.toggle("is-fixed", pinned);
     }
 
     // Wheel/touch/keydown interception (below) calls preventDefault(), but a
@@ -142,7 +143,6 @@ export default function ScrollVideoShowcase({
     function lock() {
       if (lockedRef.current) return;
       lockedRef.current = true;
-      setPinnedVisual(true);
       lenisBridge.current?.stop();
       const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
       document.body.style.overflow = "hidden";
@@ -154,7 +154,6 @@ export default function ScrollVideoShowcase({
     function unlock() {
       if (!lockedRef.current) return;
       lockedRef.current = false;
-      setPinnedVisual(false);
       lenisBridge.current?.start();
       document.body.style.overflow = "";
       document.body.style.paddingRight = "";
