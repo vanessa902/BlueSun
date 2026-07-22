@@ -1,10 +1,11 @@
 /* ==========================================================================
    Capabilities scrollytelling section (CapabilitiesShowcase.tsx). A tall
-   spacer scrolls past a pinned (position: sticky) stage; the excavator clip
-   scrubs one encoded frame per scroll step, and the header + three cards
-   reveal progressively across that same scroll. Inner visual styling reuses
-   the existing .about-cap* / .about-card* rules from about.css — this file
-   only adds the pin scaffolding and the reveal base state.
+   spacer scrolls past a pinned (position: sticky) stage; a smaller, fully
+   visible (contained) clip scrubs one encoded frame per scroll step, and the
+   three cards show ONE AT A TIME — each fades in, holds, and fades out before
+   the next appears — all driven off the same scroll. Card visual styling
+   reuses .about-card* from about.css; this file owns the pin scaffolding,
+   the new smaller-video layout, and the reveal base state.
    ========================================================================== */
 .cap-spacer {
   position: relative;
@@ -15,16 +16,83 @@
   top: 0;
   height: 100vh;
 }
-/* The section fills the stage exactly (overriding its standalone
-   min-height:100vh) so the pinned frame is always one clean viewport. */
 .cap-stage__inner {
   height: 100vh;
   min-height: 0;
 }
+.cap-stage__inner .about-cap__content {
+  position: relative;
+  z-index: 10;
+  height: 100%;
+  padding: 5rem 2rem 2.5rem;
+  display: flex;
+  flex-direction: column;
+}
+@media (min-width: 1024px) {
+  .cap-stage__inner .about-cap__content {
+    padding: 5rem 5rem 2.5rem;
+  }
+}
+
+/* Header pinned to the top-left; doesn't take space from the centered zone. */
+.cap-stage__inner .about-cap__header {
+  position: absolute;
+  top: 5rem;
+  left: 2rem;
+  margin: 0;
+  z-index: 2;
+}
+@media (min-width: 1024px) {
+  .cap-stage__inner .about-cap__header {
+    left: 5rem;
+  }
+}
+
+/* Centered column holds the video above the single visible card. */
+.cap-center {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(1rem, 3vh, 2rem);
+}
+
+/* Smaller, contained video — the whole frame is always visible, no crop. */
+.cap-video-frame {
+  height: clamp(180px, 40vh, 420px);
+  aspect-ratio: 16 / 9;
+  max-width: 92vw;
+  border-radius: 1rem;
+  overflow: hidden;
+  background: #000;
+  flex-shrink: 0;
+}
+.cap-video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Card stack: all three occupy the same box; only one is visible at a time
+   (JS cross-fades them via CARD_PHASES). */
+.cap-cardstack {
+  position: relative;
+  width: min(92vw, 30rem);
+  min-height: clamp(200px, 30vh, 280px);
+  flex-shrink: 0;
+}
+.cap-cardstack .cap-card {
+  position: absolute;
+  inset: 0;
+  min-height: 0;
+}
+
 /* Reveal targets: JS drives opacity/transform/filter per scroll frame. The
-   base hidden state here prevents a flash of fully-visible content before
-   the effect's first paint on the client. A short transition smooths the
-   discrete per-frame steps into a fluid reveal. */
+   hidden base state avoids a flash of visible content before first paint; a
+   short transition smooths the discrete per-frame steps. */
 .cap-reveal {
   opacity: 0;
   will-change: opacity, transform, filter;

@@ -9,8 +9,9 @@ const CAP_VIDEO = `${BASE}/about-showcase.mp4`;
 
 // 24fps clip; each scroll step advances one real encoded frame.
 const VIDEO_FPS = 24;
-// Accumulated scroll distance (px) per video frame. Lower = faster scrub.
-const PX_PER_FRAME = 5;
+// Accumulated scroll distance (px) per video frame — higher makes the scrub
+// slower / more granular (closer to "a frame per scroll").
+const PX_PER_FRAME = 8;
 // Extra scroll room past the pinned 100vh so a scroll input reliably lands
 // inside the pin-detection window (the sticky stay-put mechanic is CSS
 // position: sticky; this is just detection slack).
@@ -69,15 +70,18 @@ const CAPABILITIES: Capability[] = [
   },
 ];
 
-// Reveal windows as fractions of the clip's full frame range: the header
-// types in first, then each card fades+rises in one after another, all
-// driven off the SAME scroll that scrubs the video. Everything holds visible
-// through the tail so the finished state is the full section.
-const HEADER_WINDOW: [number, number] = [0.02, 0.14];
-const CARD_WINDOWS: Array<[number, number]> = [
-  [0.2, 0.36],
-  [0.42, 0.58],
-  [0.64, 0.8],
+// Reveal windows as fractions of the clip's full frame range. The header
+// fades in first and stays. Then the cards show ONE AT A TIME, in sequence:
+// each fades in, holds, and fades back out before the next fades in (the last
+// one stays). All driven off the SAME scroll that scrubs the video, so
+// scrolling back up reverses the whole sequence.
+const HEADER_WINDOW: [number, number] = [0.02, 0.1];
+// Per card: [fadeInStart, fadeInEnd, fadeOutStart, fadeOutEnd]. A null
+// fade-out (last card) means it stays visible through the end.
+const CARD_PHASES: Array<[number, number, number | null, number | null]> = [
+  [0.12, 0.2, 0.3, 0.38],
+  [0.44, 0.52, 0.62, 0.7],
+  [0.76, 0.84, null, null],
 ];
 
 const clamp01 = (v: number) => Math.max(0, Math.min(1, v));
@@ -156,13 +160,18 @@ export default function CapabilitiesShowcase() {
         header.style.opacity = String(p);
         header.style.transform = `translateY(${(1 - p) * 30}px)`;
       }
-      CARD_WINDOWS.forEach((win, i) => {
+      CARD_PHASES.forEach((ph, i) => {
         const card = cardRefs.current[i];
         if (!card) return;
-        const p = clamp01((f - win[0]) / (win[1] - win[0]));
-        card.style.opacity = String(p);
-        card.style.transform = `translateY(${(1 - p) * 48}px)`;
-        card.style.filter = `blur(${(1 - p) * 8}px)`;
+        const [is, ie, os, oe] = ph;
+        const inP = clamp01((f - is) / (ie - is));
+        const outP =
+          os != null && oe != null ? clamp01((f - os) / (oe - os)) : 0;
+        const opacity = inP * (1 - outP);
+        card.style.opacity = String(opacity);
+        // rise in on entry, drift up slightly on exit
+        card.style.transform = `translateY(${(1 - inP) * 40 - outP * 24}px)`;
+        card.style.filter = `blur(${(1 - inP) * 8 + outP * 6}px)`;
       });
     }
 
@@ -276,17 +285,6 @@ export default function CapabilitiesShowcase() {
     >
       <div className="cap-stage" ref={stageRef}>
         <section className="about-cap cap-stage__inner">
-          <video
-            ref={videoRef}
-            className="about-cap__video"
-            src={CAP_VIDEO}
-            muted
-            playsInline
-            preload="auto"
-          />
-          <div className="about-cap__vignette" aria-hidden="true" />
-          <div className="about-cap__gradient" aria-hidden="true" />
-
           <div className="about-cap__content">
             <div className="about-cap__header cap-reveal" ref={headerRef}>
               <span className="about-cap__label">{"// Capabilities"}</span>
@@ -297,32 +295,48 @@ export default function CapabilitiesShowcase() {
               </h2>
             </div>
 
-            <div className="about-cap__grid">
-              {CAPABILITIES.map((cap, i) => (
-                <div
-                  key={cap.title}
-                  className="about-card liquid-glass cap-reveal"
-                  ref={(el) => {
-                    cardRefs.current[i] = el;
-                  }}
-                >
-                  <div className="about-card__top">
-                    <div className="about-card__icon liquid-glass">
-                      <cap.Icon />
+            <div className="cap-center">
+              {/* Smaller, fully-visible (contained) video */}
+              <div className="cap-video-frame">
+                <video
+                  ref={videoRef}
+                  className="cap-video"
+                  src={CAP_VIDEO}
+                  muted
+                  playsInline
+                  preload="auto"
+                />
+              </div>
+
+              {/* One card visible at a time — they stack in the same spot and
+                  cross-fade in sequence (driven by CARD_PHASES). */}
+              <div className="cap-cardstack">
+                {CAPABILITIES.map((cap, i) => (
+                  <div
+                    key={cap.title}
+                    className="about-card liquid-glass cap-card cap-reveal"
+                    ref={(el) => {
+                      cardRefs.current[i] = el;
+                    }}
+                  >
+                    <div className="about-card__top">
+                      <div className="about-card__icon liquid-glass">
+                        <cap.Icon />
+                      </div>
+                      <div className="about-card__tags">
+                        {cap.tags.map((tag) => (
+                          <span key={tag} className="about-card__tag liquid-glass">
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
                     </div>
-                    <div className="about-card__tags">
-                      {cap.tags.map((tag) => (
-                        <span key={tag} className="about-card__tag liquid-glass">
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
+                    <div className="about-card__spacer" />
+                    <h3 className="about-card__title">{cap.title}</h3>
+                    <p className="about-card__body">{cap.body}</p>
                   </div>
-                  <div className="about-card__spacer" />
-                  <h3 className="about-card__title">{cap.title}</h3>
-                  <p className="about-card__body">{cap.body}</p>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
         </section>
