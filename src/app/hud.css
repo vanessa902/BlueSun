@@ -53,9 +53,18 @@
    vertically, and with the title's tight line-height (0.92) that cut off
    the tops of the caps. The vertical padding gives the glyphs room inside
    the clip box; the equal negative vertical margin cancels it out of the
-   layout so the tight line stacking is unchanged. Horizontal padding stays
-   0 so the width reveal isn't offset. */
+   layout so the tight line stacking is unchanged.
+
+   box-sizing is forced to content-box here (the site default is
+   border-box): the JS sets width to scrollWidth, and the blinking caret's
+   0.06em (~6px) right border — kept as a transparent border when done, to
+   avoid a layout shift — would otherwise eat that much off the content box
+   and clip the last letter (the "s" of Experts). With content-box the JS
+   width maps to the content area directly, and a 3px right padding leaves an
+   invisible margin after the last glyph so it's never touched by the clip;
+   the negative right margin keeps the line centered. */
 #hero-frame .hf-line {
+  box-sizing: content-box;
   display: inline-block;
   overflow: hidden;
   white-space: nowrap;
@@ -64,8 +73,10 @@
   max-width: 100%;
   padding-top: 0.24em;
   padding-bottom: 0.16em;
+  padding-right: 3px;
   margin-top: -0.24em;
   margin-bottom: -0.16em;
+  margin-right: -3px;
 }
 #hero-frame .hf-title {
   display: flex;
