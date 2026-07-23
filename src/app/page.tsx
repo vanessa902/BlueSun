@@ -300,7 +300,7 @@ export default function BlueSunPage() {
         <section id="hero" />
 
         {/* Immersive video-travel zone (longer = slower, more cinematic scrub) */}
-        <div style={{ height: "320vh" }} />
+        <div style={{ height: "250vh" }} />
 
 
         {/* Smooth fade from the video into the black intro — no hard cut. */}
