@@ -40,9 +40,11 @@ const FRAMING_DESIGN_SCENE_START_FRAC = 0.226;
 const FRAMING_DESIGN_HOLD_FRAMES = 1.5 * FRAMES_PER_SCROLL;
 
 // Same shaft, a beat later once the electrical panels/conduit come into
-// view (starts ~t=5.3s, hence 0.352).
+// view (starts ~t=5.3s, hence 0.352) — held a bit longer than the other
+// single cards (2.5 scrolls) so it's still up through ~t=8s, matching the
+// panels staying in frame that long before "Construction" starts fading.
 const ELECTRICAL_SCENE_START_FRAC = 0.352;
-const ELECTRICAL_HOLD_FRAMES = 1.5 * FRAMES_PER_SCROLL;
+const ELECTRICAL_HOLD_FRAMES = 2.5 * FRAMES_PER_SCROLL;
 
 // Colored-pipe MEP corridor (starts ~t=8.75s, hence 0.582).
 const PLUMBING_SCENE_START_FRAC = 0.582;
