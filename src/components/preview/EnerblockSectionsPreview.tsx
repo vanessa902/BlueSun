@@ -37,7 +37,7 @@ const WINDOWS_HOLD_FRAMES = 1 * FRAMES_PER_SCROLL;
 // (starts ~t=3.4s, hence 0.226) — the Framing and Design/Engineering cards
 // sit side by side over this same moment, so they share one timing window.
 const FRAMING_DESIGN_SCENE_START_FRAC = 0.226;
-const FRAMING_DESIGN_HOLD_FRAMES = 1.5 * FRAMES_PER_SCROLL;
+const FRAMING_DESIGN_HOLD_FRAMES = 1.5 * FRAMES_PER_SCROLL + 1;
 
 // Same shaft, a beat later once the electrical panels/conduit come into
 // view (starts ~t=5.3s, hence 0.352, nudged 2 frames later to 0.358) —
