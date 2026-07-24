@@ -15,7 +15,7 @@ const seg = (v: number, a: number, b: number) => clamp01((v - a) / (b - a));
 // rename. Bump this (e.g. to the video's own short content hash, via
 // `md5sum public/home-showcase.mp4 | cut -c1-10`) every time the video is
 // swapped.
-const VIDEO_CACHE_BUST = "da5a78cb97";
+const VIDEO_CACHE_BUST = "356745cb79";
 
 // Slower scroll than ScrollVideoShowcase's 5px/frame default (passed as
 // pxPerFrame below), and a dedicated 4-scroll title-only lead-in (passed as
@@ -23,11 +23,17 @@ const VIDEO_CACHE_BUST = "da5a78cb97";
 // "Commercial Construction" has fully played out and faded, instead of
 // scrubbing through its own early frames underneath the title. onFrame
 // still reports pure video-frame progress (excluding that lead-in), so the
-// scene fractions below are unaffected by it either way — they're re-
-// derived here only because the clip itself changed (the black hold added
-// a few edits ago was removed again: the new title lead-in already covers
-// that "opens on black" beat more cleanly, so the clip goes back to
-// opening right on the building, 350 frames, ~14.58s).
+// scene fractions below are unaffected by it either way.
+//
+// The clip's original 11-frame opening (a near-static establishing shot of
+// the building against a black night sky) was trimmed early in this
+// project as a presumed dead "black" cut, then later requested back —
+// it's a deliberate hero shot, not a mistake. Restored by prepending those
+// same 11 frames (sourced from the original Supabase render) back onto the
+// front of the clip: 350 frames -> 361, ~14.58s -> ~15.04s. Every card's
+// *_SCENE_START_FRAC below is re-derived against this new 361-frame total
+// (old_frame_index + 11) / 361 — HOLD_FRAMES are frame counts, not
+// fractions, so they're untouched by the clip getting longer.
 const LOCAL_PX_PER_FRAME = 7;
 const LOCAL_FRAMES_PER_SCROLL = framesPerScroll(LOCAL_PX_PER_FRAME);
 const INTRO_SCROLLS = 4;
@@ -41,37 +47,38 @@ const INTRO_SCROLLS = 4;
 const FADE_FRAMES = Math.round(0.5 * LOCAL_FRAMES_PER_SCROLL);
 
 // Balcony/window shot, right after the "Commercial" title finishes typing
-// in and holds (~t=1.0s of this clip's ~14.58s duration, hence 0.072).
-const WINDOWS_SCENE_START_FRAC = 0.072;
+// in and holds (frame ~36 of 361, hence 0.100).
+const WINDOWS_SCENE_START_FRAC = 0.1;
 const WINDOWS_HOLD_FRAMES = 26;
 
-// Elevator-shaft/walkway flythrough (~t=2.9s, hence 0.202) — the Framing
-// and Design/Engineering cards sit side by side over this same moment, so
-// they share one timing window. Hold is tuned so it fades out with a clean
-// few-frame margin before Electrical's scene starts (see below) — Electrical
-// must only ever appear once this row is completely gone, not overlapping.
-const FRAMING_DESIGN_SCENE_START_FRAC = 0.202;
+// Elevator-shaft/walkway flythrough (frame ~82 of 361, hence 0.226) — the
+// Framing and Design/Engineering cards sit side by side over this same
+// moment, so they share one timing window. Hold is tuned so it fades out
+// with a clean few-frame margin before Electrical's scene starts (see
+// below) — Electrical must only ever appear once this row is completely
+// gone, not overlapping.
+const FRAMING_DESIGN_SCENE_START_FRAC = 0.226;
 const FRAMING_DESIGN_HOLD_FRAMES = 30;
 
 // The shaft flythrough cuts to the building exterior with the breaker
-// panel/conduit run (~t=5.9s, hence 0.406) — re-measured directly against
-// the clip's own scene cut so this starts only once that exterior shot
-// begins, well after Framing/Design's fade-out above has fully completed
-// (frame ~115 vs ~142, a clean gap, not overlapping it). Holds until the
-// clip cuts again to the colored-pipe MEP corridor (~frame 199), handing
-// off to Plumbing right at that cut.
-const ELECTRICAL_SCENE_START_FRAC = 0.406;
+// panel/conduit run (frame ~153 of 361, hence 0.424) — re-measured directly
+// against the clip's own scene cut so this starts only once that exterior
+// shot begins, well after Framing/Design's fade-out above has fully
+// completed, not overlapping it. Holds until the clip cuts again to the
+// colored-pipe MEP corridor, handing off to Plumbing right at that cut.
+const ELECTRICAL_SCENE_START_FRAC = 0.424;
 const ELECTRICAL_HOLD_FRAMES = 43;
 
-// Colored-pipe MEP corridor (~t=8.3s, hence 0.569).
-const PLUMBING_SCENE_START_FRAC = 0.569;
+// Colored-pipe MEP corridor (frame ~210 of 361, hence 0.582).
+const PLUMBING_SCENE_START_FRAC = 0.582;
 const PLUMBING_HOLD_FRAMES = 36;
 
-// Rooftop-equipment shot near the end of the clip (~t=12.0s, hence 0.825) —
-// holds 4 scrolls; being the last card, it simply stays at full opacity
-// through the end of the clip once that hold window runs past the video's
-// own remaining length, same as the last card in a sequence always does.
-const SOLAR_SCENE_START_FRAC = 0.825;
+// Rooftop-equipment shot near the end of the clip (frame ~300 of 361, hence
+// 0.83) — holds 4 scrolls; being the last card, it simply stays at full
+// opacity through the end of the clip once that hold window runs past the
+// video's own remaining length, same as the last card in a sequence always
+// does.
+const SOLAR_SCENE_START_FRAC = 0.83;
 const SOLAR_HOLD_FRAMES = 57;
 
 function sceneOpacity(
