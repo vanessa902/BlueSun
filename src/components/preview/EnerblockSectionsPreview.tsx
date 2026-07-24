@@ -137,6 +137,26 @@ export default function EnerblockSectionsPreview() {
         titleLines={["Commercial", "Construction"]}
         objectFit="cover"
         fullBleed
+        overlay={
+          <div className="eb-preview-infobox">
+            <div className="eb-preview-infobox__item">
+              <h3 className="eb-preview-infobox__title">Solar Energy</h3>
+              <p className="eb-preview-infobox__body">
+                We design and install commercial solar systems that help
+                businesses reduce energy costs and improve long term energy
+                efficiency.
+              </p>
+            </div>
+            <div className="eb-preview-infobox__item">
+              <h3 className="eb-preview-infobox__title">Battery Storage</h3>
+              <p className="eb-preview-infobox__body">
+                Our commercial battery storage solutions provide backup
+                power, energy management, peak-demand reduction, and greater
+                control over energy costs.
+              </p>
+            </div>
+          </div>
+        }
       />
 
     </div>

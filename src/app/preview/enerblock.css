@@ -399,3 +399,92 @@
     margin-top: 1.25rem;
   }
 }
+
+/* ==========================================================================
+   Commercial Construction video overlay info box — a static chamfered-corner
+   black card (same clip-path notch technique as .bsnav/.btn-glass) placed
+   over the left side of the full-bleed video, holding the Solar Energy /
+   Battery Storage copy. Preview-only: lives in this preview-scoped
+   stylesheet, not the shared scroll-video.css, so it never reaches the live
+   home page's identical video section.
+   ========================================================================== */
+.eb-preview-infobox {
+  --ib-cut: 16px;
+  position: absolute;
+  left: clamp(1.25rem, 4vw, 3rem);
+  top: 26%;
+  width: min(24rem, 30vw);
+  min-width: 260px;
+  padding: 1.75rem 2rem;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.62);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  pointer-events: auto;
+  clip-path: polygon(
+    var(--ib-cut) 0,
+    calc(100% - var(--ib-cut)) 0,
+    100% var(--ib-cut),
+    100% calc(100% - var(--ib-cut)),
+    calc(100% - var(--ib-cut)) 100%,
+    var(--ib-cut) 100%,
+    0 calc(100% - var(--ib-cut)),
+    0 var(--ib-cut)
+  );
+}
+/* Hairline outline following the same chamfered shape. */
+.eb-preview-infobox::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: rgba(255, 255, 255, 0.16);
+  clip-path: polygon(
+    var(--ib-cut) 0,
+    calc(100% - var(--ib-cut)) 0,
+    100% var(--ib-cut),
+    100% calc(100% - var(--ib-cut)),
+    calc(100% - var(--ib-cut)) 100%,
+    var(--ib-cut) 100%,
+    0 calc(100% - var(--ib-cut)),
+    0 var(--ib-cut),
+    var(--ib-cut) 1px,
+    1px var(--ib-cut),
+    1px calc(100% - var(--ib-cut)),
+    var(--ib-cut) calc(100% - 1px),
+    calc(100% - var(--ib-cut)) calc(100% - 1px),
+    calc(100% - 1px) calc(100% - var(--ib-cut)),
+    calc(100% - 1px) var(--ib-cut),
+    calc(100% - var(--ib-cut)) 1px
+  );
+}
+.eb-preview-infobox__item + .eb-preview-infobox__item {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+}
+.eb-preview-infobox__title {
+  font-size: clamp(1.05rem, 1.5vw, 1.3rem);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin-bottom: 0.5rem;
+}
+.eb-preview-infobox__body {
+  font-size: 0.875rem;
+  font-weight: 300;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+@media (max-width: 720px) {
+  .eb-preview-infobox {
+    --ib-cut: 12px;
+    left: 1rem;
+    right: 1rem;
+    top: auto;
+    bottom: 6%;
+    width: auto;
+    min-width: 0;
+    padding: 1.25rem 1.5rem;
+  }
+}

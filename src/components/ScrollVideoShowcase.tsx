@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 import { lenisBridge } from "@/lib/lenisBridge";
 import "../app/scroll-video.css";
 
@@ -87,6 +87,10 @@ type ScrollVideoShowcaseProps = {
    * overlaid directly on top of the video. Default false preserves existing
    * usages exactly as they were. */
   fullBleed?: boolean;
+  /** Optional arbitrary content laid over the video frame (e.g. an info
+   * card), positioned by whatever the caller's own CSS does with it. Not
+   * used by any existing caller, so omitting it changes nothing. */
+  overlay?: ReactNode;
 };
 
 export default function ScrollVideoShowcase({
@@ -94,6 +98,7 @@ export default function ScrollVideoShowcase({
   titleLines,
   objectFit = "contain",
   fullBleed = false,
+  overlay,
 }: ScrollVideoShowcaseProps) {
   const spacerRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
@@ -359,6 +364,7 @@ export default function ScrollVideoShowcase({
               preload="auto"
             />
             {titleLines && <div className="eb-scrollvideo__gradient" aria-hidden="true" />}
+            {overlay && <div className="eb-scrollvideo__overlay">{overlay}</div>}
           </div>
         </section>
       </div>
