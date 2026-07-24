@@ -420,7 +420,14 @@
   background: rgba(0, 0, 0, 0.62);
   -webkit-backdrop-filter: blur(4px);
   backdrop-filter: blur(4px);
-  pointer-events: auto;
+  pointer-events: none;
+  /* Hidden by default so it never flashes visible before the first
+     onFrame callback runs; JS drives opacity per scroll frame (see
+     ScrollVideoInfoBox in EnerblockSectionsPreview.tsx) so it only shows
+     during its own scene window and holds for exactly 3 scrolls. */
+  opacity: 0;
+  will-change: opacity;
+  transition: opacity 0.15s linear;
   clip-path: polygon(
     var(--ib-cut) 0,
     calc(100% - var(--ib-cut)) 0,

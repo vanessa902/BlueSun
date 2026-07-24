@@ -33,7 +33,7 @@ const FALLBACK_TOTAL_FRAMES = Math.round(15 * VIDEO_FPS);
 // then the second types on in the same spot, holds, and fades out. One word
 // is on screen at a time. Driven directly off the current frame (not a
 // timer), so it stays in lockstep with scroll like everything else here.
-const FRAMES_PER_SCROLL = 100 / PX_PER_FRAME;
+export const FRAMES_PER_SCROLL = 100 / PX_PER_FRAME;
 const WORD_TYPE_FRAMES = Math.round(1.5 * FRAMES_PER_SCROLL);
 const WORD_HOLD_FRAMES = Math.round(2.5 * FRAMES_PER_SCROLL);
 const WORD_FADE_FRAMES = Math.round(0.8 * FRAMES_PER_SCROLL);
@@ -91,6 +91,12 @@ type ScrollVideoShowcaseProps = {
    * card), positioned by whatever the caller's own CSS does with it. Not
    * used by any existing caller, so omitting it changes nothing. */
   overlay?: ReactNode;
+  /** Called with the current frame and total frame count every time the
+   * frame changes, so a caller-supplied `overlay` can drive its own
+   * scroll-timed reveal (fade in/hold/out at whatever frames it chooses)
+   * without the engine needing to know anything about that content. Not
+   * used by any existing caller. */
+  onFrame?: (frame: number, total: number) => void;
 };
 
 export default function ScrollVideoShowcase({
@@ -99,6 +105,7 @@ export default function ScrollVideoShowcase({
   objectFit = "contain",
   fullBleed = false,
   overlay,
+  onFrame,
 }: ScrollVideoShowcaseProps) {
   const spacerRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
@@ -108,11 +115,16 @@ export default function ScrollVideoShowcase({
   const frameRef = useRef(0);
   const totalFramesRef = useRef(FALLBACK_TOTAL_FRAMES);
   const hasTitleRef = useRef(!!titleLines);
+  const onFrameRef = useRef(onFrame);
   const videoSrc = `${BASE}/${videoFile}`;
 
   useEffect(() => {
     hasTitleRef.current = !!titleLines;
   }, [titleLines]);
+
+  useEffect(() => {
+    onFrameRef.current = onFrame;
+  }, [onFrame]);
 
   useEffect(() => {
     const v = videoRef.current;
@@ -219,6 +231,7 @@ export default function ScrollVideoShowcase({
       const v = videoRef.current;
       if (v) v.currentTime = frameRef.current / VIDEO_FPS;
       updateTitle(frameRef.current);
+      onFrameRef.current?.(frameRef.current, total);
     }
 
     // Shared by wheel and touch: accumulates raw scroll/drag distance and

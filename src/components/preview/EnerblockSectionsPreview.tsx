@@ -1,12 +1,41 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import ScrollVideoShowcase from "@/components/ScrollVideoShowcase";
+import ScrollVideoShowcase, { FRAMES_PER_SCROLL } from "@/components/ScrollVideoShowcase";
 import "../../app/preview/enerblock.css";
+
+const clamp01 = (v: number) => Math.max(0, Math.min(1, v));
+const seg = (v: number, a: number, b: number) => clamp01((v - a) / (b - a));
+
+// The Solar Energy / Battery Storage info box only makes sense over the
+// rooftop-equipment shot near the end of the clip (~83% through — matched
+// by eye against the current video). Expressed as a fraction of total
+// frames rather than a fixed frame number so it stays roughly in place if
+// a future video swap changes the clip's length. It fades in, holds fully
+// visible for exactly 3 scrolls, then fades out — same "N scrolls" unit
+// (100px of wheel delta) the title words above already use.
+const INFOBOX_SCENE_START_FRAC = 0.83;
+const INFOBOX_FADE_FRAMES = Math.round(0.5 * FRAMES_PER_SCROLL);
+const INFOBOX_HOLD_FRAMES = 3 * FRAMES_PER_SCROLL;
 
 export default function EnerblockSectionsPreview() {
   const root = useRef<HTMLDivElement>(null);
   const stage = useRef<HTMLDivElement>(null);
+  const infoboxRef = useRef<HTMLDivElement>(null);
+
+  function handleVideoFrame(frame: number, total: number) {
+    const el = infoboxRef.current;
+    if (!el) return;
+    const start = total * INFOBOX_SCENE_START_FRAC;
+    const fadeInEnd = start + INFOBOX_FADE_FRAMES;
+    const holdEnd = fadeInEnd + INFOBOX_HOLD_FRAMES;
+    const fadeOutEnd = holdEnd + INFOBOX_FADE_FRAMES;
+    const opacity = Math.min(
+      seg(frame, start, fadeInEnd),
+      1 - seg(frame, holdEnd, fadeOutEnd)
+    );
+    el.style.opacity = String(opacity);
+  }
   useEffect(() => {
     let destroyed = false;
     const clamp = (v: number, a = 0, b = 1) => Math.max(a, Math.min(b, v));
@@ -137,8 +166,9 @@ export default function EnerblockSectionsPreview() {
         titleLines={["Commercial", "Construction"]}
         objectFit="cover"
         fullBleed
+        onFrame={handleVideoFrame}
         overlay={
-          <div className="eb-preview-infobox">
+          <div className="eb-preview-infobox" ref={infoboxRef}>
             <div className="eb-preview-infobox__item">
               <h3 className="eb-preview-infobox__title">Solar Energy</h3>
               <p className="eb-preview-infobox__body">
