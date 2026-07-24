@@ -455,10 +455,11 @@
 }
 /* Over the electrical panel/conduit moment, later in the same elevator
    shaft shot the Framing/Design row sits over. Shifted right of the usual
-   left-edge position so it doesn't sit over the panels themselves. */
+   left-edge position so it doesn't sit over the panels themselves; nudged
+   further right again per feedback. */
 .eb-preview-infobox--electrical {
   top: 38%;
-  left: 8%;
+  left: 20%;
 }
 /* Over the colored-pipe MEP corridor. Shifted right of the usual left-edge
    position, same as .eb-preview-infobox--electrical. */
