@@ -1,12 +1,114 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import ScrollVideoShowcase from "@/components/ScrollVideoShowcase";
+import ScrollVideoShowcase, { FRAMES_PER_SCROLL } from "@/components/ScrollVideoShowcase";
 import "../app/enerblock.css";
+
+const clamp01 = (v: number) => Math.max(0, Math.min(1, v));
+const seg = (v: number, a: number, b: number) => clamp01((v - a) / (b - a));
+
+// The video file keeps the same name across every swap, so GitHub Pages'
+// CDN and browsers can keep serving a cached, stale copy after a new deploy
+// even though the underlying bytes changed. A query-string cache-buster
+// forces both to treat it as a new resource — GitHub Pages serves the file
+// by path and ignores the query string, so this doesn't need any file
+// rename. Bump this (e.g. to the video's own short content hash, via
+// `md5sum public/home-showcase.mp4 | cut -c1-10`) every time the video is
+// swapped.
+const VIDEO_CACHE_BUST = "ceeb372464";
+
+// Each info box only makes sense over its own scene, located by extracting
+// and eyeballing frames with ffmpeg — expressed as a fraction of total
+// frames rather than a fixed frame number so it stays roughly in place if a
+// future video swap changes the clip's length; re-check these by eye
+// whenever the video changes. Each fades in, holds fully visible, then
+// fades out — timed in "scrolls" (100px of wheel delta), the same unit the
+// title words above already use.
+//
+// The clip's opening ~0.46s (11 frames) was almost entirely black night
+// sky, reading as a hard "cut" rather than a deliberate shot — trimmed out
+// of the video itself (see public/home-showcase.mp4), which shifts every
+// scene earlier and shortens the total duration (~15.04s -> ~14.58s).
+const FADE_FRAMES = Math.round(0.5 * FRAMES_PER_SCROLL);
+
+// Balcony/window shot, right after the "Commercial" title finishes typing
+// in and holds (~t=1.0s of this clip's ~14.58s duration, hence 0.072).
+const WINDOWS_SCENE_START_FRAC = 0.072;
+const WINDOWS_HOLD_FRAMES = 1.5 * FRAMES_PER_SCROLL;
+
+// Elevator-shaft/walkway flythrough, while "Construction" is still typing in
+// (~t=2.9s, hence 0.202) — the Framing and Design/Engineering cards sit
+// side by side over this same moment, so they share one timing window.
+const FRAMING_DESIGN_SCENE_START_FRAC = 0.202;
+const FRAMING_DESIGN_HOLD_FRAMES = 2 * FRAMES_PER_SCROLL;
+
+// Same shaft, a beat later once the electrical panels/conduit come into
+// view (~t=5.0s, hence 0.341) — holds a full 3 scrolls, matching how long
+// that scene itself lasts (fades out almost exactly as Plumbing's scene
+// begins).
+const ELECTRICAL_SCENE_START_FRAC = 0.341;
+const ELECTRICAL_HOLD_FRAMES = 3 * FRAMES_PER_SCROLL;
+
+// Colored-pipe MEP corridor (~t=8.3s, hence 0.569).
+const PLUMBING_SCENE_START_FRAC = 0.569;
+const PLUMBING_HOLD_FRAMES = 2.5 * FRAMES_PER_SCROLL;
+
+// Rooftop-equipment shot near the end of the clip (~t=12.0s, hence 0.825) —
+// holds 4 scrolls; being the last card, it simply stays at full opacity
+// through the end of the clip once that hold window runs past the video's
+// own remaining length, same as the last card in a sequence always does.
+const SOLAR_SCENE_START_FRAC = 0.825;
+const SOLAR_HOLD_FRAMES = 4 * FRAMES_PER_SCROLL;
+
+function sceneOpacity(
+  frame: number,
+  total: number,
+  startFrac: number,
+  holdFrames: number
+) {
+  const start = total * startFrac;
+  const fadeInEnd = start + FADE_FRAMES;
+  const holdEnd = fadeInEnd + holdFrames;
+  const fadeOutEnd = holdEnd + FADE_FRAMES;
+  return Math.min(seg(frame, start, fadeInEnd), 1 - seg(frame, holdEnd, fadeOutEnd));
+}
 
 export default function EnerblockSections() {
   const root = useRef<HTMLDivElement>(null);
   const stage = useRef<HTMLDivElement>(null);
+  const windowsBoxRef = useRef<HTMLDivElement>(null);
+  const framingDesignRowRef = useRef<HTMLDivElement>(null);
+  const electricalBoxRef = useRef<HTMLDivElement>(null);
+  const plumbingBoxRef = useRef<HTMLDivElement>(null);
+  const solarBoxRef = useRef<HTMLDivElement>(null);
+
+  function handleVideoFrame(frame: number, total: number) {
+    if (windowsBoxRef.current) {
+      windowsBoxRef.current.style.opacity = String(
+        sceneOpacity(frame, total, WINDOWS_SCENE_START_FRAC, WINDOWS_HOLD_FRAMES)
+      );
+    }
+    if (framingDesignRowRef.current) {
+      framingDesignRowRef.current.style.opacity = String(
+        sceneOpacity(frame, total, FRAMING_DESIGN_SCENE_START_FRAC, FRAMING_DESIGN_HOLD_FRAMES)
+      );
+    }
+    if (electricalBoxRef.current) {
+      electricalBoxRef.current.style.opacity = String(
+        sceneOpacity(frame, total, ELECTRICAL_SCENE_START_FRAC, ELECTRICAL_HOLD_FRAMES)
+      );
+    }
+    if (plumbingBoxRef.current) {
+      plumbingBoxRef.current.style.opacity = String(
+        sceneOpacity(frame, total, PLUMBING_SCENE_START_FRAC, PLUMBING_HOLD_FRAMES)
+      );
+    }
+    if (solarBoxRef.current) {
+      solarBoxRef.current.style.opacity = String(
+        sceneOpacity(frame, total, SOLAR_SCENE_START_FRAC, SOLAR_HOLD_FRAMES)
+      );
+    }
+  }
   useEffect(() => {
     let destroyed = false;
     const clamp = (v: number, a = 0, b = 1) => Math.max(a, Math.min(b, v));
@@ -131,10 +233,100 @@ export default function EnerblockSections() {
         </div>
       </section>
 
+      {/* Breathing room before the pinned video kicks in. Without this the
+          video's pin zone starts the instant the intro section ends (zero
+          gap), so a real scroll gesture can catch it cutting in abruptly
+          mid-motion instead of arriving as its own deliberate moment. */}
+      <div style={{ height: "20vh", background: "var(--bg-black)" }} />
+
       {/* 1b. Scrollytelling video break */}
       <ScrollVideoShowcase
-        videoFile="home-showcase.mp4"
+        videoFile={`home-showcase.mp4?v=${VIDEO_CACHE_BUST}`}
         titleLines={["Commercial", "Construction"]}
+        objectFit="cover"
+        fullBleed
+        onFrame={handleVideoFrame}
+        overlay={
+          <>
+            <div className="eb-infobox eb-infobox--windows" ref={windowsBoxRef}>
+              <div className="eb-infobox__item">
+                <h3 className="eb-infobox__title">Commercial Windows</h3>
+                <p className="eb-infobox__body">
+                  BlueSun provides commercial window installation and
+                  replacement solutions designed to improve energy
+                  efficiency, building appearance, security, and long term
+                  performance for offices, retail spaces, multifamily
+                  properties, and other commercial facilities.
+                </p>
+              </div>
+            </div>
+            <div className="eb-cardrow" ref={framingDesignRowRef}>
+              <div className="eb-infobox">
+                <div className="eb-infobox__item">
+                  <h3 className="eb-infobox__title">Framing</h3>
+                  <p className="eb-infobox__body">
+                    Our experienced crews provide structural wood and metal
+                    framing for commercial renovations, additions, tenant
+                    improvements, and ground-up construction.
+                  </p>
+                </div>
+              </div>
+              <div className="eb-infobox">
+                <div className="eb-infobox__item">
+                  <h3 className="eb-infobox__title">
+                    Design, Engineering &amp; Preconstruction
+                  </h3>
+                  <p className="eb-infobox__body">
+                    BlueSun Services provides architectural design,
+                    engineering, and project planning support to help clients
+                    move from concept to construction with coordinated plans,
+                    clear scopes of work, accurate documentation, and a well
+                    defined execution strategy.
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="eb-infobox eb-infobox--electrical" ref={electricalBoxRef}>
+              <div className="eb-infobox__item">
+                <h3 className="eb-infobox__title">Electrical</h3>
+                <p className="eb-infobox__body">
+                  Our in house licensed electrical team provides commercial
+                  electrical installations, repairs, upgrades, lighting,
+                  panels, equipment connections, and complete electrical
+                  systems.
+                </p>
+              </div>
+            </div>
+            <div className="eb-infobox eb-infobox--plumbing" ref={plumbingBoxRef}>
+              <div className="eb-infobox__item">
+                <h3 className="eb-infobox__title">Plumbing</h3>
+                <p className="eb-infobox__body">
+                  Plumbing team handles commercial plumbing installations,
+                  repairs, piping, fixtures, system upgrades, and complete
+                  plumbing solutions.
+                </p>
+              </div>
+            </div>
+            <div className="eb-infobox eb-infobox--solar" ref={solarBoxRef}>
+              <div className="eb-infobox__item">
+                <h3 className="eb-infobox__title">Solar Energy</h3>
+                <p className="eb-infobox__body">
+                  We design and install commercial solar systems that help
+                  businesses reduce energy costs and improve long term energy
+                  efficiency.
+                </p>
+              </div>
+              <div className="eb-infobox__item">
+                <h3 className="eb-infobox__title">Battery Storage</h3>
+                <p className="eb-infobox__body">
+                  Our commercial battery storage solutions provide backup
+                  power, energy management, peak-demand reduction, and
+                  greater control over energy costs.
+                </p>
+              </div>
+            </div>
+          </>
+        }
       />
 
     </div>

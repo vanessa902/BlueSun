@@ -399,3 +399,156 @@
     margin-top: 1.25rem;
   }
 }
+
+/* ==========================================================================
+   Commercial Construction video overlay info box — a static chamfered-corner
+   black card (same clip-path notch technique as .bsnav/.btn-glass) placed
+   over the full-bleed video, each holding its own copy over its own scene
+   (see the modifier classes below for where each sits; timing for each
+   lives in EnerblockSections.tsx). Not part of scroll-video.css since it's
+   specific to this one usage of ScrollVideoShowcase, not shared with Our
+   Markets' usage of the same component.
+   ========================================================================== */
+.eb-infobox {
+  --ib-cut: 16px;
+  position: absolute;
+  left: clamp(1.25rem, 4vw, 3rem);
+  width: min(24rem, 30vw);
+  min-width: 260px;
+  padding: 1.75rem 2rem;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.62);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  pointer-events: none;
+  /* Hidden by default so it never flashes visible before the first
+     onFrame callback runs; JS drives opacity per scroll frame (see
+     ScrollVideoInfoBox in EnerblockSectionsPreview.tsx) so it only shows
+     during its own scene window and holds for exactly 3 scrolls. */
+  opacity: 0;
+  will-change: opacity;
+  transition: opacity 0.15s linear;
+  clip-path: polygon(
+    var(--ib-cut) 0,
+    calc(100% - var(--ib-cut)) 0,
+    100% var(--ib-cut),
+    100% calc(100% - var(--ib-cut)),
+    calc(100% - var(--ib-cut)) 100%,
+    var(--ib-cut) 100%,
+    0 calc(100% - var(--ib-cut)),
+    0 var(--ib-cut)
+  );
+}
+/* Over the rooftop-equipment scene near the end of the clip. */
+.eb-infobox--solar {
+  top: 26%;
+}
+/* Over the balcony/window scene near the start of the clip, below where
+   the "Commercial" title sits (top: 12vh, see .eb-scrollvideo__title in
+   scroll-video.css). The actual window in this shot sits on the right
+   side of frame (~49-81% across), not the left edge — shifted right to
+   sit next to it instead of out over the empty skyline. */
+.eb-infobox--windows {
+  top: 22vh;
+  left: 46%;
+}
+/* Over the electrical panel/conduit moment, later in the same elevator
+   shaft shot the Framing/Design row sits over. Shifted right of the usual
+   left-edge position so it doesn't sit over the panels themselves; nudged
+   further right again per feedback. */
+.eb-infobox--electrical {
+  top: 38%;
+  left: 20%;
+}
+/* Over the colored-pipe MEP corridor. Shifted right of the usual left-edge
+   position, same as .eb-infobox--electrical. */
+.eb-infobox--plumbing {
+  top: 35%;
+  left: 8%;
+}
+/* Framing + Design/Engineering & Preconstruction: two cards side by side
+   over the elevator-shaft/walkway moment, centered instead of pinned to the
+   left edge like the single-card variants above (the scene itself reads as
+   more centered in-frame). Same hidden-by-default/opacity-driven pattern as
+   .eb-infobox, just as a flex row instead of a single box — the two
+   children below override position back to static so flex can lay them out
+   side by side. */
+.eb-cardrow {
+  position: absolute;
+  left: 50%;
+  top: 56%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 1.5rem;
+  width: min(56rem, 90vw);
+  opacity: 0;
+  will-change: opacity;
+  transition: opacity 0.15s linear;
+  pointer-events: none;
+}
+.eb-cardrow .eb-infobox {
+  position: static;
+  flex: 1;
+  min-width: 0;
+  width: auto;
+  /* Each card already fades with its shared parent — no need for its own
+     opacity transition/hidden state too. */
+  opacity: 1;
+  transition: none;
+}
+/* Hairline outline following the same chamfered shape. */
+.eb-infobox::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: rgba(255, 255, 255, 0.16);
+  clip-path: polygon(
+    var(--ib-cut) 0,
+    calc(100% - var(--ib-cut)) 0,
+    100% var(--ib-cut),
+    100% calc(100% - var(--ib-cut)),
+    calc(100% - var(--ib-cut)) 100%,
+    var(--ib-cut) 100%,
+    0 calc(100% - var(--ib-cut)),
+    0 var(--ib-cut),
+    var(--ib-cut) 1px,
+    1px var(--ib-cut),
+    1px calc(100% - var(--ib-cut)),
+    var(--ib-cut) calc(100% - 1px),
+    calc(100% - var(--ib-cut)) calc(100% - 1px),
+    calc(100% - 1px) calc(100% - var(--ib-cut)),
+    calc(100% - 1px) var(--ib-cut),
+    calc(100% - var(--ib-cut)) 1px
+  );
+}
+.eb-infobox__item + .eb-infobox__item {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+}
+.eb-infobox__title {
+  font-size: clamp(1.05rem, 1.5vw, 1.3rem);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin-bottom: 0.5rem;
+}
+.eb-infobox__body {
+  font-size: 0.875rem;
+  font-weight: 300;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+@media (max-width: 720px) {
+  .eb-infobox {
+    --ib-cut: 12px;
+    left: 1rem;
+    right: 1rem;
+    top: auto;
+    bottom: 6%;
+    width: auto;
+    min-width: 0;
+    padding: 1.25rem 1.5rem;
+  }
+}
