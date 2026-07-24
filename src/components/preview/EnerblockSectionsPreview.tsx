@@ -28,10 +28,10 @@ const FADE_FRAMES = Math.round(0.5 * FRAMES_PER_SCROLL);
 
 // Balcony/window shot, right after the "Commercial" title finishes typing
 // in and holds (starts ~t=1.5s of this clip's ~15.04s duration, hence
-// 0.10) — holds for 2 scrolls, a bit shorter than the other box since the
-// shot itself is brief before the camera moves on into the building.
+// 0.10) — holds for only 1 scroll so it's fully gone before the Framing/
+// Design row starts (~t=3.4s); it was overlapping both at a 2-scroll hold.
 const WINDOWS_SCENE_START_FRAC = 0.1;
-const WINDOWS_HOLD_FRAMES = 2 * FRAMES_PER_SCROLL;
+const WINDOWS_HOLD_FRAMES = 1 * FRAMES_PER_SCROLL;
 
 // Elevator-shaft/walkway flythrough, while "Construction" is still typing in
 // (starts ~t=3.4s, hence 0.226) — the Framing and Design/Engineering cards

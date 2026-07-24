@@ -457,9 +457,11 @@
   top: 38%;
   left: 8%;
 }
-/* Over the colored-pipe MEP corridor. */
+/* Over the colored-pipe MEP corridor. Shifted right of the usual left-edge
+   position, same as .eb-preview-infobox--electrical. */
 .eb-preview-infobox--plumbing {
   top: 35%;
+  left: 8%;
 }
 /* Framing + Design/Engineering & Preconstruction: two cards side by side
    over the elevator-shaft/walkway moment, centered instead of pinned to the
