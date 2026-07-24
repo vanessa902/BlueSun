@@ -1,0 +1,39 @@
+name: List External Asset Bucket
+
+# Manual, on-demand helper: lists objects in the same public Supabase
+# storage bucket that fetch-asset.yml downloads from, so a file can be
+# located by prefix when only a partial/truncated name is known. Read-only,
+# no repo changes — just prints the bucket listing to the job log.
+on:
+  workflow_dispatch:
+    inputs:
+      bucket:
+        description: "Supabase storage bucket name"
+        required: true
+        default: BlueSun
+      prefix:
+        description: "Prefix to filter object names by"
+        required: false
+        default: ""
+      project_ref:
+        description: "Supabase project ref (the <ref> in <ref>.supabase.co)"
+        required: true
+        default: ummajmkeoaebzbrpnhgx
+
+permissions:
+  contents: read
+
+jobs:
+  list:
+    runs-on: ubuntu-latest
+    steps:
+      - name: List bucket objects
+        run: |
+          curl -sS -X POST \
+            "https://${{ inputs.project_ref }}.supabase.co/storage/v1/object/list/${{ inputs.bucket }}" \
+            -H "Content-Type: application/json" \
+            -d "{\"prefix\": \"${{ inputs.prefix }}\", \"limit\": 200, \"sortBy\": {\"column\": \"name\", \"order\": \"asc\"}}" \
+            | tee /tmp/listing.json
+          echo
+          echo "---- names only ----"
+          python3 -c "import json,sys; data=json.load(open('/tmp/listing.json')); [print(o.get('name')) for o in data]" 2>/dev/null || echo "(response was not a plain array — see raw output above)"
