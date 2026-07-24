@@ -18,6 +18,9 @@ const VIDEO_FPS = 24;
 // feel stuck, since a real scroll gesture fires wildly different numbers of
 // events depending on the input device. Lower = faster (fewer px needed per
 // frame, so the same scroll gesture advances further through the clip).
+// Overridable per instance via the `pxPerFrame` prop (default below) so one
+// usage can scrub slower/faster without affecting every other usage of this
+// shared component.
 const PX_PER_FRAME = 5;
 // Extra scroll room, on top of the 100vh the stage itself occupies, purely
 // so a real scroll input reliably has a wide enough window to be detected
@@ -29,22 +32,72 @@ const BUFFER_VH = 20;
 const PIN_VH = 100;
 const FALLBACK_TOTAL_FRAMES = Math.round(15 * VIDEO_FPS);
 
+/** How many virtual frames make up "one scroll" (100px of wheel delta) at a
+ * given pxPerFrame. Exported as a function (not a fixed constant) because
+ * pxPerFrame is now configurable per instance — callers driving their own
+ * scroll-timed content (e.g. an `onFrame` overlay) should compute their
+ * "scrolls" unit from the SAME pxPerFrame value they pass in, so the two
+ * stay in sync. FRAMES_PER_SCROLL below is the old fixed export, kept for
+ * any caller still relying on the default pxPerFrame. */
+export function framesPerScroll(pxPerFrame = PX_PER_FRAME) {
+  return 100 / pxPerFrame;
+}
+export const FRAMES_PER_SCROLL = framesPerScroll();
+
 // Optional intro title (two words): the first types on, holds, fades out —
 // then the second types on in the same spot, holds, and fades out. One word
-// is on screen at a time. Driven directly off the current frame (not a
-// timer), so it stays in lockstep with scroll like everything else here.
-export const FRAMES_PER_SCROLL = 100 / PX_PER_FRAME;
-const WORD_TYPE_FRAMES = Math.round(1.5 * FRAMES_PER_SCROLL);
-const WORD_HOLD_FRAMES = Math.round(2.5 * FRAMES_PER_SCROLL);
-const WORD_FADE_FRAMES = Math.round(0.8 * FRAMES_PER_SCROLL);
-const FINAL_HOLD_FRAMES = Math.round(3 * FRAMES_PER_SCROLL);
-const FINAL_FADE_FRAMES = Math.round(1.6 * FRAMES_PER_SCROLL);
+// is on screen at a time. Driven off an "intro progress" counter (see
+// introScrolls in the props) that runs from 0 to introBudgetFrames — either
+// the dedicated pre-video intro phase when introScrolls is set, or (when
+// it's 0, the default) frame 0 onward directly, exactly matching the
+// original behavior where the title played out overlapping the video's own
+// early frames. Proportions across the 5 phases (type/hold/fade x2 words,
+// swapping the last fade for a slightly longer one) are fixed; only the
+// total duration scales with introBudgetFrames.
+const TITLE_PHASE_UNITS = {
+  type: 1.5,
+  hold: 2.5,
+  fade: 0.8,
+  finalHold: 3,
+  finalFade: 1.6,
+} as const;
+const TITLE_PHASE_TOTAL_UNITS =
+  TITLE_PHASE_UNITS.type * 2 +
+  TITLE_PHASE_UNITS.hold +
+  TITLE_PHASE_UNITS.fade +
+  TITLE_PHASE_UNITS.finalHold +
+  TITLE_PHASE_UNITS.finalFade;
 
-const LINE1_FADE_START = WORD_TYPE_FRAMES + WORD_HOLD_FRAMES;
-const LINE1_FADE_END = LINE1_FADE_START + WORD_FADE_FRAMES;
-const LINE2_START = LINE1_FADE_END;
-const LINE2_TYPE_END = LINE2_START + WORD_TYPE_FRAMES;
-const LINE2_FADE_START = LINE2_TYPE_END + FINAL_HOLD_FRAMES;
+function computeTitleTiming(introBudgetFrames: number) {
+  // introBudgetFrames > 0 means introScrolls was set — scale every phase so
+  // the whole two-word sequence fits exactly inside that budget. Otherwise
+  // fall back to the original fixed timing (in units of the default
+  // FRAMES_PER_SCROLL), unchanged from before this prop existed.
+  const scale =
+    introBudgetFrames > 0 ? introBudgetFrames / TITLE_PHASE_TOTAL_UNITS : FRAMES_PER_SCROLL;
+  const wordTypeFrames = Math.round(TITLE_PHASE_UNITS.type * scale);
+  const wordHoldFrames = Math.round(TITLE_PHASE_UNITS.hold * scale);
+  const wordFadeFrames = Math.round(TITLE_PHASE_UNITS.fade * scale);
+  const finalHoldFrames = Math.round(TITLE_PHASE_UNITS.finalHold * scale);
+  const finalFadeFrames = Math.round(TITLE_PHASE_UNITS.finalFade * scale);
+
+  const line1FadeStart = wordTypeFrames + wordHoldFrames;
+  const line1FadeEnd = line1FadeStart + wordFadeFrames;
+  const line2Start = line1FadeEnd;
+  const line2TypeEnd = line2Start + wordTypeFrames;
+  const line2FadeStart = line2TypeEnd + finalHoldFrames;
+
+  return {
+    wordTypeFrames,
+    wordFadeFrames,
+    line1FadeStart,
+    line1FadeEnd,
+    line2Start,
+    line2TypeEnd,
+    line2FadeStart,
+    finalFadeFrames,
+  };
+}
 
 /** Scrollytelling video. Pinning is done with a JS-toggled
  * position: fixed/absolute swap on the stage — not CSS position: sticky.
@@ -91,12 +144,25 @@ type ScrollVideoShowcaseProps = {
    * card), positioned by whatever the caller's own CSS does with it. Not
    * used by any existing caller, so omitting it changes nothing. */
   overlay?: ReactNode;
-  /** Called with the current frame and total frame count every time the
-   * frame changes, so a caller-supplied `overlay` can drive its own
-   * scroll-timed reveal (fade in/hold/out at whatever frames it chooses)
-   * without the engine needing to know anything about that content. Not
-   * used by any existing caller. */
+  /** Called with the current VIDEO frame (i.e. excluding any introScrolls
+   * lead-in — frame 0 is the video's own first frame) and total video frame
+   * count every time it changes, so a caller-supplied `overlay` can drive
+   * its own scroll-timed reveal without the engine needing to know
+   * anything about that content. Not used by any existing caller. */
   onFrame?: (frame: number, total: number) => void;
+  /** Overrides the default 5px-per-frame scroll speed — higher is slower
+   * (more scroll distance needed per frame advance). Default preserves
+   * every existing usage's exact feel. */
+  pxPerFrame?: number;
+  /** When set, the first `introScrolls` scrolls (in units of this
+   * instance's own pxPerFrame) are a dedicated title-only lead-in: the
+   * video stays on its own frame 0 while scroll instead drives the title
+   * type/hold/fade sequence, which is rescaled to fit entirely inside this
+   * budget. Once exhausted, further scroll starts advancing the video's
+   * own frames from 0, with the title left in its final (faded-out) state.
+   * Default 0 preserves the original behavior, where the title plays out
+   * overlapping the video's own early frames instead of before them. */
+  introScrolls?: number;
 };
 
 export default function ScrollVideoShowcase({
@@ -106,6 +172,8 @@ export default function ScrollVideoShowcase({
   fullBleed = false,
   overlay,
   onFrame,
+  pxPerFrame = PX_PER_FRAME,
+  introScrolls = 0,
 }: ScrollVideoShowcaseProps) {
   const spacerRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
@@ -116,6 +184,12 @@ export default function ScrollVideoShowcase({
   const totalFramesRef = useRef(FALLBACK_TOTAL_FRAMES);
   const hasTitleRef = useRef(!!titleLines);
   const onFrameRef = useRef(onFrame);
+  // Both are static per-usage configuration (same as videoFile, objectFit,
+  // ...) — captured once via ref, same as the other values the pin effect
+  // below reads without listing in its deps array, rather than reacting to
+  // changes after mount.
+  const pxPerFrameRef = useRef(pxPerFrame);
+  const introScrollsRef = useRef(introScrolls);
   const videoSrc = `${BASE}/${videoFile}`;
 
   useEffect(() => {
@@ -149,6 +223,13 @@ export default function ScrollVideoShowcase({
     // the window, so the NEXT approach (from either direction) can re-lock.
     const armedRef = { current: true };
     let rafId = 0;
+
+    const pxPerFrame = pxPerFrameRef.current;
+    const introBudgetFrames =
+      introScrollsRef.current > 0
+        ? Math.round(introScrollsRef.current * framesPerScroll(pxPerFrame))
+        : 0;
+    const titleTiming = computeTitleTiming(introBudgetFrames);
 
     // True for the whole BUFFER_VH-tall window where the spacer spans the
     // entire viewport — this is deliberately generous (not a razor-thin
@@ -198,14 +279,14 @@ export default function ScrollVideoShowcase({
       if (!t1 || !t2) return;
 
       // Line 1 ("Commercial"): types in, holds, fades out — fully gone by
-      // LINE1_FADE_END, before line 2 ever starts typing.
-      const r1 = Math.max(0, Math.min(1, frame / WORD_TYPE_FRAMES));
+      // line1FadeEnd, before line 2 ever starts typing.
+      const r1 = Math.max(0, Math.min(1, frame / titleTiming.wordTypeFrames));
       t1.style.width = `${Math.round(t1.scrollWidth * r1)}px`;
-      t1.classList.toggle("is-typing", frame > 0 && frame < WORD_TYPE_FRAMES);
+      t1.classList.toggle("is-typing", frame > 0 && frame < titleTiming.wordTypeFrames);
       t1.classList.toggle("is-done", r1 >= 1);
       const fade1 = Math.max(
         0,
-        Math.min(1, (frame - LINE1_FADE_START) / WORD_FADE_FRAMES)
+        Math.min(1, (frame - titleTiming.line1FadeStart) / titleTiming.wordFadeFrames)
       );
       t1.style.opacity = String(1 - fade1);
 
@@ -213,25 +294,36 @@ export default function ScrollVideoShowcase({
       // then types in the same spot, holds, and fades out at the end.
       const r2 = Math.max(
         0,
-        Math.min(1, (frame - LINE2_START) / WORD_TYPE_FRAMES)
+        Math.min(1, (frame - titleTiming.line2Start) / titleTiming.wordTypeFrames)
       );
       t2.style.width = `${Math.round(t2.scrollWidth * r2)}px`;
-      t2.classList.toggle("is-typing", frame >= LINE2_START && frame < LINE2_TYPE_END);
+      t2.classList.toggle(
+        "is-typing",
+        frame >= titleTiming.line2Start && frame < titleTiming.line2TypeEnd
+      );
       t2.classList.toggle("is-done", r2 >= 1);
       const fade2 = Math.max(
         0,
-        Math.min(1, (frame - LINE2_FADE_START) / FINAL_FADE_FRAMES)
+        Math.min(1, (frame - titleTiming.line2FadeStart) / titleTiming.finalFadeFrames)
       );
-      t2.style.opacity = frame < LINE2_START ? "0" : String(1 - fade2);
+      t2.style.opacity = frame < titleTiming.line2Start ? "0" : String(1 - fade2);
     }
 
     function applyFrame(next: number) {
-      const total = totalFramesRef.current;
-      frameRef.current = Math.max(0, Math.min(total - 1, next));
+      const videoTotal = totalFramesRef.current;
+      const virtualTotal = introBudgetFrames + videoTotal;
+      frameRef.current = Math.max(0, Math.min(virtualTotal - 1, next));
+      const videoFrame = Math.max(0, frameRef.current - introBudgetFrames);
       const v = videoRef.current;
-      if (v) v.currentTime = frameRef.current / VIDEO_FPS;
-      updateTitle(frameRef.current);
-      onFrameRef.current?.(frameRef.current, total);
+      if (v) v.currentTime = videoFrame / VIDEO_FPS;
+      // With no intro budget (the default), the title is driven by the raw
+      // frame directly — identical to the original behavior, where it plays
+      // out overlapping the video's own early frames. With a budget, the
+      // title is driven by intro progress only, and is left in its final
+      // (faded-out) state for the rest of the video once that's exhausted.
+      const introProgress = Math.min(frameRef.current, introBudgetFrames);
+      updateTitle(introBudgetFrames > 0 ? introProgress : frameRef.current);
+      onFrameRef.current?.(videoFrame, videoTotal);
     }
 
     // Shared by wheel and touch: accumulates raw scroll/drag distance and
@@ -243,8 +335,9 @@ export default function ScrollVideoShowcase({
     function stepByDistance(rawDelta: number) {
       const dir = Math.sign(rawDelta);
       if (dir === 0) return true;
+      const virtualTotal = introBudgetFrames + totalFramesRef.current;
       const atStart = frameRef.current <= 0;
-      const atEnd = frameRef.current >= totalFramesRef.current - 1;
+      const atEnd = frameRef.current >= virtualTotal - 1;
       if ((dir > 0 && atEnd) || (dir < 0 && atStart)) {
         accumRef.current = 0;
         armedRef.current = false;
@@ -252,11 +345,11 @@ export default function ScrollVideoShowcase({
         return false;
       }
       accumRef.current += rawDelta;
-      while (Math.abs(accumRef.current) >= PX_PER_FRAME) {
+      while (Math.abs(accumRef.current) >= pxPerFrame) {
         const step = Math.sign(accumRef.current);
         const prev = frameRef.current;
         applyFrame(prev + step);
-        accumRef.current -= step * PX_PER_FRAME;
+        accumRef.current -= step * pxPerFrame;
         if (frameRef.current === prev) {
           accumRef.current = 0;
           armedRef.current = false;
@@ -311,12 +404,12 @@ export default function ScrollVideoShowcase({
     // Lenis only intercepts wheel/touch — keyboard scrolling (PageDown,
     // Space, arrow keys) would bypass the pin entirely otherwise.
     const KEY_DELTA: Record<string, number> = {
-      ArrowDown: PX_PER_FRAME * 2,
-      PageDown: PX_PER_FRAME * 6,
-      " ": PX_PER_FRAME * 6,
-      Spacebar: PX_PER_FRAME * 6,
-      ArrowUp: -PX_PER_FRAME * 2,
-      PageUp: -PX_PER_FRAME * 6,
+      ArrowDown: pxPerFrame * 2,
+      PageDown: pxPerFrame * 6,
+      " ": pxPerFrame * 6,
+      Spacebar: pxPerFrame * 6,
+      ArrowUp: -pxPerFrame * 2,
+      PageUp: -pxPerFrame * 6,
     };
 
     function onKeyDown(e: KeyboardEvent) {

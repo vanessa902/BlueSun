@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import ScrollVideoShowcase, { FRAMES_PER_SCROLL } from "@/components/ScrollVideoShowcase";
+import ScrollVideoShowcase, { framesPerScroll } from "@/components/ScrollVideoShowcase";
 import "../app/enerblock.css";
 
 const clamp01 = (v: number) => Math.max(0, Math.min(1, v));
@@ -15,53 +15,62 @@ const seg = (v: number, a: number, b: number) => clamp01((v - a) / (b - a));
 // rename. Bump this (e.g. to the video's own short content hash, via
 // `md5sum public/home-showcase.mp4 | cut -c1-10`) every time the video is
 // swapped.
-const VIDEO_CACHE_BUST = "af0d248bbc";
+const VIDEO_CACHE_BUST = "da5a78cb97";
+
+// Slower scroll than ScrollVideoShowcase's 5px/frame default (passed as
+// pxPerFrame below), and a dedicated 4-scroll title-only lead-in (passed as
+// introScrolls below) — the video no longer starts advancing until
+// "Commercial Construction" has fully played out and faded, instead of
+// scrubbing through its own early frames underneath the title. onFrame
+// still reports pure video-frame progress (excluding that lead-in), so the
+// scene fractions below are unaffected by it either way — they're re-
+// derived here only because the clip itself changed (the black hold added
+// a few edits ago was removed again: the new title lead-in already covers
+// that "opens on black" beat more cleanly, so the clip goes back to
+// opening right on the building, 350 frames, ~14.58s).
+const LOCAL_PX_PER_FRAME = 7;
+const LOCAL_FRAMES_PER_SCROLL = framesPerScroll(LOCAL_PX_PER_FRAME);
+const INTRO_SCROLLS = 4;
 
 // Each info box only makes sense over its own scene, located by extracting
 // and eyeballing frames with ffmpeg — expressed as a fraction of total
-// frames rather than a fixed frame number so it stays roughly in place if a
-// future video swap changes the clip's length; re-check these by eye
-// whenever the video changes. Each fades in, holds fully visible, then
-// fades out — timed in "scrolls" (100px of wheel delta), the same unit the
-// title words above already use.
-//
-// The clip's opening ~0.46s (11 frames) was almost entirely black night
-// sky, reading as a hard "cut" rather than a deliberate shot — trimmed out
-// of the video itself, then a clean ~0.5s (12 frames) black hold was
-// prepended back on so the clip now opens on solid black before revealing
-// the building, rather than cutting straight to it. Total duration ~15.08s
-// (362 frames), so every scene's fraction below is re-derived once more.
-const FADE_FRAMES = Math.round(0.5 * FRAMES_PER_SCROLL);
+// video frames (not counting the title lead-in) so it stays roughly in
+// place if a future video swap changes the clip's length. Each fades in,
+// holds fully visible, then fades out — timed in "scrolls" (100px of wheel
+// delta) at this section's own (slower) pxPerFrame.
+const FADE_FRAMES = Math.round(0.5 * LOCAL_FRAMES_PER_SCROLL);
 
 // Balcony/window shot, right after the "Commercial" title finishes typing
-// in and holds (~t=1.55s of this clip's ~15.08s duration, hence 0.103).
-const WINDOWS_SCENE_START_FRAC = 0.103;
-const WINDOWS_HOLD_FRAMES = 1.5 * FRAMES_PER_SCROLL;
+// in and holds (~t=1.0s of this clip's ~14.58s duration, hence 0.072).
+const WINDOWS_SCENE_START_FRAC = 0.072;
+const WINDOWS_HOLD_FRAMES = 26;
 
-// Elevator-shaft/walkway flythrough, while "Construction" is still typing in
-// (~t=3.45s, hence 0.229) — the Framing and Design/Engineering cards sit
-// side by side over this same moment, so they share one timing window.
-const FRAMING_DESIGN_SCENE_START_FRAC = 0.229;
-const FRAMING_DESIGN_HOLD_FRAMES = 2 * FRAMES_PER_SCROLL;
+// Elevator-shaft/walkway flythrough (~t=2.9s, hence 0.202) — the Framing
+// and Design/Engineering cards sit side by side over this same moment, so
+// they share one timing window. Hold is tuned so it fades out with a clean
+// few-frame margin before Electrical's scene starts (see below) — Electrical
+// must only ever appear once this row is completely gone, not overlapping.
+const FRAMING_DESIGN_SCENE_START_FRAC = 0.202;
+const FRAMING_DESIGN_HOLD_FRAMES = 30;
 
 // Same shaft, a beat later once the electrical panels/conduit come into
-// view (~t=5.47s, hence 0.363) — holds a full 3 scrolls, matching how long
-// that scene itself lasts (fades out almost exactly as Plumbing's scene
-// begins).
-const ELECTRICAL_SCENE_START_FRAC = 0.363;
-const ELECTRICAL_HOLD_FRAMES = 3 * FRAMES_PER_SCROLL;
+// view (~t=5.0s, hence 0.341) — starts only after Framing/Design's fade-out
+// above has fully completed (with a few frames of black gap in between, on
+// purpose), not overlapping it. Holds a full 3 scrolls, matching how long
+// that scene itself lasts.
+const ELECTRICAL_SCENE_START_FRAC = 0.341;
+const ELECTRICAL_HOLD_FRAMES = 43;
 
-// Colored-pipe MEP corridor (~t=8.8s, hence 0.583).
-const PLUMBING_SCENE_START_FRAC = 0.583;
-const PLUMBING_HOLD_FRAMES = 2.5 * FRAMES_PER_SCROLL;
+// Colored-pipe MEP corridor (~t=8.3s, hence 0.569).
+const PLUMBING_SCENE_START_FRAC = 0.569;
+const PLUMBING_HOLD_FRAMES = 36;
 
-// Rooftop-equipment shot near the end of the clip (~t=12.53s, hence
-// 0.831) — holds 4 scrolls; being the last card, it simply stays at full
-// opacity through the end of the clip once that hold window runs past the
-// video's own remaining length, same as the last card in a sequence
-// always does.
-const SOLAR_SCENE_START_FRAC = 0.831;
-const SOLAR_HOLD_FRAMES = 4 * FRAMES_PER_SCROLL;
+// Rooftop-equipment shot near the end of the clip (~t=12.0s, hence 0.825) —
+// holds 4 scrolls; being the last card, it simply stays at full opacity
+// through the end of the clip once that hold window runs past the video's
+// own remaining length, same as the last card in a sequence always does.
+const SOLAR_SCENE_START_FRAC = 0.825;
+const SOLAR_HOLD_FRAMES = 57;
 
 function sceneOpacity(
   frame: number,
@@ -248,6 +257,8 @@ export default function EnerblockSections() {
         titleLines={["Commercial", "Construction"]}
         objectFit="cover"
         fullBleed
+        pxPerFrame={LOCAL_PX_PER_FRAME}
+        introScrolls={INTRO_SCROLLS}
         onFrame={handleVideoFrame}
         overlay={
           <>
