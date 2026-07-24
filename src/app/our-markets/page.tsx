@@ -11,6 +11,12 @@ const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 const U = (id: string) =>
   `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=1400&q=85`;
 
+// Cache-buster: GitHub Pages/browsers can keep serving a stale copy of this
+// video under its unchanged filename after a swap. Bump this to the file's
+// own content hash (`md5sum public/markets-showcase.mp4 | cut -c1-10`)
+// every time the video changes.
+const VIDEO_CACHE_BUST = "7e6d409d62";
+
 type MarketItem = {
   label: string;
   image: string;
@@ -135,7 +141,10 @@ export default function OurMarketsPage() {
 
         {/* Scrollytelling video break, same frame-by-frame scroll effect
             as the home page's showcase video. */}
-        <ScrollVideoShowcase videoFile="markets-showcase.mp4" objectFit="cover" />
+        <ScrollVideoShowcase
+          videoFile={`markets-showcase.mp4?v=${VIDEO_CACHE_BUST}`}
+          objectFit="cover"
+        />
 
         {/* ============================================================
             Gallery (draggable carousel)
