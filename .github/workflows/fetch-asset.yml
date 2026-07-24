@@ -1,0 +1,47 @@
+name: Fetch External Asset
+
+# Manual, on-demand helper: downloads a file from a direct URL and commits it
+# to the repo. Exists because the Claude Code session that normally develops
+# this repo runs in a network-restricted sandbox that can't reach arbitrary
+# external hosts (cloud storage, CDNs, etc.) — GitHub-hosted runners have
+# normal internet access, so this lets a large upload (e.g. a new source
+# video) land in the repo without going through that sandbox's network at
+# all.
+on:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: "Direct download URL of the file to fetch"
+        required: true
+      dest_path:
+        description: "Path to write it to in the repo, e.g. uploads/video.mp4"
+        required: true
+      branch:
+        description: "Branch to commit the file to"
+        required: true
+        default: claude/cool-hawking-u9zv13
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.branch }}
+
+      - name: Download file
+        run: |
+          mkdir -p "$(dirname "${{ inputs.dest_path }}")"
+          curl -L --fail --show-error -o "${{ inputs.dest_path }}" "${{ inputs.url }}"
+          ls -la "${{ inputs.dest_path }}"
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add "${{ inputs.dest_path }}"
+          git commit -m "Fetch external asset: ${{ inputs.dest_path }}" || echo "Nothing to commit"
+          git push origin HEAD:${{ inputs.branch }}
