@@ -403,16 +403,17 @@
 /* ==========================================================================
    Commercial Construction video overlay info box — a static chamfered-corner
    black card (same clip-path notch technique as .bsnav/.btn-glass) placed
-   over the left side of the full-bleed video, holding the Solar Energy /
-   Battery Storage copy. Preview-only: lives in this preview-scoped
-   stylesheet, not the shared scroll-video.css, so it never reaches the live
-   home page's identical video section.
+   over the left side of the full-bleed video, each holding its own copy
+   over its own scene (see the two modifier classes below for where each
+   sits; timing for each lives in EnerblockSectionsPreview.tsx). Preview-
+   only: lives in this preview-scoped stylesheet, not the shared
+   scroll-video.css, so it never reaches the live home page's identical
+   video section.
    ========================================================================== */
 .eb-preview-infobox {
   --ib-cut: 16px;
   position: absolute;
   left: clamp(1.25rem, 4vw, 3rem);
-  top: 26%;
   width: min(24rem, 30vw);
   min-width: 260px;
   padding: 1.75rem 2rem;
@@ -438,6 +439,55 @@
     0 calc(100% - var(--ib-cut)),
     0 var(--ib-cut)
   );
+}
+/* Over the rooftop-equipment scene near the end of the clip. */
+.eb-preview-infobox--solar {
+  top: 26%;
+}
+/* Over the balcony/window scene near the start of the clip, below where
+   the "Commercial" title sits (top: 12vh, see .eb-scrollvideo__title in
+   scroll-video.css). */
+.eb-preview-infobox--windows {
+  top: 22vh;
+}
+/* Over the electrical panel/conduit moment, later in the same elevator
+   shaft shot the Framing/Design row sits over. */
+.eb-preview-infobox--electrical {
+  top: 38%;
+}
+/* Over the colored-pipe MEP corridor. */
+.eb-preview-infobox--plumbing {
+  top: 35%;
+}
+/* Framing + Design/Engineering & Preconstruction: two cards side by side
+   over the elevator-shaft/walkway moment, centered instead of pinned to the
+   left edge like the single-card variants above (the scene itself reads as
+   more centered in-frame). Same hidden-by-default/opacity-driven pattern as
+   .eb-preview-infobox, just as a flex row instead of a single box — the two
+   children below override position back to static so flex can lay them out
+   side by side. */
+.eb-preview-cardrow {
+  position: absolute;
+  left: 50%;
+  top: 56%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 1.5rem;
+  width: min(56rem, 90vw);
+  opacity: 0;
+  will-change: opacity;
+  transition: opacity 0.15s linear;
+  pointer-events: none;
+}
+.eb-preview-cardrow .eb-preview-infobox {
+  position: static;
+  flex: 1;
+  min-width: 0;
+  width: auto;
+  /* Each card already fades with its shared parent — no need for its own
+     opacity transition/hidden state too. */
+  opacity: 1;
+  transition: none;
 }
 /* Hairline outline following the same chamfered shape. */
 .eb-preview-infobox::before {
