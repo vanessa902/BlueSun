@@ -135,6 +135,8 @@ export default function EnerblockSectionsPreview() {
       <ScrollVideoShowcase
         videoFile="home-showcase-preview.mp4"
         titleLines={["Commercial", "Construction"]}
+        objectFit="cover"
+        fullBleed
       />
 
     </div>

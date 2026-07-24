@@ -81,12 +81,19 @@ type ScrollVideoShowcaseProps = {
    * bars); "contain" (default) shows the whole frame uncropped, which can
    * letterbox if the video's aspect ratio doesn't match the frame's. */
   objectFit?: "cover" | "contain";
+  /** When there's a title, the frame normally shrinks to 80vh to leave room
+   * above it (see .eb-scrollvideo--has-title in scroll-video.css). Setting
+   * this lets the frame fill the full 100vh stage instead, with the title
+   * overlaid directly on top of the video. Default false preserves existing
+   * usages exactly as they were. */
+  fullBleed?: boolean;
 };
 
 export default function ScrollVideoShowcase({
   videoFile,
   titleLines,
   objectFit = "contain",
+  fullBleed = false,
 }: ScrollVideoShowcaseProps) {
   const spacerRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
@@ -326,7 +333,11 @@ export default function ScrollVideoShowcase({
       style={{ height: `${PIN_VH + BUFFER_VH}vh` }}
     >
       <div className="eb-scrollvideo-stage" ref={stageRef}>
-        <section className={`eb-scrollvideo${titleLines ? " eb-scrollvideo--has-title" : ""}`}>
+        <section
+          className={`eb-scrollvideo${titleLines ? " eb-scrollvideo--has-title" : ""}${
+            fullBleed ? " eb-scrollvideo--fullbleed" : ""
+          }`}
+        >
           {titleLines && (
             <div className="eb-scrollvideo__title">
               <span className="eb-scrollvideo__title-text" ref={titleText1Ref}>

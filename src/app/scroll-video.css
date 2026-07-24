@@ -102,6 +102,13 @@
 .eb-scrollvideo--has-title .eb-scrollvideo__frame {
   height: 80vh;
 }
+/* Opt-in (fullBleed prop): frame fills the whole 100vh stage instead, title
+   overlaid directly on top of the video instead of sitting in its own room
+   above it. Same specificity as the rule above; comes after it in source
+   order so it wins whenever both classes are present. */
+.eb-scrollvideo--fullbleed .eb-scrollvideo__frame {
+  height: 100%;
+}
 .eb-scrollvideo__video {
   position: absolute;
   inset: 0;
