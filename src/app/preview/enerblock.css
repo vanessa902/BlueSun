@@ -446,9 +446,12 @@
 }
 /* Over the balcony/window scene near the start of the clip, below where
    the "Commercial" title sits (top: 12vh, see .eb-scrollvideo__title in
-   scroll-video.css). */
+   scroll-video.css). The actual window in this shot sits on the right
+   side of frame (~49-81% across), not the left edge — shifted right to
+   sit next to it instead of out over the empty skyline. */
 .eb-preview-infobox--windows {
   top: 22vh;
+  left: 46%;
 }
 /* Over the electrical panel/conduit moment, later in the same elevator
    shaft shot the Framing/Design row sits over. Shifted right of the usual
