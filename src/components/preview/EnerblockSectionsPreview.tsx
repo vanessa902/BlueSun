@@ -8,16 +8,16 @@ const clamp01 = (v: number) => Math.max(0, Math.min(1, v));
 const seg = (v: number, a: number, b: number) => clamp01((v - a) / (b - a));
 
 // The Solar Energy / Battery Storage info box only makes sense over the
-// rooftop-equipment shot, which is the last of the three sharp segments
-// kept after trimming out the blurry transition footage (see the video's
-// own git history for how the cut points were chosen via ffmpeg's
-// blurdetect filter) — it now starts at ~65% through the shorter clip.
-// Expressed as a fraction of total frames rather than a fixed frame number
-// so it stays roughly in place if a future video swap changes the clip's
-// length. It fades in, holds fully visible for exactly 3 scrolls, then
-// fades out — same "N scrolls" unit (100px of wheel delta) the title words
-// above already use.
-const INFOBOX_SCENE_START_FRAC = 0.65;
+// rooftop-equipment shot near the end of the clip — located by extracting
+// and eyeballing frames with ffmpeg (starts at ~t=12.5s of this clip's
+// ~15.04s duration, hence 0.83). Expressed as a fraction of total frames
+// rather than a fixed frame number so it stays roughly in place if a future
+// video swap changes the clip's length; re-check this by eye whenever the
+// video changes, same as this value has each time so far. It fades in,
+// holds fully visible for exactly 3 scrolls, then fades out — same
+// "N scrolls" unit (100px of wheel delta) the title words above already
+// use.
+const INFOBOX_SCENE_START_FRAC = 0.83;
 const INFOBOX_FADE_FRAMES = Math.round(0.5 * FRAMES_PER_SCROLL);
 const INFOBOX_HOLD_FRAMES = 3 * FRAMES_PER_SCROLL;
 
