@@ -7,6 +7,16 @@ import "../../app/preview/enerblock.css";
 const clamp01 = (v: number) => Math.max(0, Math.min(1, v));
 const seg = (v: number, a: number, b: number) => clamp01((v - a) / (b - a));
 
+// The video file keeps the same name across every swap, so GitHub Pages'
+// CDN and browsers can keep serving a cached, stale copy after a new deploy
+// even though the underlying bytes changed. A query-string cache-buster
+// forces both to treat it as a new resource — GitHub Pages serves the file
+// by path and ignores the query string, so this doesn't need any file
+// rename. Bump this (e.g. to the video's own short content hash, via
+// `md5sum public/home-showcase-preview.mp4 | cut -c1-10`) every time the
+// video is swapped.
+const VIDEO_CACHE_BUST = "5577f0ee9a";
+
 // The Solar Energy / Battery Storage info box only makes sense over the
 // rooftop-equipment shot near the end of the clip — located by extracting
 // and eyeballing frames with ffmpeg (starts at ~t=12.5s of this clip's
@@ -165,7 +175,7 @@ export default function EnerblockSectionsPreview() {
 
       {/* 1b. Scrollytelling video break */}
       <ScrollVideoShowcase
-        videoFile="home-showcase-preview.mp4"
+        videoFile={`home-showcase-preview.mp4?v=${VIDEO_CACHE_BUST}`}
         titleLines={["Commercial", "Construction"]}
         objectFit="cover"
         fullBleed
