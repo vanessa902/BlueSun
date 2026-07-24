@@ -15,7 +15,7 @@ const seg = (v: number, a: number, b: number) => clamp01((v - a) / (b - a));
 // rename. Bump this (e.g. to the video's own short content hash, via
 // `md5sum public/home-showcase-preview.mp4 | cut -c1-10`) every time the
 // video is swapped.
-const VIDEO_CACHE_BUST = "5577f0ee9a";
+const VIDEO_CACHE_BUST = "ceeb372464";
 
 // Each info box only makes sense over its own scene, located by extracting
 // and eyeballing frames with ffmpeg — expressed as a fraction of total
@@ -24,36 +24,43 @@ const VIDEO_CACHE_BUST = "5577f0ee9a";
 // whenever the video changes, same as they have each time so far. Each
 // fades in, holds fully visible, then fades out — timed in "scrolls" (100px
 // of wheel delta), the same unit the title words above already use.
+//
+// The clip's opening ~0.46s (11 frames) was almost entirely black night
+// sky, reading as a hard "cut" rather than a deliberate shot — trimmed out
+// of the video itself (see public/home-showcase-preview.mp4), which shifts
+// every scene earlier and shortens the total duration (~15.04s -> ~14.58s).
+// All the fractions below are re-derived from that trim. Holds were also
+// generally lengthened so each card stays up longer per feedback.
 const FADE_FRAMES = Math.round(0.5 * FRAMES_PER_SCROLL);
 
 // Balcony/window shot, right after the "Commercial" title finishes typing
-// in and holds (starts ~t=1.5s of this clip's ~15.04s duration, hence
-// 0.10) — holds for only 1 scroll so it's fully gone before the Framing/
-// Design row starts (~t=3.4s); it was overlapping both at a 2-scroll hold.
-const WINDOWS_SCENE_START_FRAC = 0.1;
-const WINDOWS_HOLD_FRAMES = 1 * FRAMES_PER_SCROLL;
+// in and holds (~t=1.0s of this clip's ~14.58s duration, hence 0.072).
+const WINDOWS_SCENE_START_FRAC = 0.072;
+const WINDOWS_HOLD_FRAMES = 1.5 * FRAMES_PER_SCROLL;
 
 // Elevator-shaft/walkway flythrough, while "Construction" is still typing in
-// (starts ~t=3.4s, hence 0.226) — the Framing and Design/Engineering cards
-// sit side by side over this same moment, so they share one timing window.
-const FRAMING_DESIGN_SCENE_START_FRAC = 0.226;
-const FRAMING_DESIGN_HOLD_FRAMES = 1.5 * FRAMES_PER_SCROLL + 1;
+// (~t=2.9s, hence 0.202) — the Framing and Design/Engineering cards sit
+// side by side over this same moment, so they share one timing window.
+const FRAMING_DESIGN_SCENE_START_FRAC = 0.202;
+const FRAMING_DESIGN_HOLD_FRAMES = 2 * FRAMES_PER_SCROLL;
 
 // Same shaft, a beat later once the electrical panels/conduit come into
-// view — nudged frame by frame per feedback: 0.352 -> 0.358 (+2 frames) ->
-// 0.361 (+1 more frame). Hold is now a literal 3 frames (not scrolls) per
-// the same feedback, replacing the earlier longer 2.5-scroll hold.
-const ELECTRICAL_SCENE_START_FRAC = 0.361;
-const ELECTRICAL_HOLD_FRAMES = 3;
+// view (~t=5.0s, hence 0.341) — holds a full 3 scrolls, matching how long
+// that scene itself lasts (fades out almost exactly as Plumbing's scene
+// begins).
+const ELECTRICAL_SCENE_START_FRAC = 0.341;
+const ELECTRICAL_HOLD_FRAMES = 3 * FRAMES_PER_SCROLL;
 
-// Colored-pipe MEP corridor (starts ~t=8.75s, hence 0.582).
-const PLUMBING_SCENE_START_FRAC = 0.582;
-const PLUMBING_HOLD_FRAMES = 2 * FRAMES_PER_SCROLL;
+// Colored-pipe MEP corridor (~t=8.3s, hence 0.569).
+const PLUMBING_SCENE_START_FRAC = 0.569;
+const PLUMBING_HOLD_FRAMES = 2.5 * FRAMES_PER_SCROLL;
 
-// Rooftop-equipment shot near the end of the clip (starts ~t=12.5s, hence
-// 0.83) — holds for 3 scrolls.
-const SOLAR_SCENE_START_FRAC = 0.83;
-const SOLAR_HOLD_FRAMES = 3 * FRAMES_PER_SCROLL;
+// Rooftop-equipment shot near the end of the clip (~t=12.0s, hence 0.825) —
+// holds 4 scrolls; being the last card, it simply stays at full opacity
+// through the end of the clip once that hold window runs past the video's
+// own remaining length, same as the last card in a sequence always does.
+const SOLAR_SCENE_START_FRAC = 0.825;
+const SOLAR_HOLD_FRAMES = 4 * FRAMES_PER_SCROLL;
 
 function sceneOpacity(
   frame: number,
