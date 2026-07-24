@@ -1,0 +1,166 @@
+/* Projects section — dark rounded panel with sticky-stacking project cards.
+   Adapted from the "3D Creator" portfolio spec (Projects section only). */
+.proj {
+  position: relative;
+  z-index: 10;
+  background: #ffffff;
+  color: #111827;
+  border-top-left-radius: clamp(40px, 5vw, 60px);
+  border-top-right-radius: clamp(40px, 5vw, 60px);
+  margin-top: clamp(-3.5rem, -3vw, -2.5rem);
+  padding: 5rem 1.25rem 6rem;
+}
+@media (min-width: 640px) {
+  .proj {
+    padding: 6rem 2rem 7rem;
+  }
+}
+@media (min-width: 768px) {
+  .proj {
+    padding: 8rem 2.5rem 8rem;
+  }
+}
+
+.proj__heading {
+  background: linear-gradient(180deg, #1a1a1a 0%, #444 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  font-weight: 900;
+  text-transform: lowercase;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  font-size: clamp(3rem, 12vw, 160px);
+  text-align: center;
+  margin-bottom: clamp(2.5rem, 5vw, 5rem);
+}
+/* Titles read lowercase but keep an uppercase first letter. */
+.proj__heading::first-letter {
+  text-transform: uppercase;
+}
+
+.proj__list {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Cards are direct children of the list so each sticky card stays pinned
+   within the whole section — they pile up instead of leaving with a wrapper.
+   --proj-step is how far each card stops below the previous one, which is the
+   strip of the previous card's header that stays visible underneath. */
+.proj-card {
+  --proj-sticky: 6rem;
+  --proj-step: clamp(2.5rem, 4vw, 3.75rem);
+  position: sticky;
+  transform-origin: top center;
+  border: 2px solid #d0d0d0;
+  border-radius: clamp(40px, 5vw, 60px);
+  background: #ffffff;
+  padding: clamp(1rem, 2vw, 2rem);
+  /* Trailing space = scroll distance before the next card slides up over it. */
+  margin-bottom: 55vh;
+}
+.proj-card:last-child {
+  margin-bottom: 0;
+}
+@media (min-width: 768px) {
+  .proj-card {
+    --proj-sticky: 8rem;
+  }
+}
+
+/* ---- top row ---- */
+.proj-card__top {
+  display: flex;
+  align-items: center;
+  gap: clamp(1rem, 2vw, 2rem);
+  margin-bottom: clamp(1rem, 2vw, 1.5rem);
+}
+.proj-card__num {
+  font-weight: 900;
+  font-size: clamp(2.5rem, 8vw, 110px);
+  line-height: 1;
+  color: #111827;
+}
+.proj-card__info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  flex: 1;
+  min-width: 0;
+}
+.proj-card__cat {
+  text-transform: lowercase;
+  letter-spacing: 0.12em;
+  font-size: 0.75rem;
+  opacity: 0.55;
+}
+.proj-card__name {
+  font-weight: 500;
+  text-transform: lowercase;
+  font-size: clamp(1rem, 2.2vw, 2.1rem);
+  line-height: 1.1;
+}
+.proj-live {
+  flex-shrink: 0;
+  font-weight: 500;
+  text-transform: lowercase;
+  letter-spacing: 0.15em;
+  font-size: 0.8rem;
+}
+.proj-live:hover {
+  background: #fff;
+  color: #111827;
+}
+
+/* ---- image grid ---- */
+.proj-card__grid {
+  display: grid;
+  grid-template-columns: 40% 60%;
+  gap: clamp(0.75rem, 1.5vw, 1.25rem);
+  overflow: hidden;
+  border-radius: 0;
+}
+.proj-card__col1 {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.75rem, 1.5vw, 1.25rem);
+  overflow: hidden;
+}
+.proj-img-wrap {
+  overflow: hidden;
+}
+.proj-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* Square corners on every project image. */
+  border-radius: 0;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+/* Hover: the image expands a little within its clipped frame. */
+.proj-img-wrap:hover .proj-img {
+  transform: scale(1.08);
+}
+.proj-img-wrap--t {
+  height: clamp(130px, 16vw, 230px);
+}
+.proj-img-wrap--b {
+  height: clamp(160px, 22vw, 340px);
+}
+.proj-img-wrap--tall {
+  height: 100%;
+  min-height: clamp(310px, 40vw, 595px);
+}
+
+@media (max-width: 640px) {
+  .proj-card__top {
+    flex-wrap: wrap;
+  }
+  .proj-live {
+    padding: 0.6rem 1.4rem;
+    font-size: 0.7rem;
+  }
+}

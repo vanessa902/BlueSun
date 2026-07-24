@@ -1,0 +1,401 @@
+/* ==========================================================================
+   Enerblock-style sections appended after the scroll-video.
+   Titles: Haffer family (SemiBold), sentence case (NOT uppercase).
+   SOLUTIONS uses a sticky-stacking grid: each row pins to the top as you
+   scroll and the next expands over it. All motion is scroll-driven.
+   ========================================================================== */
+
+.eb {
+  --eb-paper: #000000;
+  --eb-ink: #ffffff;
+  --eb-red: #ff2e23;
+  --eb-line: rgba(255, 255, 255, 0.14);
+  --eb-head: 3.25rem; /* visible collapsed strip height when stacked */
+  position: relative;
+  z-index: 2;
+}
+
+.eb-title {
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  line-height: 1.05;
+}
+
+/* ---------- 1. Intro: title + 2D->3D blueprint ---------- */
+.eb-intro {
+  background: var(--bg-black);
+  color: #fff;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 100vh;
+}
+.eb-intro__left {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 8rem 3rem 3rem;
+}
+.eb-intro__title {
+  color: rgba(255, 255, 255, 0.92);
+  font-size: clamp(1.5rem, 3.4vw, 3.25rem);
+  width: 100%;
+  max-width: 18ch;
+  text-transform: lowercase;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1em;
+}
+/* Each line spreads its words to the column edges, matching the justified
+   visual order of the reference layout. */
+.eb-intro__line {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5em;
+}
+/* Lowercase title, uppercase first letter only. */
+.eb-intro__title .eb-intro__line:first-child > span:first-child::first-letter {
+  text-transform: uppercase;
+}
+
+/* ---- Typewriter reveal (triggered by .is-typing via IntersectionObserver) ---- */
+/* Armed but not yet typing: lines stay hidden. */
+.eb-intro__title.eb-armed .eb-intro__line {
+  clip-path: inset(0 100% 0 0);
+}
+/* Typing: each line wipes in left-to-right with a stepped (typewriter) feel,
+   one after another. */
+.eb-intro__title.is-typing .eb-intro__line {
+  animation: eb-typeline 0.6s steps(16, end) forwards;
+}
+.eb-intro__title.is-typing .eb-intro__line:nth-child(1) {
+  animation-delay: 0s;
+}
+.eb-intro__title.is-typing .eb-intro__line:nth-child(2) {
+  animation-delay: 0.6s;
+}
+.eb-intro__title.is-typing .eb-intro__line:nth-child(3) {
+  animation-delay: 1.2s;
+}
+.eb-intro__title.is-typing .eb-intro__line:nth-child(4) {
+  animation-delay: 1.8s;
+}
+.eb-intro__title.is-typing .eb-intro__line:nth-child(5) {
+  animation-delay: 2.4s;
+}
+@keyframes eb-typeline {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .eb-intro__title.eb-armed .eb-intro__line,
+  .eb-intro__title.is-typing .eb-intro__line {
+    clip-path: none;
+    animation: none;
+  }
+}
+.eb-intro__desc {
+  max-width: 58ch;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  font-weight: 400;
+  /* Nudge the description up ~20% of its own height. */
+  transform: translateY(-20%);
+}
+.eb-intro__right {
+  position: relative;
+  border-left: 1px solid rgba(255, 255, 255, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 3rem 7rem;
+  overflow: hidden;
+}
+.eb-bp-rock {
+  position: absolute;
+  left: 50%;
+  top: 47%;
+  width: 40%;
+  transform: translate(-50%, -55%);
+  pointer-events: none;
+  z-index: 2;
+  filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.6));
+}
+.eb-bp-stage {
+  --p: 0;
+  width: 70%;
+  max-width: 420px;
+  perspective: 1400px;
+}
+/* Draggable 3D scaffolding overlaid on top of the blueprint vector */
+.eb-bp-model {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 80%;
+  max-width: 520px;
+  height: 80%;
+  max-height: 560px;
+  z-index: 3;
+  background: transparent;
+  cursor: grab;
+  --poster-color: transparent;
+}
+.eb-bp-model:active {
+  cursor: grabbing;
+}
+.eb-bp {
+  width: 100%;
+  transform-style: preserve-3d;
+  transform: rotateX(calc(var(--p) * 58deg)) rotateZ(calc(var(--p) * -40deg))
+    translateZ(calc(var(--p) * 30px));
+  transition: transform 0.1s linear;
+}
+.eb-bp svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.eb-bp__line {
+  stroke: rgba(255, 255, 255, 0.85);
+  stroke-width: 2;
+  fill: none;
+}
+.eb-bp__hatch {
+  stroke: rgba(255, 255, 255, 0.4);
+  stroke-width: 1;
+}
+.eb-intro__caption {
+  position: absolute;
+  left: 3rem;
+  bottom: 2.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 0.75rem 1rem;
+}
+.eb-intro__caption .mark {
+  color: #fff;
+  font-weight: 700;
+  font-size: 1.5rem;
+}
+.eb-intro__caption .meta {
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 0.6rem;
+  letter-spacing: 0.08em;
+  line-height: 1.5;
+  text-transform: lowercase;
+}
+
+/* ---------- 1b. Scrollytelling video break ----------
+   Moved to scroll-video.css (imported directly by ScrollVideoShowcase.tsx)
+   so the section can be reused outside the home page (e.g. Our Markets).
+   ---------- */
+
+/* ---------- 2. SOLUTIONS sticky-stacking grid ---------- */
+.eb-sol {
+  background: var(--eb-paper);
+  color: var(--eb-ink);
+  padding: 0 3rem 6rem;
+}
+.eb-sol__eyebrow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 0;
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+  text-transform: lowercase;
+  border-bottom: 1px solid var(--eb-line);
+}
+.eb-sol__head {
+  padding: 5rem 0 6rem;
+}
+.eb-sol__head h2 {
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  max-width: 18ch;
+}
+
+/* Our Markets header + segmented toggle */
+.eb-markets-head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.75rem;
+  text-align: center;
+  padding: 5rem 0 4rem;
+}
+.eb-markets-head h2 {
+  font-size: clamp(2rem, 4vw, 3.25rem);
+}
+.eb-toggle {
+  display: inline-flex;
+  gap: 0.35rem;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--eb-line);
+  border-radius: 9999px;
+  padding: 0.35rem;
+}
+.eb-toggle button {
+  border: none;
+  cursor: pointer;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.55);
+  border-radius: 9999px;
+  padding: 0.6rem 1.5rem;
+  font-size: 0.85rem;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+.eb-toggle button:hover {
+  color: var(--eb-ink);
+}
+.eb-toggle button.is-active {
+  background: #fff;
+  color: #111827;
+}
+.eb-sol__list {
+  position: relative;
+}
+
+/* Each row sticks at the top (offset per index via inline style) and is opaque,
+   so previous rows show only their top strip while the current one expands. */
+.eb-item {
+  position: sticky;
+  background: var(--eb-paper);
+  border-top: 1px solid var(--eb-line);
+  display: grid;
+  grid-template-columns: 26% 24% 50%;
+}
+.eb-item__num {
+  padding: 1.1rem 1.5rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  border-right: 1px solid var(--eb-line);
+}
+.eb-item__media {
+  padding: 1.1rem 1.5rem;
+  border-right: 1px solid var(--eb-line);
+}
+.eb-item__media img {
+  width: 100%;
+  height: 20rem;
+  object-fit: cover;
+  display: block;
+  border-radius: 2px;
+}
+.eb-item__body {
+  padding: 1.1rem 0 2.5rem 2rem;
+}
+.eb-item__label {
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: lowercase;
+  color: rgba(255, 255, 255, 0.55);
+}
+.eb-item__title {
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  line-height: 1.08;
+  font-size: clamp(1.5rem, 2.4vw, 2.4rem);
+  margin-top: 1rem;
+  max-width: 18ch;
+}
+.eb-item__desc {
+  margin-top: 6rem;
+  max-width: 46ch;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.65);
+  font-weight: 400;
+}
+.eb-item__more {
+  margin-top: 1.5rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 2rem;
+  border: 1px solid var(--eb-ink);
+  padding: 0.7rem 1.1rem;
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+  text-transform: lowercase;
+  width: max-content;
+}
+
+/* ---------- 3. Industrial band + PROJECTS ---------- */
+.eb-bandvid {
+  position: relative;
+  height: 260vh;
+  background: var(--bg-black);
+}
+.eb-bandvid__sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+}
+.eb-bandvid__video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.eb-projects {
+  background: var(--eb-paper);
+  color: var(--eb-ink);
+  padding: 1.5rem 3rem 10rem;
+}
+.eb-projects__eyebrow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 0;
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+  text-transform: lowercase;
+  border-bottom: 1px solid var(--eb-line);
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 860px) {
+  .eb-intro {
+    grid-template-columns: 1fr;
+  }
+  .eb-intro__left {
+    padding: 7rem 1.25rem 2rem;
+  }
+  .eb-intro__right {
+    border-left: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    min-height: 70vh;
+  }
+  .eb-sol,
+  .eb-projects {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+  .eb-item {
+    position: static; /* stacking off on small screens */
+    grid-template-columns: 1fr;
+  }
+  .eb-item__num,
+  .eb-item__media {
+    border-right: none;
+  }
+  .eb-item__media img {
+    height: 14rem;
+  }
+  .eb-item__body {
+    padding: 1rem 0 2rem;
+  }
+  .eb-item__desc {
+    margin-top: 1.25rem;
+  }
+}

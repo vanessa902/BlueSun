@@ -1,0 +1,208 @@
+/* Stats section — staggered stat cards with hover image reveal */
+.stats {
+  position: relative;
+  z-index: 10;
+  background: var(--bg-black);
+  color: #fff;
+  /* No horizontal padding so the marquee can span full width; the grid
+     supplies its own side gutters. */
+  padding: 0 0 8rem;
+}
+
+/* ---------- Infinite text marquee ---------- */
+.stats-marquee {
+  overflow: hidden;
+  white-space: nowrap;
+  width: 100%;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  padding: clamp(0.75rem, 1.5vw, 1.5rem) 0;
+  margin-bottom: clamp(3rem, 6vw, 6rem);
+}
+.stats-marquee__track {
+  display: inline-flex;
+  flex-wrap: nowrap;
+  will-change: transform;
+  animation: stats-marquee 26s linear infinite;
+}
+.stats-marquee__copy {
+  flex-shrink: 0;
+  font-size: clamp(2.25rem, 8vw, 6rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  color: #fff;
+}
+@keyframes stats-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .stats-marquee__track {
+    animation: none;
+  }
+}
+
+.stats__grid {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: clamp(1rem, 1.5vw, 1.5rem);
+  align-items: start;
+}
+
+.stat-card {
+  position: relative;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 0;
+  overflow: hidden;
+  aspect-ratio: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: clamp(1.25rem, 2vw, 1.75rem);
+  cursor: pointer;
+  background: var(--bg-black);
+}
+
+.stat-card--low {
+  margin-top: clamp(3rem, 5vw, 5rem);
+}
+
+.stat-card--high {
+  margin-top: 0;
+}
+
+/* Hover image reveal */
+.stat-card__img {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 0.45s ease;
+  border-radius: inherit;
+  overflow: hidden;
+}
+.stat-card__img::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.05) 0%,
+    rgba(0, 0, 0, 0.45) 100%
+  );
+}
+.stat-card:hover .stat-card__img {
+  opacity: 1;
+}
+.stat-card__img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Label — top-right, two-line */
+.stat-card__label {
+  position: relative;
+  z-index: 2;
+  text-align: right;
+  font-size: clamp(0.85rem, 1.2vw, 1.1rem);
+  font-weight: 500;
+  line-height: 1.3;
+  color: rgba(255, 255, 255, 0.85);
+  white-space: pre-line;
+}
+
+/* Bottom row: value + arrow */
+.stat-card__bottom {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+
+.stat-card__value {
+  font-weight: 500;
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  font-style: italic;
+}
+
+/* Numeric count-up: an @property-registered integer animates from 0 to
+   --target and is printed via a CSS counter. Runs once .is-counting is set
+   when the section scrolls into view. */
+@property --stat-num {
+  syntax: "<integer>";
+  inherits: false;
+  initial-value: 0;
+}
+.stat-card__count {
+  --target: 0;
+  counter-reset: stat-num var(--stat-num);
+}
+.stat-card__count::after {
+  content: counter(stat-num);
+}
+.stats.is-counting .stat-card__count {
+  animation: stat-count 1.2s cubic-bezier(0.16, 0.84, 0.3, 1) forwards;
+}
+@keyframes stat-count {
+  from {
+    --stat-num: 0;
+  }
+  to {
+    --stat-num: var(--target);
+  }
+}
+/* Reduced motion / no @property support: show the final figure outright. */
+@media (prefers-reduced-motion: reduce) {
+  .stat-card__count {
+    counter-reset: stat-num var(--target);
+    animation: none;
+  }
+}
+
+.stat-card__arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.6);
+  transition: color 0.3s;
+}
+.stat-card:hover .stat-card__arrow {
+  color: #fff;
+}
+
+/* Responsive */
+@media (max-width: 860px) {
+  .stats__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .stat-card--low {
+    margin-top: 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .stats {
+    padding: 0 0 5rem;
+  }
+  .stats__grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+    padding: 0 1rem;
+  }
+  .stat-card--low {
+    margin-top: 1.5rem;
+  }
+}

@@ -1,0 +1,152 @@
+/* Hero: fixed SVG HUD frame (Group 19) over the scroll video. The SVG has a
+   transparent-center vignette so the video shows through; it stays visible for
+   the whole video and fades as the video ends (driven in page.tsx). Centered
+   hero text + SCROLL + bottom-left chip are overlaid on top. */
+#hero-frame {
+  position: fixed;
+  inset: 0;
+  z-index: 7;
+  pointer-events: none;
+  color: #fff;
+  will-change: opacity;
+}
+#hero-frame .hf-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+}
+
+/* centered hero text */
+#hero-frame .hf-center {
+  position: absolute;
+  left: 50%;
+  top: 44%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  width: 100%;
+  padding: 0 1rem;
+}
+#hero-frame .hf-eyebrow {
+  font-size: clamp(0.8rem, 1.4vw, 1.15rem);
+  letter-spacing: 0.42em;
+  text-transform: lowercase;
+  margin-bottom: 0.7rem;
+  font-weight: 400;
+  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.6);
+}
+#hero-frame .hf-center {
+  transition: opacity 0.18s linear;
+}
+#hero-frame .hf-title {
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  line-height: 0.92;
+  font-size: clamp(2.6rem, 7.5vw, 6.5rem);
+  text-shadow: 0 4px 30px rgba(0, 0, 0, 0.65);
+}
+/* Typewriter lines: each clips to a JS-driven width with a blinking caret
+   while typing; the caret hides once the line is fully revealed. The
+   overflow: hidden that does the horizontal width reveal also clips
+   vertically, and with the title's tight line-height (0.92) that cut off
+   the tops of the caps. The vertical padding gives the glyphs room inside
+   the clip box; the equal negative vertical margin cancels it out of the
+   layout so the tight line stacking is unchanged.
+
+   box-sizing is forced to content-box here (the site default is
+   border-box): the JS sets width to scrollWidth, and the blinking caret's
+   0.06em (~6px) right border — kept as a transparent border when done, to
+   avoid a layout shift — would otherwise eat that much off the content box
+   and clip the last letter (the "s" of Experts). With content-box the JS
+   width maps to the content area directly, and a 3px right padding leaves an
+   invisible margin after the last glyph so it's never touched by the clip;
+   the negative right margin keeps the line centered. */
+#hero-frame .hf-line {
+  box-sizing: content-box;
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  vertical-align: bottom;
+  width: 0;
+  max-width: 100%;
+  padding-top: 0.24em;
+  padding-bottom: 0.16em;
+  padding-right: 3px;
+  margin-top: -0.24em;
+  margin-bottom: -0.16em;
+  margin-right: -3px;
+}
+#hero-frame .hf-title {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+/* CONSTRUCTION in regular weight. */
+#hero-frame .hf-line {
+  font-weight: 400;
+}
+/* EXPERTS in light weight. */
+#hero-frame .hf-line--reg {
+  font-weight: 300;
+}
+#hero-frame .hf-line.is-typing {
+  border-right: 0.06em solid currentColor;
+  animation: hfCaret 0.8s steps(1) infinite;
+}
+#hero-frame .hf-line.is-done {
+  border-right: 0.06em solid transparent;
+}
+@keyframes hfCaret {
+  0%, 100% { border-right-color: currentColor; }
+  50% { border-right-color: transparent; }
+}
+
+/* SCROLL indicator */
+#hero-frame .hf-scroll {
+  position: absolute;
+  left: 50%;
+  bottom: 9%;
+  transform: translateX(-50%);
+  text-align: center;
+  font-size: 0.75rem;
+  letter-spacing: 0.3em;
+  text-transform: lowercase;
+}
+#hero-frame .hf-scroll .chev {
+  display: block;
+  margin-top: 0.35rem;
+  animation: hfBounce 1.6s ease-in-out infinite;
+}
+@keyframes hfBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(5px); }
+}
+
+/* Bottom-left chip. Rather than relying on pixel-precise alignment with
+   the SVG's decorative corner tab (which drifts at aspect ratios other
+   than the artwork's own, since object-fit: fill stretches each axis
+   independently), it carries its own background/border so it always
+   reads cleanly as a self-contained label regardless of viewport shape. */
+#hero-frame .hf-chip {
+  position: absolute;
+  left: 1.8%;
+  bottom: 2.2%;
+  font-size: clamp(0.6rem, 0.95vw, 0.85rem);
+  letter-spacing: 0.12em;
+  text-transform: lowercase;
+  white-space: nowrap;
+  padding: 0.5rem 0.85rem;
+  background: rgba(0, 0, 0, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+}
+#hero-frame .hf-chip b { font-weight: 700; }
+#hero-frame .hf-chip .dim { opacity: 0.55; }
+
+@media (max-width: 768px) {
+  #hero-frame .hf-svg { object-fit: cover; }
+  #hero-frame .hf-chip { font-size: 0.55rem; }
+}
