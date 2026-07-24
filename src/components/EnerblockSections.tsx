@@ -53,12 +53,14 @@ const WINDOWS_HOLD_FRAMES = 26;
 const FRAMING_DESIGN_SCENE_START_FRAC = 0.202;
 const FRAMING_DESIGN_HOLD_FRAMES = 30;
 
-// Same shaft, a beat later once the electrical panels/conduit come into
-// view (~t=5.0s, hence 0.341) — starts only after Framing/Design's fade-out
-// above has fully completed (with a few frames of black gap in between, on
-// purpose), not overlapping it. Holds a full 3 scrolls, matching how long
-// that scene itself lasts.
-const ELECTRICAL_SCENE_START_FRAC = 0.341;
+// The shaft flythrough cuts to the building exterior with the breaker
+// panel/conduit run (~t=5.9s, hence 0.406) — re-measured directly against
+// the clip's own scene cut so this starts only once that exterior shot
+// begins, well after Framing/Design's fade-out above has fully completed
+// (frame ~115 vs ~142, a clean gap, not overlapping it). Holds until the
+// clip cuts again to the colored-pipe MEP corridor (~frame 199), handing
+// off to Plumbing right at that cut.
+const ELECTRICAL_SCENE_START_FRAC = 0.406;
 const ELECTRICAL_HOLD_FRAMES = 43;
 
 // Colored-pipe MEP corridor (~t=8.3s, hence 0.569).
