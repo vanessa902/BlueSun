@@ -265,8 +265,8 @@
 .markets-infobox {
   --ib-cut: 16px;
   position: absolute;
-  left: 20%;
-  top: 38%;
+  left: 52%;
+  top: 15%;
   width: min(24rem, 30vw);
   min-width: 260px;
   padding: 1.75rem 2rem;
