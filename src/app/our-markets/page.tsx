@@ -17,6 +17,36 @@ const U = (id: string) =>
 // every time the video changes.
 const VIDEO_CACHE_BUST = "7e6d409d62";
 
+const clamp01 = (v: number) => Math.max(0, Math.min(1, v));
+const seg = (v: number, a: number, b: number) => clamp01((v - a) / (b - a));
+// Same fade-in/hold/fade-out shape as the home page's card timing, in video
+// frames (this page uses ScrollVideoShowcase's default pxPerFrame, so no
+// custom "scrolls" unit is needed here).
+const FADE_FRAMES = 10;
+
+// Electrical panel + glass-wireframe moment in the first clip (frame ~140
+// of 722, hence 0.194) — located by extracting and eyeballing frames.
+// Holds 40 frames, fading out before the wireframe breaks apart into the
+// next interior shot.
+const ELECTRICAL_SCENE_START_FRAC = 0.194;
+const ELECTRICAL_HOLD_FRAMES = 40;
+
+// Rooftop solar + battery-storage aerial, near the end of the first clip
+// (frame ~300 of 722, hence 0.415) — the cyan line runs from the panels
+// down to the battery unit on the lower deck. Holds until the clip cuts to
+// the second clip's exterior shot (~frame 361), fading out right at that
+// boundary so it doesn't bleed into the next scene.
+const BATTERY_SCENE_START_FRAC = 0.415;
+const BATTERY_HOLD_FRAMES = 40;
+
+function sceneOpacity(frame: number, total: number, startFrac: number, holdFrames: number) {
+  const start = total * startFrac;
+  const fadeInEnd = start + FADE_FRAMES;
+  const holdEnd = fadeInEnd + holdFrames;
+  const fadeOutEnd = holdEnd + FADE_FRAMES;
+  return Math.min(seg(frame, start, fadeInEnd), 1 - seg(frame, holdEnd, fadeOutEnd));
+}
+
 type MarketItem = {
   label: string;
   image: string;
@@ -86,6 +116,22 @@ function MarketCarousel() {
 }
 
 export default function OurMarketsPage() {
+  const electricalBoxRef = useRef<HTMLDivElement>(null);
+  const batteryBoxRef = useRef<HTMLDivElement>(null);
+
+  function handleVideoFrame(frame: number, total: number) {
+    if (electricalBoxRef.current) {
+      electricalBoxRef.current.style.opacity = String(
+        sceneOpacity(frame, total, ELECTRICAL_SCENE_START_FRAC, ELECTRICAL_HOLD_FRAMES)
+      );
+    }
+    if (batteryBoxRef.current) {
+      batteryBoxRef.current.style.opacity = String(
+        sceneOpacity(frame, total, BATTERY_SCENE_START_FRAC, BATTERY_HOLD_FRAMES)
+      );
+    }
+  }
+
   return (
     <>
       <Navbar />
@@ -144,6 +190,28 @@ export default function OurMarketsPage() {
         <ScrollVideoShowcase
           videoFile={`markets-showcase.mp4?v=${VIDEO_CACHE_BUST}`}
           objectFit="cover"
+          onFrame={handleVideoFrame}
+          overlay={
+            <>
+              <div className="markets-infobox" ref={electricalBoxRef}>
+                <h3 className="markets-infobox__title">Electrical Services</h3>
+                <p className="markets-infobox__body">
+                  We offer residential electrical services including panel
+                  upgrades, wiring, lighting installation, troubleshooting,
+                  and system upgrades to ensure your home is safe, efficient,
+                  and up to code.
+                </p>
+              </div>
+              <div className="markets-infobox markets-infobox--battery" ref={batteryBoxRef}>
+                <h3 className="markets-infobox__title">Battery Storage</h3>
+                <p className="markets-infobox__body">
+                  BlueSun installs residential battery systems that provide
+                  backup power, energy independence, and better control over
+                  when and how electricity is used.
+                </p>
+              </div>
+            </>
+          }
         />
 
         {/* ============================================================

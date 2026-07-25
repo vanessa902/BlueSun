@@ -256,6 +256,100 @@
 }
 
 /* ================================================================
+   Scroll-video info card
+   Same chamfered-corner black card design as the home page's
+   ScrollVideoShowcase overlay (.eb-infobox in enerblock.css) — reimplemented
+   here under its own class names since this page doesn't import that
+   stylesheet.
+   ================================================================ */
+.markets-infobox {
+  --ib-cut: 16px;
+  position: absolute;
+  left: 20%;
+  top: 38%;
+  width: min(24rem, 30vw);
+  min-width: 260px;
+  padding: 1.75rem 2rem;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.62);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  pointer-events: none;
+  /* Hidden by default so it never flashes visible before the first
+     onFrame callback runs; JS drives opacity per scroll frame so it only
+     shows during its own scene window. */
+  opacity: 0;
+  will-change: opacity;
+  transition: opacity 0.15s linear;
+  clip-path: polygon(
+    var(--ib-cut) 0,
+    calc(100% - var(--ib-cut)) 0,
+    100% var(--ib-cut),
+    100% calc(100% - var(--ib-cut)),
+    calc(100% - var(--ib-cut)) 100%,
+    var(--ib-cut) 100%,
+    0 calc(100% - var(--ib-cut)),
+    0 var(--ib-cut)
+  );
+}
+/* Aerial rooftop solar + battery-storage moment, away from the driveway/
+   battery unit the shot itself is centered on. */
+.markets-infobox--battery {
+  top: 14%;
+  left: 6%;
+}
+/* Hairline outline following the same chamfered shape. */
+.markets-infobox::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: rgba(255, 255, 255, 0.16);
+  clip-path: polygon(
+    var(--ib-cut) 0,
+    calc(100% - var(--ib-cut)) 0,
+    100% var(--ib-cut),
+    100% calc(100% - var(--ib-cut)),
+    calc(100% - var(--ib-cut)) 100%,
+    var(--ib-cut) 100%,
+    0 calc(100% - var(--ib-cut)),
+    0 var(--ib-cut),
+    var(--ib-cut) 1px,
+    1px var(--ib-cut),
+    1px calc(100% - var(--ib-cut)),
+    var(--ib-cut) calc(100% - 1px),
+    calc(100% - var(--ib-cut)) calc(100% - 1px),
+    calc(100% - 1px) calc(100% - var(--ib-cut)),
+    calc(100% - 1px) var(--ib-cut),
+    calc(100% - var(--ib-cut)) 1px
+  );
+}
+.markets-infobox__title {
+  font-size: clamp(1.05rem, 1.5vw, 1.3rem);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin-bottom: 0.5rem;
+}
+.markets-infobox__body {
+  font-size: 0.875rem;
+  font-weight: 300;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.85);
+}
+@media (max-width: 720px) {
+  .markets-infobox {
+    --ib-cut: 12px;
+    left: 1rem;
+    right: 1rem;
+    top: auto;
+    bottom: 6%;
+    width: auto;
+    min-width: 0;
+    padding: 1.25rem 1.5rem;
+  }
+}
+
+/* ================================================================
    Responsive
    ================================================================ */
 @media (max-width: 900px) {
