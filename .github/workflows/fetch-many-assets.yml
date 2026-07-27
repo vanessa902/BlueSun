@@ -1,0 +1,47 @@
+name: Fetch Many External Assets
+
+# Batch version of fetch-asset.yml: downloads several files in one job and
+# commits/pushes them together, instead of dispatching one workflow run per
+# file (which races on the final git push when run concurrently — every
+# extra file after the first tends to fail with a non-fast-forward push
+# and needs a manual re-dispatch). One run, one sequential loop, one push.
+on:
+  workflow_dispatch:
+    inputs:
+      manifest:
+        description: "One 'url|dest_path' pair per line"
+        required: true
+      branch:
+        description: "Branch to commit the files to"
+        required: true
+        default: claude/cool-hawking-u9zv13
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.branch }}
+
+      - name: Download files
+        run: |
+          set -e
+          while IFS='|' read -r url dest; do
+            [ -z "$url" ] && continue
+            echo "== $dest =="
+            mkdir -p "$(dirname "$dest")"
+            curl -L --fail --show-error -o "$dest" "$url"
+            ls -la "$dest"
+          done <<< "${{ inputs.manifest }}"
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Fetch external assets (batch)" || echo "Nothing to commit"
+          git push origin HEAD:${{ inputs.branch }}
