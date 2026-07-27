@@ -42,7 +42,10 @@ const ELECTRICAL_HOLD_FRAMES = 40;
 // (frame ~300 of 722, hence 0.415) — the cyan line runs from the panels
 // down to the battery unit on the lower deck. Holds until the clip cuts to
 // the second clip's exterior shot (~frame 361), fading out right at that
-// boundary so it doesn't bleed into the next scene.
+// boundary so it doesn't bleed into the next scene. Shared by both the
+// Battery Storage and Residential Solar cards — same scene, one for the
+// panels, one for the battery unit it feeds — just positioned apart on
+// screen (see .markets-infobox--solar in our-markets.css).
 const BATTERY_SCENE_START_FRAC = 0.415;
 const BATTERY_HOLD_FRAMES = 40;
 
@@ -140,6 +143,7 @@ export default function OurMarketsPage() {
   const windowsBoxRef = useRef<HTMLDivElement>(null);
   const electricalBoxRef = useRef<HTMLDivElement>(null);
   const batteryBoxRef = useRef<HTMLDivElement>(null);
+  const solarBoxRef = useRef<HTMLDivElement>(null);
   const roofingBoxRef = useRef<HTMLDivElement>(null);
   const hvacBoxRef = useRef<HTMLDivElement>(null);
 
@@ -156,6 +160,11 @@ export default function OurMarketsPage() {
     }
     if (batteryBoxRef.current) {
       batteryBoxRef.current.style.opacity = String(
+        sceneOpacity(frame, total, BATTERY_SCENE_START_FRAC, BATTERY_HOLD_FRAMES)
+      );
+    }
+    if (solarBoxRef.current) {
+      solarBoxRef.current.style.opacity = String(
         sceneOpacity(frame, total, BATTERY_SCENE_START_FRAC, BATTERY_HOLD_FRAMES)
       );
     }
@@ -255,6 +264,14 @@ export default function OurMarketsPage() {
                   BlueSun installs residential battery systems that provide
                   backup power, energy independence, and better control over
                   when and how electricity is used.
+                </p>
+              </div>
+              <div className="markets-infobox markets-infobox--solar" ref={solarBoxRef}>
+                <h3 className="markets-infobox__title">Residential Solar</h3>
+                <p className="markets-infobox__body">
+                  Our residential solar systems help homeowners reduce
+                  electricity costs, improve energy efficiency, and gain
+                  greater control over their power.
                 </p>
               </div>
               <div className="markets-infobox markets-infobox--roofing" ref={roofingBoxRef}>

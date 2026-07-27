@@ -298,6 +298,13 @@
   top: 14%;
   left: 6%;
 }
+/* Same aerial as Battery Storage above (same scene, see the shared
+   BATTERY_SCENE_START_FRAC in page.tsx) — upper-right, near the panels
+   themselves, per feedback (screenshot with the target area marked). */
+.markets-infobox--solar {
+  top: 6%;
+  left: 64%;
+}
 /* Opening exterior shot, over the facade's window/balcony wall per
    feedback (screenshot with the target area circled). */
 .markets-infobox--windows {
