@@ -310,6 +310,13 @@
   top: 18%;
   left: 56%;
 }
+/* Kitchen ceiling ductwork wireframe moment, over the chandelier/plants
+   area on the left, per feedback (screenshot with the target area
+   circled). */
+.markets-infobox--hvac {
+  top: 27%;
+  left: 16%;
+}
 /* Hairline outline following the same chamfered shape. */
 .markets-infobox::before {
   content: "";

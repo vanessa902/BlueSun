@@ -53,6 +53,13 @@ const BATTERY_HOLD_FRAMES = 40;
 const ROOFING_SCENE_START_FRAC = 0.506;
 const ROOFING_HOLD_FRAMES = 25;
 
+// Kitchen ceiling ductwork/pipe wireframe, later in the second clip (frame
+// ~505 of 722, hence 0.699) — forms up close then pulls back to a wide
+// shot with the chandelier and plants visible. Holds 55 frames, fading out
+// right before the cut to the next, more distant exterior shot.
+const HVAC_SCENE_START_FRAC = 0.699;
+const HVAC_HOLD_FRAMES = 55;
+
 function sceneOpacity(frame: number, total: number, startFrac: number, holdFrames: number) {
   const start = total * startFrac;
   const fadeInEnd = start + FADE_FRAMES;
@@ -134,6 +141,7 @@ export default function OurMarketsPage() {
   const electricalBoxRef = useRef<HTMLDivElement>(null);
   const batteryBoxRef = useRef<HTMLDivElement>(null);
   const roofingBoxRef = useRef<HTMLDivElement>(null);
+  const hvacBoxRef = useRef<HTMLDivElement>(null);
 
   function handleVideoFrame(frame: number, total: number) {
     if (windowsBoxRef.current) {
@@ -154,6 +162,11 @@ export default function OurMarketsPage() {
     if (roofingBoxRef.current) {
       roofingBoxRef.current.style.opacity = String(
         sceneOpacity(frame, total, ROOFING_SCENE_START_FRAC, ROOFING_HOLD_FRAMES)
+      );
+    }
+    if (hvacBoxRef.current) {
+      hvacBoxRef.current.style.opacity = String(
+        sceneOpacity(frame, total, HVAC_SCENE_START_FRAC, HVAC_HOLD_FRAMES)
       );
     }
   }
@@ -250,6 +263,14 @@ export default function OurMarketsPage() {
                   We install, repair, and replace residential roofing
                   systems using dependable materials and quality workmanship
                   designed to protect your home.
+                </p>
+              </div>
+              <div className="markets-infobox markets-infobox--hvac" ref={hvacBoxRef}>
+                <h3 className="markets-infobox__title">Residential HVAC</h3>
+                <p className="markets-infobox__body">
+                  BlueSun provides HVAC installation, replacement, repair,
+                  and maintenance to keep homes comfortable and energy
+                  efficient throughout the year.
                 </p>
               </div>
             </>
