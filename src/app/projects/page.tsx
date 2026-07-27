@@ -15,12 +15,20 @@ const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 const SMALL_IMG = `${BASE}/about-studio-small.jpg`;
 const LARGE_IMG = `${BASE}/about-studio-large.jpg`;
 
-const CREW_WATCH = `${BASE}/project-crew-watch.jpg`;
-const CREW_GROUP = `${BASE}/project-crew-group.jpg`;
-const ROOFTOP_AERIAL = `${BASE}/project-rooftop-aerial.jpg`;
-const AERIAL_VIDEO = `${BASE}/contact-aerial.mp4`;
-const ROOFTOP_VIDEO = `${BASE}/contact-rooftop.mp4`;
-const NIGHT_VIDEO = `${BASE}/contact-scroll.mp4`;
+// Real BlueSun job-site media (drone footage + crew photos), sourced from
+// the team's own Supabase uploads rather than stock/placeholder images.
+const ROOFING_1 = `${BASE}/project-roofing-1.jpg`;
+const ROOFING_2 = `${BASE}/project-roofing-2.jpg`;
+const ROOFING_VIDEO = `${BASE}/project-roofing.mp4`;
+const MECHANICAL_1 = `${BASE}/project-mechanical-1.jpg`;
+const MECHANICAL_2 = `${BASE}/project-mechanical-2.jpg`;
+const MECHANICAL_VIDEO = `${BASE}/project-mechanical.mp4`;
+const HVAC_LIFT_1 = `${BASE}/project-hvac-lift-1.jpg`;
+const HVAC_LIFT_2 = `${BASE}/project-hvac-lift-2.jpg`;
+const HVAC_LIFT_VIDEO = `${BASE}/project-hvac-lift.mp4`;
+const FRAMING_1 = `${BASE}/project-framing-1.jpg`;
+const FRAMING_2 = `${BASE}/project-framing-2.jpg`;
+const FRAMING_VIDEO = `${BASE}/project-framing.mp4`;
 
 type SwapProject = {
   title: string;
@@ -33,29 +41,29 @@ type SwapProject = {
 
 const SWAP_PROJECTS: SwapProject[] = [
   {
-    title: "Rooftop HVAC Lift",
-    desc: "A full mechanical unit lifted by helicopter and set in place without ever shutting the building down.",
-    swapImages: [CREW_WATCH, LARGE_IMG],
-    bigVideo: AERIAL_VIDEO,
+    title: "Residential Roofing",
+    desc: "A full apartment complex re-roof, from tear-off to new membrane, documented from the air and on the deck.",
+    swapImages: [ROOFING_1, ROOFING_2],
+    bigVideo: ROOFING_VIDEO,
   },
   {
     title: "Mechanical Retrofit",
-    desc: "Rooftop-level upgrades planned around live building operations, from survey to final tie-in.",
-    swapImages: [ROOFTOP_AERIAL, SMALL_IMG],
-    bigVideo: ROOFTOP_VIDEO,
+    desc: "Rooftop-level HVAC survey and unit swaps planned around live building operations.",
+    swapImages: [MECHANICAL_1, MECHANICAL_2],
+    bigVideo: MECHANICAL_VIDEO,
   },
   {
-    title: "Boots on the Ground",
-    desc: "Every lift starts with a crew that knows the site cold — safety briefed, positioned, and ready.",
-    swapImages: [CREW_GROUP, CREW_WATCH],
-    bigImage: LARGE_IMG,
+    title: "Rooftop HVAC Lift",
+    desc: "A full mechanical unit craned into place and set on the roof without ever shutting the building down.",
+    swapImages: [HVAC_LIFT_1, HVAC_LIFT_2],
+    bigVideo: HVAC_LIFT_VIDEO,
     reversed: true,
   },
   {
-    title: "Built After Hours",
-    desc: "Night and weekend phasing kept the job moving without disrupting tenants or traffic.",
-    swapImages: [SMALL_IMG, ROOFTOP_AERIAL],
-    bigVideo: NIGHT_VIDEO,
+    title: "Framing",
+    desc: "Structural framing and renovation work, tracked from above as the building takes shape.",
+    swapImages: [FRAMING_1, FRAMING_2],
+    bigVideo: FRAMING_VIDEO,
     reversed: true,
   },
 ];
