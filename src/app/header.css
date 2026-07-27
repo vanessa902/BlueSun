@@ -93,15 +93,167 @@
   color: #fff;
 }
 
-@media (max-width: 720px) {
+/* ==========================================================================
+   Mobile: hamburger + drawer
+   The five links stop fitting at ~820px. They used to shrink to 0.62rem
+   (~10px) and *still* overflow the bar — "Projects" and "Contact us" were
+   pushed off-screen entirely — so below that width they're swapped for a
+   burger that opens a full-screen drawer.
+   ========================================================================== */
+
+/* Hidden on desktop; the inline .bsnav__links are the nav there. */
+.bsnav__burger {
+  display: none;
+  /* 44px is the minimum comfortable touch target. */
+  width: 44px;
+  height: 44px;
+  margin: -0.35rem -0.5rem -0.35rem 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+.bsnav__burger-box {
+  position: relative;
+  display: block;
+  width: 22px;
+  height: 14px;
+}
+.bsnav__burger-box span {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 1.5px;
+  background: currentColor;
+  border-radius: 2px;
+  transition: transform 0.28s ease, opacity 0.2s ease, top 0.28s ease;
+}
+.bsnav__burger-box span:nth-child(1) {
+  top: 0;
+}
+.bsnav__burger-box span:nth-child(2) {
+  top: 6.25px;
+}
+.bsnav__burger-box span:nth-child(3) {
+  top: 12.5px;
+}
+/* Collapse the three bars into an X */
+.bsnav__burger-box.is-open span:nth-child(1) {
+  top: 6.25px;
+  transform: rotate(45deg);
+}
+.bsnav__burger-box.is-open span:nth-child(2) {
+  opacity: 0;
+}
+.bsnav__burger-box.is-open span:nth-child(3) {
+  top: 6.25px;
+  transform: rotate(-45deg);
+}
+
+/* Drawer — a sibling of <header>, since .bsnav's clip-path would clip it. */
+.bsnav-drawer {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 49; /* just under .bsnav (50) so the burger stays tappable */
+}
+.bsnav-drawer__scrim {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  border: 0;
+  padding: 0;
+  background: rgba(10, 13, 17, 0.72);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  animation: bsnav-fade-in 0.25s ease both;
+}
+.bsnav-drawer__panel {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.25rem;
+  /* clear the fixed header */
+  padding: 6rem clamp(1.5rem, 8vw, 3rem) 3rem;
+  background: rgba(14, 18, 24, 0.96);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+  backdrop-filter: blur(20px) saturate(140%);
+  animation: bsnav-slide-in 0.28s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.bsnav-drawer__link {
+  color: rgba(255, 255, 255, 0.9);
+  text-decoration: none;
+  font-family: var(--font-haffer), sans-serif;
+  font-size: clamp(1.5rem, 7vw, 2.1rem);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+  /* generous vertical padding => tall, easy tap targets */
+  padding: 0.6rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+}
+.bsnav-drawer__link:last-child {
+  border-bottom: 0;
+}
+.bsnav-drawer__link:active {
+  color: #fff;
+}
+
+@keyframes bsnav-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes bsnav-slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 820px) {
   .bsnav {
     --bsnav-cut: 10px;
+    padding: 0.55rem 1rem;
+    width: calc(100% - 1.5rem);
   }
+  /* Inline links out, burger in. */
   .bsnav__links {
-    gap: 0.7rem;
+    display: none;
   }
-  .bsnav__link {
-    font-size: 0.62rem;
-    letter-spacing: 0.02em;
+  .bsnav__burger {
+    display: flex;
+  }
+  /* The logo image is only ~20px tall; pad the anchor out so the tap
+     target matches the burger's without moving the artwork. */
+  .bsnav__logo {
+    padding: 12px 0;
+    margin: -12px 0;
+  }
+  .bsnav-drawer.is-open {
+    display: block;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bsnav__burger-box span,
+  .bsnav-drawer__scrim,
+  .bsnav-drawer__panel {
+    transition: none;
+    animation: none;
   }
 }

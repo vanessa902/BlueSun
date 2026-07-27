@@ -655,3 +655,18 @@
 .contact-form__submit:hover {
   opacity: 0.85;
 }
+
+/* ==========================================================================
+   Mobile type floor
+   The uppercase eyebrow/tag labels sit at 0.7rem (11.2px), which reads as
+   fine print on a phone. Nudge them up — they're wide-tracked and short,
+   so the extra size costs no layout.
+   ========================================================================== */
+@media (max-width: 640px) {
+  .contact-featured__card-label,
+  .contact-philosophy__block-label,
+  .contact-services__card-tag {
+    font-size: 0.8rem;
+    letter-spacing: 0.12em;
+  }
+}

@@ -160,7 +160,9 @@
     flex-wrap: wrap;
   }
   .proj-live {
-    padding: 0.6rem 1.4rem;
-    font-size: 0.7rem;
+    /* Was 0.7rem/0.6rem padding => a 31px-tall button. Pad it up to a
+       comfortable touch target and lift the label off the 11px floor. */
+    padding: 0.85rem 1.5rem;
+    font-size: 0.78rem;
   }
 }

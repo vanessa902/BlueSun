@@ -155,7 +155,9 @@
   gap: calc(1 * var(--u));
 }
 .markets-page .hero-eyebrow {
-  font-size: calc(1.4 * var(--u));
+  /* floor: --u shrinks with the viewport, this keeps the label legible
+     on narrow phones (inert at desktop, where 1.4 * --u == 14px) */
+  font-size: max(11px, calc(1.4 * var(--u)));
   letter-spacing: 0.4em;
   text-transform: lowercase;
   font-weight: 400;
@@ -175,7 +177,7 @@
 .markets-page .about-text {
   max-width: calc(70 * var(--u));
   margin-top: calc(1 * var(--u));
-  font-size: calc(1.6 * var(--u));
+  font-size: max(14px, calc(1.6 * var(--u)));
   line-height: 1.6;
   text-transform: none;
   font-weight: 400;
@@ -238,7 +240,7 @@
   bottom: calc(1 * var(--u));
   z-index: 2;
   color: #fff;
-  font-size: calc(1.3 * var(--u));
+  font-size: max(11px, calc(1.3 * var(--u)));
   text-transform: uppercase;
   letter-spacing: 0.04em;
   text-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
@@ -248,7 +250,7 @@
   max-width: calc(80 * var(--u));
   margin: 0 auto;
   padding: calc(2 * var(--u));
-  font-size: calc(1.4 * var(--u));
+  font-size: max(13px, calc(1.4 * var(--u)));
   line-height: 1.6;
   text-transform: none;
   font-weight: 400;
@@ -377,11 +379,79 @@
 
 /* ================================================================
    Responsive
+
+   This page sizes *everything* off --u, which is pinned to the 1512px
+   design width (--u == 10px there). That ratio doesn't survive small
+   screens: at 390px --u collapses to 2.6px, so "14px" body copy actually
+   rendered at 3.6px — unreadable. The steps below re-base --u against
+   progressively narrower reference widths so type lands back at a normal
+   size, and the few places that multiply --u by a large factor (the
+   display headings, the gallery tiles) get their own overrides so they
+   don't blow up once --u grows.
    ================================================================ */
+@media (max-width: 1023px) {
+  .markets-page {
+    --u: calc(100vw / 1080 * 10);
+  }
+}
+
 @media (max-width: 900px) {
   .markets-page .row-content {
     display: flex;
     flex-direction: column;
     align-items: stretch;
+  }
+}
+
+@media (max-width: 820px) {
+  .markets-page {
+    --u: calc(100vw / 660 * 10);
+  }
+  /* 10 * --u would be ~124px here; clamp it to something that fits. */
+  .markets-page .hero-title {
+    font-size: clamp(3rem, 9.5vw, 5.5rem);
+  }
+}
+
+@media (max-width: 600px) {
+  .markets-page {
+    --u: calc(100vw / 455 * 10);
+  }
+  .markets-page .hero {
+    /* 100vh of mostly-empty space read as a broken page on a phone. */
+    min-height: 78vh;
+    padding-top: calc(6 * var(--u));
+  }
+  /* The technical frame graphic is stretched over the hero with
+     object-fit: fill, so at a phone's aspect ratio its inner box no longer
+     lines up with the copy — the rules were striking through the body text.
+     It's purely decorative, so drop it here rather than fight the stretch. */
+  .markets-page .hero-frame-overlay {
+    display: none;
+  }
+  .markets-page .hero-title {
+    font-size: clamp(2.2rem, 11.5vw, 3rem);
+    line-height: 1;
+  }
+  .markets-page .hero-eyebrow {
+    letter-spacing: 0.28em;
+  }
+  .markets-page .about-text {
+    max-width: 100%;
+    padding: 0 calc(1 * var(--u));
+  }
+
+  /* Carousel: fewer, larger tiles so each one is actually legible. */
+  .markets-page .gallery {
+    min-height: auto;
+    padding: calc(4 * var(--u)) 0;
+  }
+  .markets-page .gallery-item {
+    flex: 0 0 calc(21 * var(--u));
+    height: calc(28 * var(--u));
+  }
+  .markets-page .gallery-caption {
+    max-width: 100%;
+    padding: calc(2 * var(--u)) calc(2.5 * var(--u));
   }
 }

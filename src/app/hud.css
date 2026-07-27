@@ -148,5 +148,10 @@
 
 @media (max-width: 768px) {
   #hero-frame .hf-svg { object-fit: cover; }
-  #hero-frame .hf-chip { font-size: 0.55rem; }
+  /* was 0.55rem — 8.8px, well under the legible floor on a phone */
+  #hero-frame .hf-chip {
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    padding: 0.45rem 0.7rem;
+  }
 }

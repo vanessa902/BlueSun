@@ -552,3 +552,11 @@
     padding: 1.25rem 1.5rem;
   }
 }
+
+/* was 0.6rem — 9.6px; lift it across the whole touch range */
+@media (max-width: 820px) {
+  .eb-intro__caption .meta {
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+  }
+}
