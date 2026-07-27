@@ -35,17 +35,6 @@ const HVAC_LIFT_VIDEO = `${BASE}/project-hvac-lift.mp4`;
 const FRAMING_1 = `${BASE}/project-framing-1.jpg`;
 const FRAMING_2 = `${BASE}/project-framing-2.jpg`;
 const FRAMING_VIDEO = `${BASE}/project-framing.mp4`;
-// Rendered concept walkthroughs (not job-site photography) — reused from
-// the same source clips as the Home hero and Our Markets scroll videos.
-const SOLAR_ELEC_1 = `${BASE}/project-solar-elec-1.jpg`;
-const SOLAR_ELEC_2 = `${BASE}/project-solar-elec-2.jpg`;
-const SOLAR_ELEC_VIDEO = `${BASE}/project-solar-elec.mp4`;
-const SOLAR_BATTERY_1 = `${BASE}/project-solar-battery-1.jpg`;
-const SOLAR_BATTERY_2 = `${BASE}/project-solar-battery-2.jpg`;
-const SOLAR_BATTERY_VIDEO = `${BASE}/project-solar-battery.mp4`;
-const HIGHRISE_1 = `${BASE}/project-highrise-1.jpg`;
-const HIGHRISE_2 = `${BASE}/project-highrise-2.jpg`;
-const HIGHRISE_VIDEO = `${BASE}/project-highrise.mp4`;
 
 type SwapProject = {
   title: string;
@@ -95,25 +84,6 @@ const SWAP_PROJECTS: SwapProject[] = [
     swapImages: [FRAMING_1, FRAMING_2],
     bigVideo: FRAMING_VIDEO,
     reversed: true,
-  },
-  {
-    title: "Residential Solar & Electrical",
-    desc: "Panel placement and electrical tie-in planned together from the start of the design.",
-    swapImages: [SOLAR_ELEC_1, SOLAR_ELEC_2],
-    bigVideo: SOLAR_ELEC_VIDEO,
-  },
-  {
-    title: "Residential Solar & Battery Storage",
-    desc: "Rooftop solar paired with battery storage for backup power and energy independence.",
-    swapImages: [SOLAR_BATTERY_1, SOLAR_BATTERY_2],
-    bigVideo: SOLAR_BATTERY_VIDEO,
-    reversed: true,
-  },
-  {
-    title: "Commercial High-Rise",
-    desc: "Multi-family and commercial-scale work, phased to keep the building running after hours.",
-    swapImages: [HIGHRISE_1, HIGHRISE_2],
-    bigVideo: HIGHRISE_VIDEO,
   },
 ];
 
