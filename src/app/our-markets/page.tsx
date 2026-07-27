@@ -46,6 +46,13 @@ const ELECTRICAL_HOLD_FRAMES = 40;
 const BATTERY_SCENE_START_FRAC = 0.415;
 const BATTERY_HOLD_FRAMES = 40;
 
+// Second clip's own opening exterior shot (frame ~365 of 722, hence 0.506)
+// — the lit roofline overhang over the glass facade, right after the cut
+// from the first clip. Holds 25 frames, fading out before the blue
+// structural wireframe forms over the facade in the next moment.
+const ROOFING_SCENE_START_FRAC = 0.506;
+const ROOFING_HOLD_FRAMES = 25;
+
 function sceneOpacity(frame: number, total: number, startFrac: number, holdFrames: number) {
   const start = total * startFrac;
   const fadeInEnd = start + FADE_FRAMES;
@@ -126,6 +133,7 @@ export default function OurMarketsPage() {
   const windowsBoxRef = useRef<HTMLDivElement>(null);
   const electricalBoxRef = useRef<HTMLDivElement>(null);
   const batteryBoxRef = useRef<HTMLDivElement>(null);
+  const roofingBoxRef = useRef<HTMLDivElement>(null);
 
   function handleVideoFrame(frame: number, total: number) {
     if (windowsBoxRef.current) {
@@ -141,6 +149,11 @@ export default function OurMarketsPage() {
     if (batteryBoxRef.current) {
       batteryBoxRef.current.style.opacity = String(
         sceneOpacity(frame, total, BATTERY_SCENE_START_FRAC, BATTERY_HOLD_FRAMES)
+      );
+    }
+    if (roofingBoxRef.current) {
+      roofingBoxRef.current.style.opacity = String(
+        sceneOpacity(frame, total, ROOFING_SCENE_START_FRAC, ROOFING_HOLD_FRAMES)
       );
     }
   }
@@ -229,6 +242,14 @@ export default function OurMarketsPage() {
                   BlueSun installs residential battery systems that provide
                   backup power, energy independence, and better control over
                   when and how electricity is used.
+                </p>
+              </div>
+              <div className="markets-infobox markets-infobox--roofing" ref={roofingBoxRef}>
+                <h3 className="markets-infobox__title">Residential Roofing</h3>
+                <p className="markets-infobox__body">
+                  We install, repair, and replace residential roofing
+                  systems using dependable materials and quality workmanship
+                  designed to protect your home.
                 </p>
               </div>
             </>

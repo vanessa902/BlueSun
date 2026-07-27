@@ -304,6 +304,12 @@
   top: 24%;
   left: 57%;
 }
+/* Second clip's opening exterior shot, over the column between the two
+   glass wings, per feedback (screenshot with the target area circled). */
+.markets-infobox--roofing {
+  top: 18%;
+  left: 56%;
+}
 /* Hairline outline following the same chamfered shape. */
 .markets-infobox::before {
   content: "";
