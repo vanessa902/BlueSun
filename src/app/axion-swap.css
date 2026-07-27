@@ -14,7 +14,6 @@
   --col-one-height: min(70vh, calc((380 / 272) * var(--column-one)));
   --col-two-height: min(110vh, calc((1148 / 940) * var(--column-two)));
   --catch-up: calc(var(--col-two-height) - var(--col-one-height));
-  --heading: clamp(2rem, 6vw + 1rem, 10rem);
 
   width: 100%;
   background: #efefef;
@@ -24,26 +23,6 @@
 .axion-swap :where(main, section) {
   width: 100%;
 }
-.axion-swap header {
-  height: 100vh;
-  display: grid;
-  place-items: center;
-  align-content: center;
-  margin-bottom: 25vh;
-  text-align: center;
-  padding: 0 1.5rem;
-}
-.axion-swap section:last-of-type {
-  height: 50vh;
-  display: grid;
-  place-items: center;
-  align-content: center;
-  text-align: center;
-}
-.axion-swap section:last-of-type h2:last-of-type {
-  font-size: calc(var(--heading) * 0.15);
-  text-transform: uppercase;
-}
 .axion-swap img,
 .axion-swap video {
   background: hsl(0 0% 90%);
@@ -52,35 +31,6 @@
   border-radius: 6px;
   object-fit: cover;
   mix-blend-mode: plus-lighter;
-}
-.axion-swap h1 {
-  font-size: var(--heading);
-  margin: 0;
-  position: relative;
-}
-.axion-swap h1 span {
-  position: absolute;
-  bottom: 100%;
-  left: 50%;
-  display: inline-block;
-  translate: -50% 50%;
-  font-size: calc(var(--heading) * 0.2);
-  text-transform: uppercase;
-  color: #0066ff;
-}
-.axion-swap h2 {
-  font-size: calc(var(--heading) * 0.8);
-}
-.axion-swap section > h2 {
-  text-align: center;
-}
-.axion-swap header h2 {
-  text-transform: uppercase;
-  opacity: 0.8;
-  font-size: calc(var(--heading) * 0.13);
-}
-.axion-swap :where(h1, h2, p) {
-  margin: 0;
 }
 .axion-swap main {
   display: flex;
@@ -150,22 +100,6 @@
   left: 6px;
 }
 
-.axion-swap .caption {
-  position: absolute;
-  bottom: 100%;
-  padding: 1rem;
-  font-size: 12px;
-  width: 40ch;
-  max-width: 90%;
-  text-align: right;
-  right: 6px;
-  text-transform: uppercase;
-  display: grid;
-  gap: 0.25rem;
-}
-.axion-swap .caption h2 {
-  font-size: 12px;
-}
 .axion-swap .swapper img {
   position: absolute;
 }

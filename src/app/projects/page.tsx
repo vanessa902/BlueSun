@@ -171,14 +171,6 @@ export default function ProjectsPage() {
           Section 4 — Scroll-driven work showcase
           ============================================================ */}
       <div className="axion-swap">
-        <header>
-          <h1>
-            <span>Selected work</span>
-            Built to hold up
-          </h1>
-          <h2>Scroll to explore</h2>
-        </header>
-
         <main>
           {SWAP_PROJECTS.map((project) => (
             <section key={project.title}>
@@ -194,10 +186,6 @@ export default function ProjectsPage() {
                       <div />
                     </div>
                   </div>
-                  <div className="caption">
-                    <h2>{project.title}</h2>
-                    <p>{project.desc}</p>
-                  </div>
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={project.swapImages[0]} alt="" />
                   {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -208,11 +196,6 @@ export default function ProjectsPage() {
               </div>
             </section>
           ))}
-
-          <section>
-            <h2>Let&rsquo;s build something worth scrolling for.</h2>
-            <h2>Available for new projects — Q1 2026</h2>
-          </section>
         </main>
       </div>
       </div>
