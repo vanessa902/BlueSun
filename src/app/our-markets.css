@@ -298,6 +298,12 @@
   top: 14%;
   left: 6%;
 }
+/* Opening exterior shot, over the facade's window/balcony wall per
+   feedback (screenshot with the target area circled). */
+.markets-infobox--windows {
+  top: 24%;
+  left: 57%;
+}
 /* Hairline outline following the same chamfered shape. */
 .markets-infobox::before {
   content: "";

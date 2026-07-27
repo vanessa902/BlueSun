@@ -24,6 +24,13 @@ const seg = (v: number, a: number, b: number) => clamp01((v - a) / (b - a));
 // custom "scrolls" unit is needed here).
 const FADE_FRAMES = 10;
 
+// Opening exterior establishing shot, right at the start of the first clip
+// (frame ~12 of 722, hence 0.017) — a slow zoom on the house facade, holds
+// through frame ~125, fading out well before Electrical's wireframe scene
+// starts (frame ~140 below), not overlapping it.
+const WINDOWS_SCENE_START_FRAC = 0.017;
+const WINDOWS_HOLD_FRAMES = 93;
+
 // Electrical panel + glass-wireframe moment in the first clip (frame ~140
 // of 722, hence 0.194) — located by extracting and eyeballing frames.
 // Holds 40 frames, fading out before the wireframe breaks apart into the
@@ -116,10 +123,16 @@ function MarketCarousel() {
 }
 
 export default function OurMarketsPage() {
+  const windowsBoxRef = useRef<HTMLDivElement>(null);
   const electricalBoxRef = useRef<HTMLDivElement>(null);
   const batteryBoxRef = useRef<HTMLDivElement>(null);
 
   function handleVideoFrame(frame: number, total: number) {
+    if (windowsBoxRef.current) {
+      windowsBoxRef.current.style.opacity = String(
+        sceneOpacity(frame, total, WINDOWS_SCENE_START_FRAC, WINDOWS_HOLD_FRAMES)
+      );
+    }
     if (electricalBoxRef.current) {
       electricalBoxRef.current.style.opacity = String(
         sceneOpacity(frame, total, ELECTRICAL_SCENE_START_FRAC, ELECTRICAL_HOLD_FRAMES)
@@ -193,6 +206,14 @@ export default function OurMarketsPage() {
           onFrame={handleVideoFrame}
           overlay={
             <>
+              <div className="markets-infobox markets-infobox--windows" ref={windowsBoxRef}>
+                <h3 className="markets-infobox__title">Windows</h3>
+                <p className="markets-infobox__body">
+                  Our energy efficient window solutions improve home
+                  comfort, appearance, insulation, security, and overall
+                  energy performance.
+                </p>
+              </div>
               <div className="markets-infobox" ref={electricalBoxRef}>
                 <h3 className="markets-infobox__title">Electrical Services</h3>
                 <p className="markets-infobox__body">
