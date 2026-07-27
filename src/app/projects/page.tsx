@@ -19,6 +19,12 @@ const LARGE_IMG = `${BASE}/about-studio-large.jpg`;
 // the team's own Supabase uploads rather than stock/placeholder images.
 const ROOFING_1 = `${BASE}/project-roofing-1.jpg`;
 const ROOFING_2 = `${BASE}/project-roofing-2.jpg`;
+const ROOFING_3 = `${BASE}/project-roofing-3.jpg`;
+const ROOFING_4 = `${BASE}/project-roofing-4.jpg`;
+const ROOFING_5 = `${BASE}/project-roofing-5.jpg`;
+const ROOFING_6 = `${BASE}/project-roofing-6.jpg`;
+const ROOFING_7 = `${BASE}/project-roofing-7.jpg`;
+const ROOFING_8 = `${BASE}/project-roofing-8.jpg`;
 const ROOFING_VIDEO = `${BASE}/project-roofing.mp4`;
 const MECHANICAL_1 = `${BASE}/project-mechanical-1.jpg`;
 const MECHANICAL_2 = `${BASE}/project-mechanical-2.jpg`;
@@ -47,17 +53,30 @@ const SWAP_PROJECTS: SwapProject[] = [
     bigVideo: ROOFING_VIDEO,
   },
   {
+    title: "Residential Roofing — Crew at Work",
+    desc: "Insulation board and membrane going down, crew on the deck.",
+    swapImages: [ROOFING_3, ROOFING_4],
+    bigImage: ROOFING_5,
+    reversed: true,
+  },
+  {
+    title: "Residential Roofing — Aerial Progress",
+    desc: "Tracking the re-roof building by building across the complex.",
+    swapImages: [ROOFING_6, ROOFING_7],
+    bigImage: ROOFING_8,
+  },
+  {
     title: "Mechanical Retrofit",
     desc: "Rooftop-level HVAC survey and unit swaps planned around live building operations.",
     swapImages: [MECHANICAL_1, MECHANICAL_2],
     bigVideo: MECHANICAL_VIDEO,
+    reversed: true,
   },
   {
     title: "Rooftop HVAC Lift",
     desc: "A full mechanical unit craned into place and set on the roof without ever shutting the building down.",
     swapImages: [HVAC_LIFT_1, HVAC_LIFT_2],
     bigVideo: HVAC_LIFT_VIDEO,
-    reversed: true,
   },
   {
     title: "Framing",
@@ -182,7 +201,7 @@ export default function ProjectsPage() {
         <main>
           {SWAP_PROJECTS.map((project) => (
             <section key={project.title}>
-              <div className="image-box">
+              <div className={`image-box${project.reversed ? " image-box--reversed" : ""}`}>
                 {project.reversed && <ControllerMedia project={project} />}
 
                 <div className="swapper">
