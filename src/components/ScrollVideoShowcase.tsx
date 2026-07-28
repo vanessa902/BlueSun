@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useRef, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { lenisBridge } from "@/lib/lenisBridge";
+import { PLAYBACK_MODE_QUERY, playInlineWithGestureFallback } from "@/lib/videoMode";
 import "../app/scroll-video.css";
 
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
@@ -99,6 +100,51 @@ function computeTitleTiming(introBudgetFrames: number) {
   };
 }
 
+type TitleTiming = ReturnType<typeof computeTitleTiming>;
+
+/** Drives the two-word typewriter title to the state it should be in at
+ * `frame`. Hoisted to module scope (rather than living inside the scroll
+ * effect) because both the desktop scroll path and the mobile playback path
+ * need it — on mobile `frame` comes from video playback instead of scroll. */
+function applyTitle(
+  t1: HTMLSpanElement | null,
+  t2: HTMLSpanElement | null,
+  timing: TitleTiming,
+  frame: number
+) {
+  if (!t1 || !t2) return;
+
+  // Line 1 ("Commercial"): types in, holds, fades out — fully gone by
+  // line1FadeEnd, before line 2 ever starts typing.
+  const r1 = Math.max(0, Math.min(1, frame / timing.wordTypeFrames));
+  t1.style.width = `${Math.round(t1.scrollWidth * r1)}px`;
+  t1.classList.toggle("is-typing", frame > 0 && frame < timing.wordTypeFrames);
+  t1.classList.toggle("is-done", r1 >= 1);
+  const fade1 = Math.max(
+    0,
+    Math.min(1, (frame - timing.line1FadeStart) / timing.wordFadeFrames)
+  );
+  t1.style.opacity = String(1 - fade1);
+
+  // Line 2 ("Construction"): stays hidden until line 1 has fully faded,
+  // then types in the same spot, holds, and fades out at the end.
+  const r2 = Math.max(
+    0,
+    Math.min(1, (frame - timing.line2Start) / timing.wordTypeFrames)
+  );
+  t2.style.width = `${Math.round(t2.scrollWidth * r2)}px`;
+  t2.classList.toggle(
+    "is-typing",
+    frame >= timing.line2Start && frame < timing.line2TypeEnd
+  );
+  t2.classList.toggle("is-done", r2 >= 1);
+  const fade2 = Math.max(
+    0,
+    Math.min(1, (frame - timing.line2FadeStart) / timing.finalFadeFrames)
+  );
+  t2.style.opacity = frame < timing.line2Start ? "0" : String(1 - fade2);
+}
+
 /** Scrollytelling video. Pinning is done with a JS-toggled
  * position: fixed/absolute swap on the stage — not CSS position: sticky.
  * Before/after the pin window, the stage sits position: absolute, inset: 0
@@ -192,6 +238,18 @@ export default function ScrollVideoShowcase({
   const introScrollsRef = useRef(introScrolls);
   const videoSrc = `${BASE}/${videoFile}`;
 
+  // Touch / small-screen devices can't scrub (see lib/videoMode.ts) — they
+  // get ordinary inline playback instead. Starts false so the server-rendered
+  // markup is the desktop one, then flips on mount if this device qualifies.
+  const [playbackMode, setPlaybackMode] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia(PLAYBACK_MODE_QUERY);
+    const apply = () => setPlaybackMode(mq.matches);
+    apply();
+    mq.addEventListener("change", apply);
+    return () => mq.removeEventListener("change", apply);
+  }, []);
+
   useEffect(() => {
     hasTitleRef.current = !!titleLines;
   }, [titleLines]);
@@ -213,7 +271,42 @@ export default function ScrollVideoShowcase({
     else v.addEventListener("loadedmetadata", onMeta, { once: true });
   }, []);
 
+  // ---- Playback mode (touch / small screens): just play the clip ----
+  // No pin, no scroll lock, no frame stepping. Overlay content is driven off
+  // playback progress so the cards still land on their intended scenes.
   useEffect(() => {
+    if (!playbackMode) return;
+    const v = videoRef.current;
+    if (!v) return;
+
+    v.loop = true;
+    const stopTrying = playInlineWithGestureFallback(v);
+
+    // With no scroll budget to spend on a lead-in, the title runs over the
+    // clip's own opening frames — which is exactly what computeTitleTiming(0)
+    // describes (the behaviour that predates the introScrolls prop).
+    const titleTiming = computeTitleTiming(0);
+
+    const onTime = () => {
+      const total = totalFramesRef.current;
+      const frame = Math.round(v.currentTime * VIDEO_FPS);
+      if (hasTitleRef.current) {
+        applyTitle(titleText1Ref.current, titleText2Ref.current, titleTiming, frame);
+      }
+      onFrameRef.current?.(frame, total);
+    };
+
+    v.addEventListener("timeupdate", onTime);
+    return () => {
+      stopTrying();
+      v.removeEventListener("timeupdate", onTime);
+      v.pause();
+    };
+  }, [playbackMode]);
+
+  // ---- Scroll-scrub mode (desktop) ----
+  useEffect(() => {
+    if (playbackMode) return;
     const touchYRef = { current: null as number | null };
     const accumRef = { current: 0 };
     const lockedRef = { current: false };
@@ -274,39 +367,7 @@ export default function ScrollVideoShowcase({
 
     function updateTitle(frame: number) {
       if (!hasTitleRef.current) return;
-      const t1 = titleText1Ref.current;
-      const t2 = titleText2Ref.current;
-      if (!t1 || !t2) return;
-
-      // Line 1 ("Commercial"): types in, holds, fades out — fully gone by
-      // line1FadeEnd, before line 2 ever starts typing.
-      const r1 = Math.max(0, Math.min(1, frame / titleTiming.wordTypeFrames));
-      t1.style.width = `${Math.round(t1.scrollWidth * r1)}px`;
-      t1.classList.toggle("is-typing", frame > 0 && frame < titleTiming.wordTypeFrames);
-      t1.classList.toggle("is-done", r1 >= 1);
-      const fade1 = Math.max(
-        0,
-        Math.min(1, (frame - titleTiming.line1FadeStart) / titleTiming.wordFadeFrames)
-      );
-      t1.style.opacity = String(1 - fade1);
-
-      // Line 2 ("Construction"): stays hidden until line 1 has fully faded,
-      // then types in the same spot, holds, and fades out at the end.
-      const r2 = Math.max(
-        0,
-        Math.min(1, (frame - titleTiming.line2Start) / titleTiming.wordTypeFrames)
-      );
-      t2.style.width = `${Math.round(t2.scrollWidth * r2)}px`;
-      t2.classList.toggle(
-        "is-typing",
-        frame >= titleTiming.line2Start && frame < titleTiming.line2TypeEnd
-      );
-      t2.classList.toggle("is-done", r2 >= 1);
-      const fade2 = Math.max(
-        0,
-        Math.min(1, (frame - titleTiming.line2FadeStart) / titleTiming.finalFadeFrames)
-      );
-      t2.style.opacity = frame < titleTiming.line2Start ? "0" : String(1 - fade2);
+      applyTitle(titleText1Ref.current, titleText2Ref.current, titleTiming, frame);
     }
 
     function applyFrame(next: number) {
@@ -435,13 +496,18 @@ export default function ScrollVideoShowcase({
       cancelAnimationFrame(rafId);
       unlock();
     };
-  }, []);
+  }, [playbackMode]);
 
   return (
     <div
-      className={`eb-scrollvideo-spacer${titleLines ? " eb-scrollvideo-spacer--has-title" : ""}`}
+      className={`eb-scrollvideo-spacer${titleLines ? " eb-scrollvideo-spacer--has-title" : ""}${
+        playbackMode ? " eb-scrollvideo-spacer--playback" : ""
+      }`}
       ref={spacerRef}
-      style={{ height: `${PIN_VH + BUFFER_VH}vh` }}
+      /* In playback mode there's nothing to scroll past, so the spacer is
+         just the stage's own height — the extra pin buffer would only be
+         dead scroll space. */
+      style={{ height: playbackMode ? `${PIN_VH}vh` : `${PIN_VH + BUFFER_VH}vh` }}
     >
       <div className="eb-scrollvideo-stage" ref={stageRef}>
         <section
@@ -468,6 +534,10 @@ export default function ScrollVideoShowcase({
               muted
               playsInline
               preload="auto"
+              /* Scrub mode never plays the clip (frames are driven by
+                 scroll); playback mode does, and loops it. */
+              autoPlay={playbackMode}
+              loop={playbackMode}
             />
             {titleLines && <div className="eb-scrollvideo__gradient" aria-hidden="true" />}
             {overlay && <div className="eb-scrollvideo__overlay">{overlay}</div>}

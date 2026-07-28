@@ -4,11 +4,13 @@ import { useEffect } from "react";
 import Lenis from "lenis";
 import { lenisBridge } from "@/lib/lenisBridge";
 import EnerblockSections from "@/components/EnerblockSections";
+import MarketsShowcaseSection from "@/components/MarketsShowcaseSection";
 import Footer from "@/components/Footer";
 import ProjectsSection from "@/components/ProjectsSection";
 import StatsSection from "@/components/StatsSection";
 import Rocks from "@/components/Rocks";
 import Navbar from "@/components/Navbar";
+import { PLAYBACK_MODE_QUERY, playInlineWithGestureFallback } from "@/lib/videoMode";
 import "./hud.css";
 
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
@@ -61,6 +63,17 @@ export default function BlueSunPage() {
     let framesReady = false;
     let lastFrameIndex = -1;
     let videoSeeking = false;
+
+    // Touch / small screens play the hero clip instead of scrubbing it (see
+    // lib/videoMode.ts). Two separate reasons here, on top of the shared one:
+    //
+    //  - extractFrames() below decodes up to 120 frames at 1280px wide into
+    //    ImageBitmaps and holds them all. That's several hundred MB resident,
+    //    which is well past what a phone will tolerate — iOS discards the tab.
+    //  - Its fallback path seeks `videoEl.currentTime` directly, and iOS
+    //    won't render a seek on a video that was never played, so the hero
+    //    would be blank either way.
+    const playbackMode = window.matchMedia(PLAYBACK_MODE_QUERY).matches;
 
     function resizeCanvas() {
       const dpr = Math.min(devicePixelRatio, 2);
@@ -194,6 +207,12 @@ export default function BlueSunPage() {
         hfCenter.style.opacity = String(1 - fadeOut);
         hfCenter.style.visibility = fadeOut >= 1 ? "hidden" : "visible";
       }
+      // In playback mode the clip runs on its own; only the scroll-driven
+      // HUD frame and typewriter above still track scroll position.
+      if (playbackMode) {
+        requestAnimationFrame(videoTick);
+        return;
+      }
       if (framesReady && frames.length > 0) {
         const idx = Math.round(progress * (frames.length - 1));
         if (idx !== lastFrameIndex) {
@@ -220,15 +239,24 @@ export default function BlueSunPage() {
     videoEl.addEventListener("stalled", () => {
       videoSeeking = false;
     });
-    videoEl.addEventListener("loadeddata", () => {
-      videoEl.currentTime = 0;
-    });
+    if (!playbackMode) {
+      videoEl.addEventListener("loadeddata", () => {
+        videoEl.currentTime = 0;
+      });
+    }
     canvas.style.visibility = "hidden";
 
     resizeCanvas();
     onWin("resize", resizeCanvas);
     requestAnimationFrame(videoTick);
-    extractFrames();
+    if (playbackMode) {
+      videoEl.loop = true;
+      const stopTrying = playInlineWithGestureFallback(videoEl);
+      cleanups.push(stopTrying);
+      cleanups.push(() => videoEl.pause());
+    } else {
+      extractFrames();
+    }
 
     // ===================== HERO FADE =====================
     function updateHeroOpacity() {
@@ -309,6 +337,9 @@ export default function BlueSunPage() {
         {/* Video scrub finishes here; opaque scroll sections take over. */}
         <div id="video-end" />
         <EnerblockSections />
+        {/* Residential services showcase — runs straight out of the
+            Commercial Construction video that ends EnerblockSections. */}
+        <MarketsShowcaseSection />
         <ProjectsSection />
         <StatsSection />
         <Footer />

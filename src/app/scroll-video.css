@@ -142,3 +142,10 @@
     animation: none;
   }
 }
+
+/* Playback mode (touch / small screens — see lib/videoMode.ts). The clip
+   plays inline instead of being scrubbed, so there is no pin: the stage is
+   an ordinary block and the spacer is exactly its height. */
+.eb-scrollvideo-spacer--playback .eb-scrollvideo-stage {
+  position: relative;
+}
