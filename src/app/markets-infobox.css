@@ -116,7 +116,15 @@
   line-height: 1.55;
   color: rgba(255, 255, 255, 0.85);
 }
-@media (max-width: 720px) {
+/* Deliberately the same query as PLAYBACK_MODE_QUERY in lib/videoMode.ts.
+   Those devices play the clip instead of scrubbing it, and playback has no
+   room for a title-only lead-in — the first card is due ~half a second in —
+   so the "Residential Construction" title (top: 12vh) is on screen at the
+   same time as the cards, which otherwise sit as high as top: 6%. Dropping
+   them to the bottom edge here keeps the two apart. Keeping the two queries
+   identical is what guarantees that: any device that plays rather than
+   scrubs gets this layout. */
+@media (max-width: 820px), (pointer: coarse) {
   .markets-infobox {
     --ib-cut: 12px;
     left: 1rem;

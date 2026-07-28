@@ -17,6 +17,18 @@ const seg = (v: number, a: number, b: number) => clamp01((v - a) / (b - a));
 // default pxPerFrame, so no custom "scrolls" unit is needed here).
 const FADE_FRAMES = 10;
 
+// Dedicated title-only lead-in before the video starts advancing, matching
+// the Commercial Construction showcase above. It matters more than styling
+// here: the title sits at top: 12vh and this video's cards start as early as
+// frame 12 at top: 6%, so without a lead-in the two would be on screen
+// together and overlap. Spending the first few scrolls on the title instead
+// means it has fully faded before the first card appears.
+//
+// 4 scrolls at this component's 5px/frame works out to the same 400px of
+// scroll the commercial showcase spends on its own intro at 7px/frame, so
+// the two read as the same beat.
+const INTRO_SCROLLS = 4;
+
 // Opening exterior establishing shot, right at the start of the first clip
 // (frame ~12 of 722, hence 0.017) — a slow zoom on the house facade, holds
 // through frame ~125, fading out well before Electrical's wireframe scene
@@ -116,7 +128,14 @@ export default function MarketsShowcaseSection() {
   return (
     <ScrollVideoShowcase
       videoFile={`markets-showcase.mp4?v=${VIDEO_CACHE_BUST}`}
+      titleLines={["Residential", "Construction"]}
       objectFit="cover"
+      /* Without this the frame would shrink to 80vh to make room above for
+         the title (see .eb-scrollvideo--has-title); fullBleed keeps it at
+         the full 100vh it already filled and overlays the title instead,
+         same as the commercial showcase. */
+      fullBleed
+      introScrolls={INTRO_SCROLLS}
       onFrame={handleVideoFrame}
       overlay={
         <>
