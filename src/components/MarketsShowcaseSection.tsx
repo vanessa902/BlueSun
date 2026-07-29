@@ -8,7 +8,7 @@ import "../app/markets-infobox.css";
 // video under its unchanged filename after a swap. Bump this to the file's
 // own content hash (`md5sum public/markets-showcase.mp4 | cut -c1-10`)
 // every time the video changes.
-const VIDEO_CACHE_BUST = "7e6d409d62";
+const VIDEO_CACHE_BUST = "7a27b73d67";
 
 const clamp01 = (v: number) => Math.max(0, Math.min(1, v));
 const seg = (v: number, a: number, b: number) => clamp01((v - a) / (b - a));
@@ -18,55 +18,63 @@ const seg = (v: number, a: number, b: number) => clamp01((v - a) / (b - a));
 const FADE_FRAMES = 10;
 
 // Dedicated title-only lead-in before the video starts advancing, matching
-// the Commercial Construction showcase above. It matters more than styling
-// here: the title sits at top: 12vh and this video's cards start as early as
-// frame 12 at top: 6%, so without a lead-in the two would be on screen
-// together and overlap. Spending the first few scrolls on the title instead
-// means it has fully faded before the first card appears.
+// the Commercial Construction showcase above. Without it the title would play
+// out over the video's own opening frames, and since it sits at top: 12vh
+// while the cards sit as high as top: 6%, the two would be on screen together
+// and overlap — the first card is due at frame 84 of 362, well inside the
+// ~218 frames the title takes. Spending the first few scrolls on the title
+// instead means it has fully faded before the video advances at all.
 //
 // 4 scrolls at this component's 5px/frame works out to the same 400px of
 // scroll the commercial showcase spends on its own intro at 7px/frame, so
 // the two read as the same beat.
 const INTRO_SCROLLS = 4;
 
-// Opening exterior establishing shot, right at the start of the first clip
-// (frame ~12 of 722, hence 0.017) — a slow zoom on the house facade, holds
-// through frame ~125, fading out well before Electrical's wireframe scene
-// starts (frame ~140 below), not overlapping it.
-const WINDOWS_SCENE_START_FRAC = 0.017;
-const WINDOWS_HOLD_FRAMES = 93;
+// Scene marks for the clip, located by extracting frames and eyeballing them
+// (the contact sheets step through it every 0.5s). The clip runs 15.08s =
+// 362 frames at 24fps, and its beats are: exterior establishing (0-72), the
+// window wireframe at the entrance (84-120), a warm interior (132-156), the
+// electrical panel and its conduit wireframe (162-198), a wireframed wall
+// unit (210-222), the roof panel tilting open (228-246), the solar array
+// revealed (252-276), and a closing window wireframe at sunset (288-348).
+//
+// Fractions rather than raw frame numbers because sceneOpacity multiplies by
+// the total the player reports, so these survive a re-encode that shifts the
+// frame count slightly.
+//
+// Cards are spaced so each gets the scene to itself, with only a few frames
+// of crossfade where two beats butt up against each other. The card copy is
+// unchanged from the previous clip — these marks re-point it at the moments
+// in this one.
 
-// Electrical panel + glass-wireframe moment in the first clip (frame ~140
-// of 722, hence 0.194) — located by extracting and eyeballing frames.
-// Holds 40 frames, fading out before the wireframe breaks apart into the
-// next interior shot.
-const ELECTRICAL_SCENE_START_FRAC = 0.194;
-const ELECTRICAL_HOLD_FRAMES = 40;
+// Window wireframe forming over the entrance glazing (frame 84).
+const WINDOWS_SCENE_START_FRAC = 0.232;
+const WINDOWS_HOLD_FRAMES = 26;
 
-// Rooftop solar + battery-storage aerial, near the end of the first clip
-// (frame ~300 of 722, hence 0.415) — the cyan line runs from the panels
-// down to the battery unit on the lower deck. Holds until the clip cuts to
-// the second clip's exterior shot (~frame 361), fading out right at that
-// boundary so it doesn't bleed into the next scene. Shared by both the
-// Battery Storage and Residential Solar cards — same scene, one for the
-// panels, one for the battery unit it feeds — just positioned apart on
-// screen (see .markets-infobox--solar in markets-infobox.css).
-const BATTERY_SCENE_START_FRAC = 0.415;
-const BATTERY_HOLD_FRAMES = 40;
+// The warm living/kitchen interior (frame 134). No mechanical detail on
+// screen here, which is why the comfort-led HVAC card sits over it rather
+// than over one of the wireframe beats.
+const HVAC_SCENE_START_FRAC = 0.370;
+const HVAC_HOLD_FRAMES = 16;
 
-// Second clip's own opening exterior shot (frame ~365 of 722, hence 0.506)
-// — the lit roofline overhang over the glass facade, right after the cut
-// from the first clip. Holds 25 frames, fading out before the blue
-// structural wireframe forms over the facade in the next moment.
-const ROOFING_SCENE_START_FRAC = 0.506;
-const ROOFING_HOLD_FRAMES = 25;
+// Electrical panel with the dense conduit wireframe branching off it
+// (frame 166) — the clearest single moment in the clip.
+const ELECTRICAL_SCENE_START_FRAC = 0.459;
+const ELECTRICAL_HOLD_FRAMES = 26;
 
-// Kitchen ceiling ductwork/pipe wireframe, later in the second clip (frame
-// ~505 of 722, hence 0.699) — forms up close then pulls back to a wide
-// shot with the chandelier and plants visible. Holds 55 frames, fading out
-// right before the cut to the next, more distant exterior shot.
-const HVAC_SCENE_START_FRAC = 0.699;
-const HVAC_HOLD_FRAMES = 55;
+// Wall-mounted unit picked out by its own wireframe rectangle (frame 208),
+// reading as the inverter/battery beside the panel.
+const BATTERY_SCENE_START_FRAC = 0.575;
+const BATTERY_HOLD_FRAMES = 8;
+
+// The roof panel tilting open (frame 228). Short by necessity — the move
+// only lasts about 18 frames before the panels underneath are revealed.
+const ROOFING_SCENE_START_FRAC = 0.630;
+const ROOFING_HOLD_FRAMES = 8;
+
+// Solar array on the roof, held through the aerial pull-back (frame 252).
+const SOLAR_SCENE_START_FRAC = 0.696;
+const SOLAR_HOLD_FRAMES = 34;
 
 function sceneOpacity(frame: number, total: number, startFrac: number, holdFrames: number) {
   const start = total * startFrac;
@@ -110,7 +118,7 @@ export default function MarketsShowcaseSection() {
     }
     if (solarBoxRef.current) {
       solarBoxRef.current.style.opacity = String(
-        sceneOpacity(frame, total, BATTERY_SCENE_START_FRAC, BATTERY_HOLD_FRAMES)
+        sceneOpacity(frame, total, SOLAR_SCENE_START_FRAC, SOLAR_HOLD_FRAMES)
       );
     }
     if (roofingBoxRef.current) {
