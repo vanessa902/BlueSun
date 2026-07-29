@@ -46,34 +46,34 @@
     0 var(--ib-cut)
   );
 }
-/* Aerial rooftop solar + battery-storage moment, away from the driveway/
-   battery unit the shot itself is centered on. */
+/* Rooftop solar aerial — shares the scene with Residential Solar below, this
+   one down on the left wing where the roof meets the lawn, per feedback
+   (screenshot with the target area marked). */
 .markets-infobox--battery {
-  top: 14%;
-  left: 6%;
+  top: 45%;
+  left: 11%;
 }
-/* Same aerial as Battery Storage above (same scene, see the shared
-   BATTERY_SCENE_START_FRAC in page.tsx) — upper-right, near the panels
-   themselves, per feedback (screenshot with the target area marked). */
+/* Same aerial as Battery Storage above — the two share a start/hold (see
+   BATTERY_SCENE_START_FRAC and SOLAR_SCENE_START_FRAC in
+   MarketsShowcaseSection.tsx) and sit apart on screen, this one upper-right
+   over the array itself. */
 .markets-infobox--solar {
   top: 6%;
   left: 64%;
 }
-/* Opening exterior shot, over the facade's window/balcony wall per
-   feedback (screenshot with the target area circled). */
+/* Closing sunset aerial, set beside the two upper windows the wireframe
+   picks out, per feedback (screenshot with the target area indicated). */
 .markets-infobox--windows {
-  top: 24%;
-  left: 57%;
+  top: 32%;
+  left: 67%;
 }
-/* Second clip's opening exterior shot, over the column between the two
-   glass wings, per feedback (screenshot with the target area circled). */
+/* Opening establishing exterior, over the right wing's roof overhang, per
+   feedback (screenshot with the target area circled). */
 .markets-infobox--roofing {
-  top: 18%;
-  left: 56%;
+  top: 23%;
+  left: 69%;
 }
-/* Kitchen ceiling ductwork wireframe moment, over the chandelier/plants
-   area on the left, per feedback (screenshot with the target area
-   circled). */
+/* The warm living/kitchen interior, held to the left of frame. */
 .markets-infobox--hvac {
   top: 27%;
   left: 16%;

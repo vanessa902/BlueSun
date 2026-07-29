@@ -47,8 +47,11 @@ const INTRO_SCROLLS = 4;
 // unchanged from the previous clip — these marks re-point it at the moments
 // in this one.
 
-// Window wireframe forming over the entrance glazing (frame 84).
-const WINDOWS_SCENE_START_FRAC = 0.232;
+// The closing sunset aerial, where the wireframe picks out the two upper
+// windows (frame 306) — chosen over the earlier entrance-glazing beat per
+// feedback. Starts where Solar/Battery finish rather than overlapping them,
+// so the last stretch of the clip belongs to this card alone.
+const WINDOWS_SCENE_START_FRAC = 0.845;
 const WINDOWS_HOLD_FRAMES = 26;
 
 // The warm living/kitchen interior (frame 134). No mechanical detail on
@@ -62,15 +65,20 @@ const HVAC_HOLD_FRAMES = 16;
 const ELECTRICAL_SCENE_START_FRAC = 0.459;
 const ELECTRICAL_HOLD_FRAMES = 26;
 
-// Wall-mounted unit picked out by its own wireframe rectangle (frame 208),
-// reading as the inverter/battery beside the panel.
-const BATTERY_SCENE_START_FRAC = 0.575;
-const BATTERY_HOLD_FRAMES = 8;
+// Shares the solar rooftop scene rather than getting its own moment — the
+// same arrangement the previous clip used, and what was asked for here: the
+// two cards sit on screen together, Solar over the array itself and Battery
+// down on the left wing (see .markets-infobox--battery). Deliberately the
+// same start/hold as SOLAR_* below so they rise and fall together.
+const BATTERY_SCENE_START_FRAC = 0.696;
+const BATTERY_HOLD_FRAMES = 34;
 
-// The roof panel tilting open (frame 228). Short by necessity — the move
-// only lasts about 18 frames before the panels underneath are revealed.
-const ROOFING_SCENE_START_FRAC = 0.630;
-const ROOFING_HOLD_FRAMES = 8;
+// The opening establishing exterior (frame 12), over the right wing's roof
+// overhang — asked for here rather than over the roof-panel-opening beat,
+// which now runs card-free. Held long: the camera barely moves through this
+// stretch, so the card can sit for the whole approach.
+const ROOFING_SCENE_START_FRAC = 0.033;
+const ROOFING_HOLD_FRAMES = 50;
 
 // Solar array on the roof, held through the aerial pull-back (frame 252).
 const SOLAR_SCENE_START_FRAC = 0.696;
