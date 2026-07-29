@@ -14,8 +14,15 @@ import { PLAYBACK_MODE_QUERY, playInlineWithGestureFallback } from "@/lib/videoM
 import "./hud.css";
 
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
-// Scroll-driven background video, served same-origin from /public.
-const VIDEO_URL = `${BASE}/hero.mp4`;
+// Cache-buster: GitHub Pages/browsers can keep serving a stale copy of this
+// video under its unchanged filename after a swap. Bump this to the file's
+// own content hash (`md5sum public/hero.mp4 | cut -c1-10`) every time the
+// video changes.
+const VIDEO_CACHE_BUST = "65c9c78b0f";
+// Scroll-driven background video, served same-origin from /public. Used both
+// as the <video> src and by the frame-extraction fetch, so the cache-bust
+// applies to both.
+const VIDEO_URL = `${BASE}/hero.mp4?v=${VIDEO_CACHE_BUST}`;
 
 export default function BlueSunPage() {
   useEffect(() => {
