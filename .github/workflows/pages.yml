@@ -27,12 +27,17 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      # Served at the root of www.bluesunsvcs.com (see public/CNAME), so no
-      # base path: every asset URL is root-relative. Previously this built
-      # with PAGES_BASE_PATH=/BlueSun for the github.io/BlueSun subpath —
-      # setting either variable again would prefix every asset with /BlueSun
-      # and the site would load without styling or video.
+      # Served under https://vanessa902.github.io/BlueSun/, a project-site
+      # subpath, so every asset URL needs that prefix. Dropping these two is
+      # what a move to the root of a custom domain needs (together with a
+      # public/CNAME naming it) — but only once that domain's DNS points at
+      # Pages, since a root-built site served from this subpath loads its
+      # pages without any styling or video.
       - name: Build static site
+        env:
+          PAGES_BASE_PATH: /BlueSun
+          # Exposed to the client so same-origin assets resolve under the subpath.
+          NEXT_PUBLIC_BASE_PATH: /BlueSun
         run: npm run build
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
